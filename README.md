@@ -117,7 +117,7 @@ write more tests
 ## Troubleshooting
 
 If you like living on the edge, please report any bugs you find on the
-[PHP laravel-multilang issues](https://github.com/akalongman/laravel-multilang/issues) page.
+[laravel-multilang issues](https://github.com/akalongman/laravel-multilang/issues) page.
 
 ## Contributing
 
