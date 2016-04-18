@@ -33,12 +33,11 @@ if (!function_exists('lang_url')) {
 
 if (!function_exists('t')) {
     /**
-     * Generate a url for the application.
+     * Get translated text
      *
-     * @param  string                                             $path
-     * @param  mixed                                              $parameters
-     * @param  bool                                               $secure
-     * @return Illuminate\Contracts\Routing\UrlGenerator|string
+     * @param  mixed   $key
+     * @param  string  $default
+     * @return mixed
      */
     function t($key, $default = null)
     {
