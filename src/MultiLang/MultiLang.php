@@ -233,8 +233,8 @@ class MultiLang
      */
     protected function sanitizeKey($key)
     {
-        $key = preg_replace('#[^a-z0-9_-]+#is', '', $key);
-        $key = strtolower($key);
+        //$key = preg_replace('#[^a-z0-9_-]+#is', '', $key);
+        //$key = strtolower($key);
         return $key;
     }
 
