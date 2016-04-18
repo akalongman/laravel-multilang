@@ -101,7 +101,7 @@ or simple use
 ```
 in blade templates, which is equivalent to ```{{ t('string_key', 'default_value') }}```
 
-* deafult value is optional argument.
+* default value is optional argument.
 
 
 Also you can use lang_url() helper function for appending language in urls automatically.
