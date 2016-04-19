@@ -36,12 +36,11 @@ if (!function_exists('t')) {
      * Get translated text
      *
      * @param  mixed   $key
-     * @param  string  $default
      * @return mixed
      */
-    function t($key, $default = null)
+    function t($text)
     {
-        $text = app('multilang')->get($key, $default);
+        $text = app('multilang')->get($text);
 
         return $text;
     }

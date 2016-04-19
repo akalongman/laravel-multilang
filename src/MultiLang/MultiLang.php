@@ -11,10 +11,9 @@
 namespace Longman\LaravelMultiLang;
 
 use Illuminate\Contracts\Cache\Factory as CacheContract;
-use Illuminate\Contracts\Config\Repository as ConfigContract;
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Database\DatabaseManager as DatabaseContract;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 
 class MultiLang
 {
@@ -24,6 +23,13 @@ class MultiLang
      * @var string
      */
     protected $lang;
+
+    /**
+     * System environment
+     *
+     * @var string
+     */
+    protected $environment;
 
     /**
      * The instance of the laravel app.
@@ -40,9 +46,9 @@ class MultiLang
     protected $cache;
 
     /**
-     * The instance of the config.
+     * Config.
      *
-     * @var \Illuminate\Config\Repository
+     * @var array
      */
     protected $config;
 
@@ -77,39 +83,73 @@ class MultiLang
     /**
      * Create a new MultiLang instance.
      *
-     * @param  \Illuminate\Foundation\Application   $app
-     * @param  \Illuminate\Config\Repository        $config
+     * @param  string                               $environment
+     * @param  array                                $config
      * @param  \Illuminate\Cache\CacheManager       $cache
      * @param  \Illuminate\Database\DatabaseManager $db
      * @return void
      */
-    public function __construct(ApplicationContract $app, ConfigContract $config, CacheContract $cache, DatabaseContract $db)
+    public function __construct($environment, array $config, CacheContract $cache, DatabaseContract $db)
     {
-        $this->app    = $app;
-        $this->cache  = $cache;
-        $this->config = $config;
-        $this->db     = $db;
+        $this->environment = $environment;
+        $this->cache       = $cache;
+        $this->db          = $db;
+
+        $this->setConfig($config);
+    }
+
+    public function setConfig(array $config)
+    {
+        $this->config = [
+            'enabled'        => true,
+            'locales'        => [
+                'en' => [
+                    'name'        => 'English',
+                    'native_name' => 'English',
+                    'default'     => true,
+                ],
+            ],
+            'autosave'       => true,
+            'cache'          => true,
+            'cache_lifetime' => 1440,
+            'texts_table'    => 'texts',
+        ];
+
+        foreach ($config as $k => $v) {
+            $this->config[$k] = $v;
+        }
+    }
+
+    public function getConfig($key = null)
+    {
+        if ($key === null) {
+            return $this->config;
+        }
+
+        return isset($this->config[$key]) ? $this->config[$key] : null;
     }
 
     /**
      * Set locale and load texts
      *
-     * @param  string                         $lang
-     * @param  \Illuminate\Support\Collection $text
+     * @param  string                               $lang
+     * @param  \Illuminate\Support\Collection|array $text
      * @return void
      */
-    public function setLocale($lang, Collection $text = null)
+    public function setLocale($lang, $texts = null)
     {
         if (!$lang) {
-            $lang = $this->config->get('app.fallback_locale');
+            throw new InvalidArgumentException('Locale is empty!');
         }
         $this->lang = $lang;
 
         $this->setCacheName();
 
-        $this->texts = $text ? $text : $this->loadTexts($this->getLocale());
+        if (is_array($texts)) {
+            $texts = new Collection($texts);
+        }
 
-        $this->setTerminateCallback();
+        $this->texts = $texts ? $texts : $this->loadTexts($this->getLocale());
     }
 
     /**
@@ -120,9 +160,9 @@ class MultiLang
      */
     public function loadTexts($lang = null)
     {
-        $cache = $this->config->get('multilang.cache');
+        $cache = $this->getConfig('cache');
 
-        if (!$cache || $this->cache === null) {
+        if (!$cache || $this->cache === null || $this->environment != 'production') {
             $texts = $this->loadTextsFromDatabase($lang);
             return $texts;
         }
@@ -131,9 +171,7 @@ class MultiLang
             $texts = $this->loadTextsFromCache();
         } else {
             $texts = $this->loadTextsFromDatabase($lang);
-            if ($cache) {
-                $this->storeTextsInCache($texts);
-            }
+            $this->storeTextsInCache($texts);
         }
 
         $texts = new Collection($texts);
@@ -148,37 +186,24 @@ class MultiLang
      * @param  string   $default
      * @return string
      */
-    public function get($key, $default = null)
+    public function get($key)
     {
 
         if (empty($key)) {
-            return $default;
+            return null;
         }
 
         if (!$this->lang) {
-            return $default;
+            return $key;
         }
 
-        $key = $this->sanitizeKey($key);
         if (!$this->texts->has($key)) {
-            $this->queueToRegister($key, $default);
-            return $default;
+            $this->queueToSave($key);
+            return $key;
         }
 
-        $text = $this->getText($key);
-
-        return $text;
-    }
-
-    /**
-     * Get translated text
-     *
-     * @param  string                           $key
-     * @return \Illuminate\Support\Collection
-     */
-    protected function getText($key)
-    {
         $text = $this->texts->get($key);
+
         return $text;
     }
 
@@ -204,7 +229,6 @@ class MultiLang
     {
         $texts = [];
         foreach ($texts_array as $key => $value) {
-            $key         = $this->sanitizeKey($key);
             $texts[$key] = $value;
         }
 
@@ -217,25 +241,11 @@ class MultiLang
      * Queue missing texts
      *
      * @param  string $key
-     * @param  string $default
      * @return void
      */
-    protected function queueToRegister($key, $default)
+    protected function queueToSave($key)
     {
-        $this->new_texts[$key] = !empty($default) ? $default : $key;
-    }
-
-    /**
-     * Sanitize key
-     *
-     * @param  string   $key
-     * @return string
-     */
-    protected function sanitizeKey($key)
-    {
-        //$key = preg_replace('#[^a-z0-9_-]+#is', '', $key);
-        //$key = strtolower($key);
-        return $key;
+        $this->new_texts[$key] = $key;
     }
 
     /**
@@ -245,15 +255,12 @@ class MultiLang
      */
     protected function mustLoadFromCache()
     {
-        if ($this->app->environment('local')) {
-            return false;
-        }
         return $this->cache->has($this->cache_name);
     }
 
     protected function storeTextsInCache(array $texts)
     {
-        $cache_lifetime = $this->config->get('multilang.cache_lifetime', 1440);
+        $cache_lifetime = $this->getConfig('cache_lifetime', 1440);
         $status         = $this->cache->put($this->cache_name, $texts, $cache_lifetime);
         return $status;
     }
@@ -291,9 +298,9 @@ class MultiLang
         return $path;
     }
 
-    protected function autoSaveIsEnabled()
+    public function autoSaveIsAllowed()
     {
-        if ($this->app->environment('local') && $this->config->get('multilang.autosave') && $this->db !== null) {
+        if ($this->environment == 'local' && $this->getConfig('autosave') && $this->db !== null) {
             return true;
         }
         return false;
@@ -304,18 +311,7 @@ class MultiLang
         return $this->lang;
     }
 
-    protected function setTerminateCallback()
-    {
-        if (!$this->autoSaveIsEnabled()) {
-            return false;
-        }
-
-        $this->app->terminating(function () {
-            return $this->registerTexts();
-        });
-    }
-
-    protected function registerTexts()
+    public function saveTexts()
     {
         if (empty($this->new_texts)) {
             return null;
@@ -323,11 +319,10 @@ class MultiLang
 
         $ins          = [];
         $placeholders = [];
-        $lang         = $this->app->getLocale();
+        $lang         = $this->lang;
         $i            = 1;
         foreach ($this->new_texts as $k => $v) {
-            $key               = $this->sanitizeKey($k);
-            $ins['key' . $i]   = $key;
+            $ins['key' . $i]   = $k;
             $ins['lang' . $i]  = $lang;
             $ins['value' . $i] = $v;
 
@@ -350,7 +345,7 @@ class MultiLang
 
     protected function getTableName($with_prefix = false)
     {
-        $table = $this->config->get('multilang.texts_table');
+        $table = $this->getConfig('texts_table');
         if ($with_prefix) {
             $prefix = $this->db->getTablePrefix();
             $table  = $prefix . $table;

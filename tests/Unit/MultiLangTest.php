@@ -5,9 +5,13 @@ namespace Tests\Unit;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Config\Repository as Config;
 use Longman\LaravelMultiLang\MultiLang;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class MultiLangTest extends AbstractTestCase
 {
+    protected $inited;
+
     /**
      * @test
      */
@@ -32,9 +36,20 @@ class MultiLangTest extends AbstractTestCase
         $multilang = $this->getMultilang();
         $multilang->setLocale('ka');
 
-
         $this->assertEquals('ka/users', $multilang->getUrl('users'));
     }
+
+    /**
+     * @test
+     */
+    public function check_get_config()
+    {
+        $multilang = $this->getMultilang('testing', ['cache' => false]);
+        $multilang->setLocale('ka');
+
+        $this->assertEquals(false, $multilang->getConfig('cache'));
+    }
+
 
     /**
      * @test
@@ -52,7 +67,7 @@ class MultiLangTest extends AbstractTestCase
 
         $this->assertEquals('value1', $multilang->get('text1'));
 
-        $this->assertEquals('value3', $multilang->get('tex-t3'));
+        $this->assertEquals('value3', $multilang->get('te.x-t/3'));
 
     }
 
@@ -71,17 +86,39 @@ class MultiLangTest extends AbstractTestCase
             'te.x-t/3' => 'value3',
         ]);
 
-        $this->assertEquals('value5', $multilang->get('text5', 'value5'));
+        $this->assertEquals('value5', $multilang->get('value5'));
     }
 
-    protected function getMultilang()
+    protected function getMultilang($env = 'testing', $config = [])
     {
-        $application = $this->app;
-        $config      = $this->app->config;
         $cache       = $this->app->cache;
         $database    = $this->app->db;
 
-        return new MultiLang($this->app, $this->app->config, $cache, $database);
+        $this->createTable();
+
+        $multilang = new MultiLang($env, $config, $cache, $database);
+
+        return $multilang;
+    }
+
+    protected function createTable()
+    {
+        if ($this->inited) {
+            return true;
+        }
+
+
+        $schema = $this->app->db->getSchemaBuilder();
+
+        $schema->create('texts', function (Blueprint $table) {
+            $table->char('key');
+            $table->char('lang', 2);
+            $table->text('value')->default('');
+            $table->enum('scope', ['admin', 'site', 'global'])->default('global');
+            $table->timestamps();
+            $table->primary(['key', 'lang', 'scope']);
+        });
+        $this->inited = true;
     }
 
 }

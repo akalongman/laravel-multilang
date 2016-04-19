@@ -34,23 +34,17 @@ class MultiLangServiceProvider extends ServiceProvider
     {
 
         // Publish config files
-        $configPath = __DIR__ . '/../config/config.php';
-        $this->publishes([$configPath => $this->getConfigPath()], 'config');
+        $this->publishes([__DIR__ . '/../config/config.php' => config_path('multilang.php')]);
 
-        // Register commands
-        $this->commands(['command.multilang.migration', 'command.multilang.texts']);
+        // Append the country settings
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/config.php',
+            'multilang'
+        );
 
         // Register blade directives
         Blade::directive('t', function ($expression) {
-
-            if (strpos($expression, ',') !== false) {
-                list($key, $default) = explode(',', str_replace(['(', ')'], '', $expression));
-            } else {
-                $key = str_replace(['(', ')'], '', $expression);
-                $default = 'null';
-            }
-
-            return "<?php echo e(t({$key}, {$default})); ?>";
+            return "<?php echo e(t({$expression})); ?>";
         });
 
     }
@@ -67,14 +61,24 @@ class MultiLangServiceProvider extends ServiceProvider
 
         $this->app->singleton('multilang', function ($app) {
             $locale = $app->getLocale();
+            $environment = $app->environment();
+            $config = $app['config']->get('multilang');
+
             $multilang = new \Longman\LaravelMultiLang\MultiLang(
-                $app,
-                $app['config'],
+                $environment,
+                $config,
                 $app['cache'],
                 $app['db']
             );
 
             $multilang->setLocale($locale);
+
+            if ($multilang->autoSaveIsAllowed()) {
+                $this->app->terminating(function () use ($multilang) {
+                    return $multilang->saveTexts();
+                });
+            }
+
             return $multilang;
         });
 
@@ -95,52 +99,6 @@ class MultiLangServiceProvider extends ServiceProvider
         $this->commands(['command.multilang.migration', 'command.multilang.texts']);
 
     }
-
-    /**
-     * Publish the config file
-     *
-     * @param  string $configPath
-     */
-    protected function publishConfig($configPath)
-    {
-        $this->publishes([$configPath => config_path('debugbar.php')], 'config');
-    }
-
-    /**
-     * Get the config path
-     *
-     * @return string
-     */
-    protected function getConfigPath()
-    {
-        return config_path('multilang.php');
-    }
-
-    /**
-     * Register the Debugbar Middleware
-     *
-     * @param  string $middleware
-     */
-    protected function registerMiddleware($middleware)
-    {
-        $kernel = $this->app['Illuminate\Contracts\Http\Kernel'];
-        $kernel->prependMiddleware($middleware);
-    }
-
-
-    /**
-     * Register the blade directives
-     *
-     * @return void
-     */
-    protected function registerBladeDirectives()
-    {
-        \Blade::directive('t', function ($expression) {
-            return "<?php echo t({$expression}); ?>";
-        });
-    }
-
-
 
     /**
      * Get the services provided by the provider.
