@@ -1,10 +1,8 @@
 # Laravel 5.x MultiLanguage
 
 [![Build Status](https://travis-ci.org/akalongman/laravel-multilang.svg?branch=master)](https://travis-ci.org/akalongman/laravel-multilang)
-
 [![Code Quality](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/?branch=master)
-
 [![Latest Stable Version](https://img.shields.io/packagist/v/Longman/laravel-multilang.svg)](https://packagist.org/packages/longman/laravel-multilang)
 [![Total Downloads](https://img.shields.io/packagist/dt/Longman/laravel-multilang.svg)](https://packagist.org/packages/longman/laravel-multilang)
 [![Downloads Month](https://img.shields.io/packagist/dm/Longman/laravel-multilang.svg)](https://packagist.org/packages/longman/laravel-multilang)
