@@ -32,13 +32,6 @@ class MultiLang
     protected $environment;
 
     /**
-     * The instance of the laravel app.
-     *
-     * @var \Illuminate\Foundation\Application
-     */
-    protected $app;
-
-    /**
      * The instance of the cache.
      *
      * @var \Illuminate\Cache\CacheManager
@@ -132,31 +125,35 @@ class MultiLang
     /**
      * Set locale and load texts
      *
-     * @param  string                               $lang
-     * @param  \Illuminate\Support\Collection|array $text
+     * @param  string $lang
+     * @param  array  $text
      * @return void
      */
     public function setLocale($lang, $texts = null)
     {
         if (!$lang) {
-            throw new InvalidArgumentException('Locale is empty!');
+            throw new InvalidArgumentException('Locale is empty');
         }
         $this->lang = $lang;
 
-        $this->setCacheName();
+        $this->setCacheName($lang);
 
         if (is_array($texts)) {
             $texts = new Collection($texts);
         }
 
-        $this->texts = $texts ? $texts : $this->loadTexts($this->getLocale());
+        if ($texts === null) {
+            $texts = $this->loadTexts($this->getLocale());
+        }
+
+        $this->texts = new Collection($texts);
     }
 
     /**
      * Load texts
      *
-     * @param  string                           $lang
-     * @return \Illuminate\Support\Collection
+     * @param  string  $lang
+     * @return array
      */
     public function loadTexts($lang = null)
     {
@@ -174,8 +171,6 @@ class MultiLang
             $this->storeTextsInCache($texts);
         }
 
-        $texts = new Collection($texts);
-
         return $texts;
     }
 
@@ -190,7 +185,7 @@ class MultiLang
     {
 
         if (empty($key)) {
-            return null;
+            throw new InvalidArgumentException('String key not provided');
         }
 
         if (!$this->lang) {
@@ -210,13 +205,12 @@ class MultiLang
     /**
      * Get texts
      *
-     * @param  string   $lang
-     * @return string
+     * @return array
      */
-    public function getTexts($lang = null)
+    public function getTexts()
     {
 
-        return $this->loadTexts($lang);
+        return $this->texts->toArray();
     }
 
     /**
@@ -253,19 +247,19 @@ class MultiLang
      *
      * @return bool
      */
-    protected function mustLoadFromCache()
+    public function mustLoadFromCache()
     {
-        return $this->cache->has($this->cache_name);
+        return $this->cache->has($this->getCacheName());
     }
 
     protected function storeTextsInCache(array $texts)
     {
         $cache_lifetime = $this->getConfig('cache_lifetime', 1440);
-        $status         = $this->cache->put($this->cache_name, $texts, $cache_lifetime);
+        $status         = $this->cache->put($this->getCacheName(), $texts, $cache_lifetime);
         return $status;
     }
 
-    protected function loadTextsFromDatabase($lang)
+    public function loadTextsFromDatabase($lang)
     {
         $texts = $lang ? $this->db->table($this->getTableName())
             ->where('lang', $lang)
@@ -278,15 +272,21 @@ class MultiLang
         return $array;
     }
 
-    protected function loadTextsFromCache()
+    public function loadTextsFromCache()
     {
-        $texts = $this->cache->get($this->cache_name);
+        $texts = $this->cache->get($this->getCacheName());
+
         return $texts;
     }
 
-    protected function setCacheName()
+    public function setCacheName($lang)
     {
-        $this->cache_name = 'texts.' . $this->lang;
+        $this->cache_name = $this->getConfig('texts_table') . '_' . $lang;
+    }
+
+    public function getCacheName()
+    {
+        return $this->cache_name;
     }
 
     public function getUrl($path)
@@ -314,42 +314,33 @@ class MultiLang
     public function saveTexts()
     {
         if (empty($this->new_texts)) {
-            return null;
+            return false;
         }
 
-        $ins          = [];
-        $placeholders = [];
-        $lang         = $this->lang;
-        $i            = 1;
+        $lang  = $this->lang;
+        $table = $this->getTableName();
         foreach ($this->new_texts as $k => $v) {
-            $ins['key' . $i]   = $k;
-            $ins['lang' . $i]  = $lang;
-            $ins['value' . $i] = $v;
+            $exists = $this->db->table($table)->where([
+                'key'  => $k,
+                'lang' => $lang,
+            ])->first();
 
-            $placeholders[] = '(:key' . $i . ', :lang' . $i . ', :value' . $i . ')';
-            $i++;
+            if ($exists) {
+                continue;
+            }
+
+            $this->db->table($table)->insert([
+                'key'   => $k,
+                'lang'  => $lang,
+                'value' => $v,
+            ]);
         }
-
-        $fields = ['key', 'lang', 'value'];
-
-        $placeholders = implode(', ', $placeholders);
-
-        $table = $this->getTableName(true);
-
-        $query = 'INSERT IGNORE
-            INTO `' . $table . '` (`' . implode('`, `', $fields) . '`)
-            VALUES ' . $placeholders;
-
-        $this->db->insert($query, $ins);
+        return true;
     }
 
-    protected function getTableName($with_prefix = false)
+    protected function getTableName()
     {
         $table = $this->getConfig('texts_table');
-        if ($with_prefix) {
-            $prefix = $this->db->getTablePrefix();
-            $table  = $prefix . $table;
-        }
         return $table;
     }
 }
