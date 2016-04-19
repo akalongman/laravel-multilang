@@ -1,12 +1,12 @@
 # Laravel 5.x MultiLanguage
 
-[![Build Status](https://travis-ci.org/akalongman/laravel-multilang.svg?branch=master)](https://travis-ci.org/akalongman/laravel-multilang)
-[![Code Quality](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/?branch=master)
+[![Build Status](https://img.shields.io/travis/akalongman/laravel-multilang/master.svg?style=flat-square)](https://travis-ci.org/akalongman/laravel-multilang)
+[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/akalongman/laravel-multilang.svg?style=flat-square)](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/?branch=master)
+[![Code Quality](https://img.shields.io/scrutinizer/g/akalongman/laravel-multilang.svg?style=flat-square)](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/?branch=master)
 [![Latest Stable Version](https://img.shields.io/github/release/akalongman/laravel-multilang.svg?style=flat-square)](https://github.com/akalongman/laravel-multilang/releases)
 [![Total Downloads](https://img.shields.io/packagist/dt/Longman/laravel-multilang.svg)](https://packagist.org/packages/longman/laravel-multilang)
 [![Downloads Month](https://img.shields.io/packagist/dm/Longman/laravel-multilang.svg)](https://packagist.org/packages/longman/laravel-multilang)
-[![License](https://img.shields.io/packagist/l/Longman/laravel-multilang.svg)](LICENSE.md)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 This is a very useful package to integrate multi language (multi locale) functionality in Laravel 5.x.
 It includes a ServiceProvider to register the multilang and Middleware for modification routes.
