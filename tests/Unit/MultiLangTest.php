@@ -3,14 +3,18 @@
 namespace Tests\Unit;
 
 use Illuminate\Cache\CacheManager as Cache;
-use Illuminate\Config\Repository as Config;
-use Longman\LaravelMultiLang\MultiLang;
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Longman\LaravelMultiLang\MultiLang;
 
 class MultiLangTest extends AbstractTestCase
 {
-    protected $inited;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->createTable();
+    }
 
     /**
      * @test
@@ -50,6 +54,33 @@ class MultiLangTest extends AbstractTestCase
         $this->assertEquals(false, $multilang->getConfig('cache'));
     }
 
+    /**
+     * @test
+     */
+    public function check_get_default_config()
+    {
+        $multilang = $this->getMultilang('testing');
+        $multilang->setLocale('ka');
+
+        $this->assertEquals($multilang->getDefaultConfig(), $multilang->getConfig());
+    }
+
+    /**
+     * @test
+     */
+    public function check_get_texts()
+    {
+        $multilang = $this->getMultilang('testing');
+        $texts     = [
+            'text1'    => 'value1',
+            'text2'    => 'value2',
+            'te.x-t/3' => 'value3',
+        ];
+
+        $multilang->setLocale('ka', 'en', $texts);
+
+        $this->assertEquals($texts, $multilang->getTexts());
+    }
 
     /**
      * @test
@@ -68,17 +99,25 @@ class MultiLangTest extends AbstractTestCase
         $this->assertEquals('value1', $multilang->get('text1'));
 
         $this->assertEquals('value3', $multilang->get('te.x-t/3'));
-
     }
 
     /**
      * @test
      */
-    public function should_return_default_value()
+    public function should_return_key_when_no_lang()
+    {
+        $multilang = $this->getMultilang();
+
+        $this->assertEquals('value5', $multilang->get('value5'));
+    }
+
+    /**
+     * @test
+     */
+    public function should_return_key()
     {
         $multilang = $this->getMultilang();
         $multilang->setLocale('ka');
-
 
         $multilang->setTexts([
             'text1'    => 'value1',
@@ -98,8 +137,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $texts = [
-            'text1'    => 'value1',
-            'text2'    => 'value2',
+            'text1'                   => 'value1',
+            'text2'                   => 'value2',
             'te.x-t/3 dsasad sadadas' => 'value3',
         ];
 
@@ -107,8 +146,6 @@ class MultiLangTest extends AbstractTestCase
 
         $this->assertEquals($texts, $multilang->getTexts());
     }
-
-
 
     /**
      * @test
@@ -130,10 +167,7 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->get(null);
-
     }
-
-
 
     /**
      * @test
@@ -145,8 +179,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setCacheName('somestring');
 
         $texts = [
-            'text1'    => 'value1',
-            'text2'    => 'value2',
+            'text1' => 'value1',
+            'text2' => 'value2',
         ];
 
         $this->app->cache->put($multilang->getCacheName(), $texts, 1440);
@@ -154,7 +188,6 @@ class MultiLangTest extends AbstractTestCase
         $this->assertTrue($multilang->mustLoadFromCache());
 
         $this->app->cache->forget($multilang->getCacheName());
-
     }
 
     /**
@@ -169,12 +202,11 @@ class MultiLangTest extends AbstractTestCase
 
         $texts = [];
         for ($i = 0; $i <= 10; $i++) {
-            $texts['text key '.$i] = 'text value '.$i;
+            $texts['text key ' . $i] = 'text value ' . $i;
         }
 
         $this->assertEquals($texts, $multilang->loadTextsFromCache());
     }
-
 
     /**
      * @test
@@ -185,9 +217,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
         $multilang->setCacheName('somestring');
 
-        $this->assertEquals($multilang->getConfig('texts_table').'_somestring', $multilang->getCacheName());
+        $this->assertEquals($multilang->getConfig('texts_table') . '_somestring', $multilang->getCacheName());
     }
-
 
     /**
      * @test
@@ -205,7 +236,6 @@ class MultiLangTest extends AbstractTestCase
         $this->assertFalse($multilang->autoSaveIsAllowed());
     }
 
-
     /**
      * @test
      */
@@ -216,13 +246,12 @@ class MultiLangTest extends AbstractTestCase
 
         $this->assertFalse($multilang->saveTexts());
 
-
         $strings = [
             'aaaaa1' => 'aaaaa1',
             'aaaaa2' => 'aaaaa2',
             'aaaaa3' => 'aaaaa3',
         ];
-        foreach($strings as $string) {
+        foreach ($strings as $string) {
             $multilang->get($string);
         }
 
@@ -233,6 +262,104 @@ class MultiLangTest extends AbstractTestCase
 
         $this->assertEquals($strings, $multilang->getTexts());
     }
+
+    /**
+     * @test
+     */
+    public function check_autosave_for_all_langs()
+    {
+        $config = [
+            'locales' => [
+                'en' => [
+                    'name'        => 'English',
+                    'native_name' => 'English',
+                    'default'     => true,
+                ],
+                'ka' => [
+                    'name'        => 'Georgian',
+                    'native_name' => 'ქართული',
+                    'default'     => false,
+                ],
+            ],
+        ];
+
+        $multilang = $this->getMultilang('local', $config);
+        $multilang->setLocale('en');
+
+        $this->assertFalse($multilang->saveTexts());
+
+        $strings = [
+            'keyyy1',
+            'keyyy2',
+            'keyyy3',
+        ];
+        foreach ($strings as $string) {
+            $multilang->get($string);
+        }
+
+        $this->assertTrue($multilang->saveTexts());
+
+        $multilang = $this->getMultilang('local');
+        $multilang->setLocale('ka');
+
+        $this->assertEquals('ka', $multilang->getLocale('ka'));
+
+        $texts = $multilang->getTexts();
+
+        foreach ($strings as $string) {
+            $this->assertArrayHasKey($string, $texts);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function check_autosave_if_exists()
+    {
+        $multilang = $this->getMultilang('local');
+        $multilang->setLocale('en');
+
+        $this->assertFalse($multilang->saveTexts());
+
+        $strings = [
+            'aaaaa1' => 'aaaaa1',
+            'aaaaa2' => 'aaaaa2',
+            'aaaaa3' => 'aaaaa3',
+        ];
+        foreach ($strings as $string) {
+            $multilang->get($string);
+        }
+
+        $this->assertTrue($multilang->saveTexts());
+
+        $this->assertTrue($multilang->saveTexts());
+    }
+
+    /**
+     * @TODO
+     */
+    public function check_redirect_url()
+    {
+        $multilang = $this->getMultilang('local');
+        $multilang->setLocale('en');
+
+        $this->assertFalse($multilang->saveTexts());
+
+        $strings = [
+            'aaaaa1' => 'aaaaa1',
+            'aaaaa2' => 'aaaaa2',
+            'aaaaa3' => 'aaaaa3',
+        ];
+        foreach ($strings as $string) {
+            $multilang->get($string);
+        }
+
+        $this->assertTrue($multilang->saveTexts());
+
+        $this->assertTrue($multilang->saveTexts());
+    }
+
+
 
 
     /**
@@ -257,54 +384,15 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $this->assertEquals($table_name, $multilang->getTableName(false));
-
     }
-
-
-
-
-
 
     protected function getMultilang($env = 'testing', $config = [])
     {
-        $cache       = $this->app->cache;
-        $database    = $this->app->db;
-
-        $this->createTable();
+        $cache    = $this->app->cache;
+        $database = $this->app->db;
 
         $multilang = new MultiLang($env, $config, $cache, $database);
 
         return $multilang;
     }
-
-    protected function createTable()
-    {
-        if ($this->inited) {
-            return true;
-        }
-
-
-        $schema = $this->app->db->getSchemaBuilder();
-
-        $schema->create('texts', function (Blueprint $table) {
-            $table->char('key');
-            $table->char('lang', 2);
-            $table->text('value')->default('');
-            $table->enum('scope', ['admin', 'site', 'global'])->default('global');
-            $table->timestamps();
-            $table->primary(['key', 'lang', 'scope']);
-        });
-
-        for ($i = 0; $i <= 10; $i++) {
-            $this->app->db->table('texts')->insert([
-                'key' => 'text key '.$i,
-                'lang' => 'ka',
-                'value' => 'text value '.$i,
-            ]);
-        }
-
-
-        $this->inited = true;
-    }
-
 }

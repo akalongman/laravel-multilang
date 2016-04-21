@@ -13,6 +13,7 @@ namespace Longman\LaravelMultiLang;
 use Illuminate\Contracts\Cache\Factory as CacheContract;
 use Illuminate\Database\DatabaseManager as DatabaseContract;
 use Illuminate\Support\Collection;
+use Illuminate\Http\Request;
 use InvalidArgumentException;
 
 class MultiLang
@@ -23,6 +24,13 @@ class MultiLang
      * @var string
      */
     protected $lang;
+
+    /**
+     * Default Language/Locale.
+     *
+     * @var string
+     */
+    protected $default_lang;
 
     /**
      * System environment
@@ -93,7 +101,16 @@ class MultiLang
 
     public function setConfig(array $config)
     {
-        $this->config = [
+        $this->config = $this->getDefaultConfig();
+
+        foreach ($config as $k => $v) {
+            $this->config[$k] = $v;
+        }
+    }
+
+    public function getDefaultConfig()
+    {
+        $config = [
             'enabled'        => true,
             'locales'        => [
                 'en' => [
@@ -107,10 +124,7 @@ class MultiLang
             'cache_lifetime' => 1440,
             'texts_table'    => 'texts',
         ];
-
-        foreach ($config as $k => $v) {
-            $this->config[$k] = $v;
-        }
+        return $config;
     }
 
     public function getConfig($key = null)
@@ -126,15 +140,22 @@ class MultiLang
      * Set locale and load texts
      *
      * @param  string $lang
+     * @param  string $default_lang
      * @param  array  $text
      * @return void
      */
-    public function setLocale($lang, $texts = null)
+    public function setLocale($lang, $default_lang = null, $texts = null)
     {
         if (!$lang) {
             throw new InvalidArgumentException('Locale is empty');
         }
         $this->lang = $lang;
+
+        if ($default_lang === null) {
+            $default_lang = $lang;
+        }
+
+        $this->default_lang = $default_lang;
 
         $this->setCacheName($lang);
 
@@ -201,6 +222,43 @@ class MultiLang
 
         return $text;
     }
+
+    /**
+     * Get texts
+     *
+     * @return array
+     */
+    public function getRedirectUrl(Request $request)
+    {
+        $locale          = $request->segment(1);
+        $fallback_locale = $this->default_lang;
+
+        if (strlen($locale) == 2) {
+            $locales = $this->getConfig('locales');
+
+            if (!isset($locales[$locale])) {
+                $segments    = $request->segments();
+                $segments[0] = $fallback_locale;
+                $url         = implode('/', $segments);
+                if ($query_string = $request->server->get('QUERY_STRING')) {
+                    $url .= '?' . $query_string;
+                }
+
+                return $url;
+            }
+        } else {
+            $segments = $request->segments();
+            $url      = $fallback_locale . '/' . implode('/', $segments);
+            if ($query_string = $request->server->get('QUERY_STRING')) {
+                $url .= '?' . $query_string;
+            }
+            return $url;
+        }
+
+        return null;
+    }
+
+
 
     /**
      * Get texts
@@ -317,23 +375,27 @@ class MultiLang
             return false;
         }
 
-        $lang  = $this->lang;
         $table = $this->getTableName();
+        $locales = $this->getConfig('locales');
         foreach ($this->new_texts as $k => $v) {
-            $exists = $this->db->table($table)->where([
-                'key'  => $k,
-                'lang' => $lang,
-            ])->first();
+            foreach($locales as $lang => $locale_data) {
+                $exists = $this->db->table($table)->where([
+                    'key'  => $k,
+                    'lang' => $lang,
+                ])->first();
 
-            if ($exists) {
-                continue;
+                if ($exists) {
+                    continue;
+                }
+
+                $this->db->table($table)->insert([
+                    'key'   => $k,
+                    'lang'  => $lang,
+                    'value' => $v,
+                ]);
+
             }
 
-            $this->db->table($table)->insert([
-                'key'   => $k,
-                'lang'  => $lang,
-                'value' => $v,
-            ]);
         }
         return true;
     }

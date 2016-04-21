@@ -10,7 +10,7 @@
 
 namespace Longman\LaravelMultiLang;
 
-class MultilangFacade extends \Illuminate\Support\Facades\Facade
+class MultiLangFacade extends \Illuminate\Support\Facades\Facade
 {
     /**
      * {@inheritDoc}
