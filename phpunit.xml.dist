@@ -36,5 +36,8 @@
         <whitelist>
             <directory suffix=".php" processUncoveredFilesFromWhitelist="true">./src</directory>
         </whitelist>
+        <blacklist>
+            <directory>./src/MultiLang/Commands</directory>
+        </blacklist>
     </filter>
 </phpunit>

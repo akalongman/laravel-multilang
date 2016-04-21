@@ -65,7 +65,7 @@ class MigrationCommand extends Command
     /**
      * Create the migration.
      *
-     * @param  string $name
+     * @param  string $table
      * @return bool
      */
     protected function createMigration($table)

@@ -19,6 +19,28 @@ use Longman\LaravelMultiLang\Multilang as MultilangLib;
 class MultiLang
 {
 
+    /**
+     * Application.
+     *
+     * @var \Illuminate\Foundation\Application
+     */
+    protected $app;
+
+    /**
+     * Redirector.
+     *
+     * @var \Illuminate\Routing\Redirector
+     */
+    protected $redirector;
+
+    /**
+     * Multilang.
+     *
+     * @var \Longman\LaravelMultiLang\Multilang
+     */
+    protected $multilang;
+
+
     public function __construct(Application $app, Redirector $redirector, MultilangLib $multilang)
     {
         $this->app        = $app;

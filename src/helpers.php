@@ -35,7 +35,7 @@ if (!function_exists('t')) {
     /**
      * Get translated text
      *
-     * @param  mixed   $key
+     * @param  mixed   $text
      * @return mixed
      */
     function t($text)

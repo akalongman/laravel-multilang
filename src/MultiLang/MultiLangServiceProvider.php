@@ -74,7 +74,7 @@ class MultiLangServiceProvider extends ServiceProvider
             $multilang->setLocale($locale);
 
             if ($multilang->autoSaveIsAllowed()) {
-                $this->app->terminating(function () use ($multilang) {
+                $app->terminating(function () use ($multilang) {
                     return $multilang->saveTexts();
                 });
             }
@@ -85,13 +85,13 @@ class MultiLangServiceProvider extends ServiceProvider
         $this->app->alias('multilang', 'Longman\LaravelMultiLang\MultiLang');
 
         $this->app['command.multilang.migration'] = $this->app->share(
-            function ($app) {
+            function () {
                 return new MigrationCommand();
             }
         );
 
         $this->app['command.multilang.texts'] = $this->app->share(
-            function ($app) {
+            function () {
                 return new TextsCommand();
             }
         );
