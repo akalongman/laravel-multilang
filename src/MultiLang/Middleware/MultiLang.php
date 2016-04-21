@@ -67,8 +67,7 @@ class MultiLang
 
         $this->app->setLocale($locale);
 
-        $this->multilang->setLocale($locale);
-
         return $next($request);
     }
+
 }

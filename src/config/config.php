@@ -3,16 +3,6 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Multilang Settings
-    |--------------------------------------------------------------------------
-    |
-    | Multilang is enabled by default, when ServiceProvider is included in config/app.php.
-    |
-     */
-    'enabled'        => true,
-
-    /*
-    |--------------------------------------------------------------------------
     | Available locales/languages
     |--------------------------------------------------------------------------
     |
@@ -23,7 +13,8 @@ return [
         'en' => [
             'name'        => 'English',
             'native_name' => 'English',
-            'default'     => true,
+            'flag'        => 'gb.svg',
+            'locale'      => 'en',
         ],
     ],
 

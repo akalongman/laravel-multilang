@@ -12,8 +12,8 @@ namespace Longman\LaravelMultiLang;
 
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
 class MultiLang
@@ -77,10 +77,10 @@ class MultiLang
     /**
      * Create a new MultiLang instance.
      *
-     * @param  string                               $environment
-     * @param  array                                $config
-     * @param  \Illuminate\Cache\CacheManager       $cache
-     * @param  \Illuminate\Database\DatabaseManager $db
+     * @param string                               $environment
+     * @param array                                $config
+     * @param \Illuminate\Cache\CacheManager       $cache
+     * @param \Illuminate\Database\DatabaseManager $db
      */
     public function __construct($environment, array $config, Cache $cache, Database $db)
     {
@@ -103,11 +103,12 @@ class MultiLang
     public function getDefaultConfig()
     {
         $config = [
-            'enabled'        => true,
             'locales'        => [
                 'en' => [
                     'name'        => 'English',
                     'native_name' => 'English',
+                    'flag'        => 'gb.svg',
+                    'locale'      => 'en',
                 ],
             ],
             'default_locale' => 'en',
@@ -153,7 +154,6 @@ class MultiLang
 
         $this->texts = new Collection($texts);
     }
-
 
     /**
      * Load texts
@@ -217,7 +217,6 @@ class MultiLang
         $locale          = $request->segment(1);
         $fallback_locale = $this->getConfig('default_locale');
 
-
         if (strlen($locale) == 2) {
             $locales = $this->getConfig('locales');
 
@@ -245,14 +244,16 @@ class MultiLang
 
     public function detectLocale(Request $request)
     {
-        $locale          = $request->segment(1);
+        $locale  = $request->segment(1);
         $locales = $this->getConfig('locales');
 
         if (isset($locales[$locale])) {
-            return $locale;
+            $this->setLocale($locale);
+            return isset($locales[$locale]['locale']) ? $locales[$locale]['locale'] : $locale;
         }
 
         $fallback_locale = $this->getConfig('default_locale');
+        $this->setLocale($fallback_locale);
         return $locale;
     }
 
@@ -371,7 +372,7 @@ class MultiLang
             return false;
         }
 
-        $table = $this->getTableName();
+        $table   = $this->getTableName();
         $locales = $this->getConfig('locales');
         foreach ($this->new_texts as $k => $v) {
             foreach ($locales as $lang => $locale_data) {
