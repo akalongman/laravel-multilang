@@ -42,7 +42,7 @@ class MultiLang
     /**
      * The instance of the cache.
      *
-     * @var \Illuminate\Cache\CacheManager
+     * @var \Illuminate\Cache\Repository
      */
     protected $cache;
 
@@ -88,7 +88,6 @@ class MultiLang
      * @param  array                                $config
      * @param  \Illuminate\Cache\CacheManager       $cache
      * @param  \Illuminate\Database\DatabaseManager $db
-     * @return void
      */
     public function __construct($environment, array $config, CacheContract $cache, DatabaseContract $db)
     {
@@ -141,7 +140,7 @@ class MultiLang
      *
      * @param  string $lang
      * @param  string $default_lang
-     * @param  array  $text
+     * @param  array  $texts
      * @return void
      */
     public function setLocale($lang, $default_lang = null, $texts = null)
@@ -161,9 +160,7 @@ class MultiLang
 
         if (is_array($texts)) {
             $texts = new Collection($texts);
-        }
-
-        if ($texts === null) {
+        } else {
             $texts = $this->loadTexts($this->getLocale());
         }
 
@@ -199,7 +196,6 @@ class MultiLang
      * Get translated text
      *
      * @param  string   $key
-     * @param  string   $default
      * @return string
      */
     public function get($key)
@@ -312,7 +308,7 @@ class MultiLang
 
     protected function storeTextsInCache(array $texts)
     {
-        $cache_lifetime = $this->getConfig('cache_lifetime', 1440);
+        $cache_lifetime = $this->getConfig('cache_lifetime');
         $status         = $this->cache->put($this->getCacheName(), $texts, $cache_lifetime);
         return $status;
     }
@@ -378,7 +374,7 @@ class MultiLang
         $table = $this->getTableName();
         $locales = $this->getConfig('locales');
         foreach ($this->new_texts as $k => $v) {
-            foreach($locales as $lang => $locale_data) {
+            foreach ($locales as $lang => $locale_data) {
                 $exists = $this->db->table($table)->where([
                     'key'  => $k,
                     'lang' => $lang,
@@ -393,9 +389,7 @@ class MultiLang
                     'lang'  => $lang,
                     'value' => $v,
                 ]);
-
             }
-
         }
         return true;
     }
