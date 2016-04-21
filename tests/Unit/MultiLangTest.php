@@ -386,13 +386,5 @@ class MultiLangTest extends AbstractTestCase
         $this->assertEquals($table_name, $multilang->getTableName(false));
     }
 
-    protected function getMultilang($env = 'testing', $config = [])
-    {
-        $cache    = $this->app->cache;
-        $database = $this->app->db;
 
-        $multilang = new MultiLang($env, $config, $cache, $database);
-
-        return $multilang;
-    }
 }

@@ -10,8 +10,8 @@
 
 namespace Longman\LaravelMultiLang;
 
-use Illuminate\Contracts\Cache\Factory as CacheContract;
-use Illuminate\Database\DatabaseManager as DatabaseContract;
+use Illuminate\Cache\CacheManager as Cache;
+use Illuminate\Database\DatabaseManager as Database;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
@@ -42,7 +42,7 @@ class MultiLang
     /**
      * The instance of the cache.
      *
-     * @var \Illuminate\Cache\Repository
+     * @var \Illuminate\Cache\CacheManager
      */
     protected $cache;
 
@@ -89,7 +89,7 @@ class MultiLang
      * @param  \Illuminate\Cache\CacheManager       $cache
      * @param  \Illuminate\Database\DatabaseManager $db
      */
-    public function __construct($environment, array $config, CacheContract $cache, DatabaseContract $db)
+    public function __construct($environment, array $config, Cache $cache, Database $db)
     {
         $this->environment = $environment;
         $this->cache       = $cache;
@@ -309,8 +309,8 @@ class MultiLang
     protected function storeTextsInCache(array $texts)
     {
         $cache_lifetime = $this->getConfig('cache_lifetime');
-        $status         = $this->cache->put($this->getCacheName(), $texts, $cache_lifetime);
-        return $status;
+        $this->cache->put($this->getCacheName(), $texts, $cache_lifetime);
+        return $this;
     }
 
     public function loadTextsFromDatabase($lang)

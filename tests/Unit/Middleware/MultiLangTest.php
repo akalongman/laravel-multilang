@@ -129,14 +129,4 @@ class MultiLangTest extends AbstractTestCase
         $this->assertEquals('http://localhost/en/auth/login?' . $QUERY_STRING, $location);
     }
 
-    protected function getMultilang($env = 'testing', $config = [])
-    {
-        $cache    = $this->app->cache;
-        $database = $this->app->db;
-
-        $multilang = new MultiLang($env, $config, $cache, $database);
-
-        return $multilang;
-    }
-
 }

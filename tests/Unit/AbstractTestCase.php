@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use GrahamCampbell\TestBench\AbstractPackageTestCase;
 use Illuminate\Database\Schema\Blueprint;
+use Longman\LaravelMultiLang\MultiLang;
 use Longman\LaravelMultiLang\MultiLangServiceProvider;
 
 /**
@@ -43,5 +44,15 @@ abstract class AbstractTestCase extends AbstractPackageTestCase
                 'value' => 'text value ' . $i,
             ]);
         }
+    }
+
+    protected function getMultilang($env = 'testing', $config = [])
+    {
+        $cache    = $this->app->cache;
+        $database = $this->app->db;
+
+        $multilang = new MultiLang($env, $config, $cache, $database);
+
+        return $multilang;
     }
 }
