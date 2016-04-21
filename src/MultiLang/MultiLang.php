@@ -26,13 +26,6 @@ class MultiLang
     protected $lang;
 
     /**
-     * Default Language/Locale.
-     *
-     * @var string
-     */
-    protected $default_lang;
-
-    /**
      * System environment
      *
      * @var string
@@ -115,9 +108,9 @@ class MultiLang
                 'en' => [
                     'name'        => 'English',
                     'native_name' => 'English',
-                    'default'     => true,
                 ],
             ],
+            'default_locale' => 'en',
             'autosave'       => true,
             'cache'          => true,
             'cache_lifetime' => 1440,
@@ -143,18 +136,12 @@ class MultiLang
      * @param  array  $texts
      * @return void
      */
-    public function setLocale($lang, $default_lang = null, $texts = null)
+    public function setLocale($lang, $texts = null)
     {
         if (!$lang) {
             throw new InvalidArgumentException('Locale is empty');
         }
         $this->lang = $lang;
-
-        if ($default_lang === null) {
-            $default_lang = $lang;
-        }
-
-        $this->default_lang = $default_lang;
 
         $this->setCacheName($lang);
 
@@ -166,6 +153,7 @@ class MultiLang
 
         $this->texts = new Collection($texts);
     }
+
 
     /**
      * Load texts
@@ -227,7 +215,8 @@ class MultiLang
     public function getRedirectUrl(Request $request)
     {
         $locale          = $request->segment(1);
-        $fallback_locale = $this->default_lang;
+        $fallback_locale = $this->getConfig('default_locale');
+
 
         if (strlen($locale) == 2) {
             $locales = $this->getConfig('locales');
@@ -254,7 +243,18 @@ class MultiLang
         return null;
     }
 
+    public function detectLocale(Request $request)
+    {
+        $locale          = $request->segment(1);
+        $locales = $this->getConfig('locales');
 
+        if (isset($locales[$locale])) {
+            return $locale;
+        }
+
+        $fallback_locale = $this->getConfig('default_locale');
+        return $locale;
+    }
 
     /**
      * Get texts

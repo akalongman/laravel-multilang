@@ -14,7 +14,7 @@ use Closure;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use Longman\LaravelMultiLang\Multilang as MultilangLib;
+use Longman\LaravelMultiLang\MultiLang as MultiLangLib;
 
 class MultiLang
 {
@@ -41,7 +41,7 @@ class MultiLang
     protected $multilang;
 
 
-    public function __construct(Application $app, Redirector $redirector, MultilangLib $multilang)
+    public function __construct(Application $app, Redirector $redirector, MultiLangLib $multilang)
     {
         $this->app        = $app;
         $this->redirector = $redirector;
@@ -58,11 +58,16 @@ class MultiLang
     public function handle($request, Closure $next)
     {
         $url = $this->multilang->getRedirectUrl($request);
+
         if ($url !== null) {
             return $this->redirector->to($url);
         }
 
-        $this->app->setLocale($this->multilang->getLocale());
+        $locale = $this->multilang->detectLocale($request);
+
+        $this->app->setLocale($locale);
+
+        $this->multilang->setLocale($locale);
 
         return $next($request);
     }

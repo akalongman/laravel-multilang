@@ -77,7 +77,7 @@ class MultiLangTest extends AbstractTestCase
             'te.x-t/3' => 'value3',
         ];
 
-        $multilang->setLocale('ka', 'en', $texts);
+        $multilang->setLocale('ka', $texts);
 
         $this->assertEquals($texts, $multilang->getTexts());
     }

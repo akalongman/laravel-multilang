@@ -60,7 +60,6 @@ class MultiLangServiceProvider extends ServiceProvider
         $this->mergeConfigFrom($configPath, 'debugbar');
 
         $this->app->singleton('multilang', function ($app) {
-            $locale = $app->getLocale();
             $environment = $app->environment();
             $config = $app['config']->get('multilang');
 
@@ -70,8 +69,6 @@ class MultiLangServiceProvider extends ServiceProvider
                 $app['cache'],
                 $app['db']
             );
-
-            $multilang->setLocale($locale);
 
             if ($multilang->autoSaveIsAllowed()) {
                 $app->terminating(function () use ($multilang) {
