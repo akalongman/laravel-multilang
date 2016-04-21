@@ -95,16 +95,13 @@ App::setLocale('en');
 In application you can use t() function like:
 
 ```php
-$string = t('string_key', 'default_value');
+$string = t('Your translatable string');
 ```
 or simple use
 ```php
-@t('string_key', 'default_value')
+@t('Your translatable string')
 ```
-in blade templates, which is equivalent to ```{{ t('string_key', 'default_value') }}```
-
-* default value is optional argument.
-
+in blade templates, which is equivalent to ```{{ t('Your translatable string') }}```
 
 Also you can use lang_url() helper function for appending language in urls automatically.
 
