@@ -29,7 +29,7 @@ class HelpersTest extends AbstractTestCase
             'te.x-t/3' => 'value3',
         ];
 
-        $multilang->setLocale('ka', 'en', $texts);
+        $multilang->setLocale('ka', $texts);
 
         $this->assertEquals('value1', t('text1'));
     }
@@ -47,7 +47,7 @@ class HelpersTest extends AbstractTestCase
             'te.x-t/3' => 'value3',
         ];
 
-        $multilang->setLocale('ka', 'en', $texts);
+        $multilang->setLocale('ka', $texts);
 
         $this->assertEquals('http://localhost/ka/users/list', lang_url('users/list'));
     }
