@@ -45,7 +45,7 @@ class MigrationCommand extends Command
         $this->comment($message);
         $this->line('');
 
-        if ($this->confirm('Proceed with the migration creation? [Yes|no]', 'Yes')) {
+        if ($this->confirm('Proceed with the migration creation? [Yes|no]', true)) {
             $this->line('');
 
             $this->info('Creating migration...');

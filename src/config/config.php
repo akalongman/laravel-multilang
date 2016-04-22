@@ -30,41 +30,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Autosave missing strings in database
+    | Cache Configuration
     |--------------------------------------------------------------------------
     |
-    | Multilang will autosave missing texts in database. Only on when environment is local
+    | Cache parameters
     |
      */
-    'autosave'       => true,
+    'cache'          => [
+        'enabled'  => true,
+        'store'    => env('CACHE_DRIVER', 'default'),
+        'lifetime' => 1440,
+    ],
 
     /*
     |--------------------------------------------------------------------------
-    | Cache translated texts
+    | DB Configuration
     |--------------------------------------------------------------------------
     |
-    | Multilang will cache texts from database for improving performance. Only on when environment is production
+    | DB parameters
     |
      */
-    'cache'          => true,
+    'db'             => [
+        'autosave'    => true, // Autosave missing texts in database. Only when environment is local
+        'connection'  => env('DB_CONNECTION', 'default'),
+        'texts_table' => 'texts',
+    ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Cache lifetime
-    |--------------------------------------------------------------------------
-    |
-    | Cache lifetime in minutes
-    |
-     */
-    'cache_lifetime' => 1440,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Texts table name
-    |--------------------------------------------------------------------------
-    |
-    | You can change texts table name.
-    |
-     */
-    'texts_table'    => 'texts',
 ];

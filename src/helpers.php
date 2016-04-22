@@ -31,14 +31,14 @@ if (!function_exists('lang_url')) {
     }
 }
 
-if (! function_exists('lang_redirect')) {
+if (!function_exists('lang_redirect')) {
     /**
      * Get an instance of the redirector.
      *
-     * @param  string|null  $to
-     * @param  int     $status
-     * @param  array   $headers
-     * @param  bool    $secure
+     * @param  string|null                                                        $to
+     * @param  int                                                                $status
+     * @param  array                                                              $headers
+     * @param  bool                                                               $secure
      * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
     function lang_redirect($to = null, $status = 302, $headers = [], $secure = null)
@@ -49,7 +49,7 @@ if (! function_exists('lang_redirect')) {
 
         $multilang = app('multilang');
 
-        $path = $multilang->getUrl($to);
+        $to = $multilang->getUrl($to);
 
         return app('redirect')->to($to, $status, $headers, $secure);
     }

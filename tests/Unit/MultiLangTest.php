@@ -45,25 +45,17 @@ class MultiLangTest extends AbstractTestCase
 
     /**
      * @test
+     * @group test1
      */
     public function check_get_config()
     {
-        $multilang = $this->getMultilang('testing', ['cache' => false]);
+        $multilang = $this->getMultilang('testing', ['cache' => ['enabled' => false]]);
         $multilang->setLocale('ka');
 
-        $this->assertEquals(false, $multilang->getConfig('cache'));
+        $this->assertEquals(false, $multilang->getConfig('cache.enabled'));
     }
 
-    /**
-     * @test
-     */
-    public function check_get_default_config()
-    {
-        $multilang = $this->getMultilang('testing');
-        $multilang->setLocale('ka');
 
-        $this->assertEquals($multilang->getDefaultConfig(), $multilang->getConfig());
-    }
 
     /**
      * @test
@@ -217,7 +209,7 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
         $multilang->setCacheName('somestring');
 
-        $this->assertEquals($multilang->getConfig('texts_table') . '_somestring', $multilang->getCacheName());
+        $this->assertEquals($multilang->getConfig('db.texts_table') . '_somestring', $multilang->getCacheName());
     }
 
     /**

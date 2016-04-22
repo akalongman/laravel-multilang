@@ -51,6 +51,9 @@ abstract class AbstractTestCase extends AbstractPackageTestCase
         $cache    = $this->app->cache;
         $database = $this->app->db;
 
+        $default_config = include(__DIR__ . '/../../src/config/config.php');
+        $config = array_replace_recursive($default_config, $config);
+
         $multilang = new MultiLang($env, $config, $cache, $database);
 
         return $multilang;
