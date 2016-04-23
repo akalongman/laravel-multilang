@@ -11,7 +11,6 @@
 namespace Longman\LaravelMultiLang;
 
 use Blade;
-use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\ServiceProvider;
 use Longman\LaravelMultiLang\Console\MigrationCommand;
 use Longman\LaravelMultiLang\Console\TextsCommand;
@@ -25,7 +24,6 @@ class MultiLangServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
-
     /**
      * Bootstrap any application services.
      *
@@ -34,8 +32,20 @@ class MultiLangServiceProvider extends ServiceProvider
     public function boot()
     {
 
+        \Route::get(
+            \Config::get('multilang.text-route.route'),
+            \Config::get('multilang.text-route.controller') . '@index'
+        );
+        \Route::post(
+            \Config::get('multilang.text-route.route'),
+            \Config::get('multilang.text-route.controller') . '@save'
+        );
+
         // Publish config files
-        $this->publishes([__DIR__ . '/../config/config.php' => config_path('multilang.php')]);
+        $this->publishes([
+            __DIR__ . '/../config/config.php' => config_path('multilang.php'),
+            __DIR__ . '/../views' => base_path('resources/views/vendor/multilang'),
+        ]);
 
         // Append the country settings
         $this->mergeConfigFrom(
@@ -52,14 +62,13 @@ class MultiLangServiceProvider extends ServiceProvider
             $this->app['multilang']->setLocale($locale);
         });
 
+        $this->loadViewsFrom(__DIR__ . '/../views', 'multilang');
 
         /*$this->app['events']->listen(RouteMatched::class, function () {
 
-            dump($this->app['router']);
-            die();
-        });*/
-
-
+    dump($this->app['router']);
+    die();
+    });*/
     }
 
     /**
@@ -107,7 +116,6 @@ class MultiLangServiceProvider extends ServiceProvider
         );
 
         $this->commands(['command.multilang.migration', 'command.multilang.texts']);
-
     }
 
     /**
@@ -119,8 +127,7 @@ class MultiLangServiceProvider extends ServiceProvider
     {
         return [
             'multilang', 'command.multilang.migration',
-            'command.multilang.texts', 'Longman\LaravelMultiLang\MultiLang'
+            'command.multilang.texts', 'Longman\LaravelMultiLang\MultiLang',
         ];
     }
-
 }

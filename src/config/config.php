@@ -9,12 +9,12 @@ return [
     | Available locales for routing
     |
      */
-    'locales'        => [
+    'locales' => [
         'en' => [
-            'name'        => 'English',
+            'name' => 'English',
             'native_name' => 'English',
-            'flag'        => 'gb.svg',
-            'locale'      => 'en',
+            'flag' => 'gb.svg',
+            'locale' => 'en',
         ],
     ],
 
@@ -30,15 +30,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Route Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Basic route
+    |
+     */
+    'text-route' => [
+        'route' => 'texts',
+        'controller' => '\Longman\LaravelMultiLang\Controllers\TextsController',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Cache Configuration
     |--------------------------------------------------------------------------
     |
     | Cache parameters
     |
      */
-    'cache'          => [
-        'enabled'  => true,
-        'store'    => env('CACHE_DRIVER', 'default'),
+    'cache' => [
+        'enabled' => true,
+        'store' => env('CACHE_DRIVER', 'default'),
         'lifetime' => 1440,
     ],
 
@@ -50,9 +63,9 @@ return [
     | DB parameters
     |
      */
-    'db'             => [
-        'autosave'    => true, // Autosave missing texts in database. Only when environment is local
-        'connection'  => env('DB_CONNECTION', 'default'),
+    'db' => [
+        'autosave' => true, // Autosave missing texts in database. Only when environment is local
+        'connection' => env('DB_CONNECTION', 'default'),
         'texts_table' => 'texts',
     ],
 
