@@ -13,7 +13,6 @@ namespace Longman\LaravelMultiLang;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
 class MultiLang
@@ -61,9 +60,9 @@ class MultiLang
     protected $cache_name;
 
     /**
-     * Texts collection.
+     * Texts.
      *
-     * @var \Illuminate\Support\Collection
+     * @var array
      */
     protected $texts;
 
@@ -158,7 +157,7 @@ class MultiLang
      * @param  array  $texts
      * @return void
      */
-    public function setLocale($lang, $texts = null)
+    public function setLocale($lang, array $texts = null)
     {
         if (!$lang) {
             throw new InvalidArgumentException('Locale is empty');
@@ -167,13 +166,11 @@ class MultiLang
 
         $this->setCacheName($lang);
 
-        if (is_array($texts)) {
-            $texts = new Collection($texts);
-        } else {
+        if (!is_array($texts)) {
             $texts = $this->loadTexts($this->getLocale());
         }
 
-        $this->texts = new Collection($texts);
+        $this->texts = $texts;
     }
 
     /**
@@ -216,12 +213,12 @@ class MultiLang
             return $key;
         }
 
-        if (!$this->texts->has($key)) {
+        if (!isset($this->texts[$key])) {
             $this->queueToSave($key);
             return $key;
         }
 
-        $text = $this->texts->get($key);
+        $text = $this->texts[$key];
 
         return $text;
     }
@@ -267,13 +264,10 @@ class MultiLang
         $locales = $this->getConfig('locales');
 
         if (isset($locales[$locale])) {
-            $this->setLocale($locale);
             return isset($locales[$locale]['locale']) ? $locales[$locale]['locale'] : $locale;
         }
 
-        $fallback_locale = $this->getConfig('default_locale');
-        $this->setLocale($fallback_locale);
-        return $locale;
+        return $this->getConfig('default_locale', 'en');
     }
 
     /**
@@ -284,7 +278,7 @@ class MultiLang
     public function getTexts()
     {
 
-        return $this->texts->toArray();
+        return $this->texts;
     }
 
     /**
@@ -300,7 +294,7 @@ class MultiLang
             $texts[$key] = $value;
         }
 
-        $this->texts = new Collection($texts);
+        $this->texts = $texts;
 
         return $this;
     }

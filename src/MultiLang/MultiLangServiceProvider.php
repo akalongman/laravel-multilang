@@ -48,6 +48,11 @@ class MultiLangServiceProvider extends ServiceProvider
             return "<?php echo e(t({$expression})); ?>";
         });
 
+        $this->app['events']->listen('locale.changed', function ($locale) {
+            $this->app['multilang']->setLocale($locale);
+        });
+
+
         /*$this->app['events']->listen(RouteMatched::class, function () {
 
             dump($this->app['router']);
