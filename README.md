@@ -63,7 +63,7 @@ php artisan vendor:publish --provider="Longman\LaravelMultiLang\MultiLangService
 After run multilang migration command
 
 ```
-php artisan multilang:migrate
+php artisan multilang:migration
 ```
 
 Its creates multilang migration file in your database/migrations folder. After you can run
