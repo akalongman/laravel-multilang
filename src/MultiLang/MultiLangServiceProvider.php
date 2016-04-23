@@ -10,10 +10,11 @@
 
 namespace Longman\LaravelMultiLang;
 
+use Blade;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\ServiceProvider;
 use Longman\LaravelMultiLang\Console\MigrationCommand;
 use Longman\LaravelMultiLang\Console\TextsCommand;
-use Blade;
 
 class MultiLangServiceProvider extends ServiceProvider
 {
@@ -46,6 +47,13 @@ class MultiLangServiceProvider extends ServiceProvider
         Blade::directive('t', function ($expression) {
             return "<?php echo e(t({$expression})); ?>";
         });
+
+        /*$this->app['events']->listen(RouteMatched::class, function () {
+
+            dump($this->app['router']);
+            die();
+        });*/
+
 
     }
 

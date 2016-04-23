@@ -84,6 +84,15 @@ protected $middleware = [
 ];
 ```
 
+And add 'prefix' in all routes group. In your RoutesServiceProvider modify that:
+```php
+$router->group([
+    'namespace' => $this->namespace, 'prefix' => $request->segment(1)
+], function ($router) {
+    require app_path('Http/routes.php');
+});
+```
+
 Or if you want only translating strings without modification urls, you must manually set locale in your app like:
 ```php
 App::setLocale('en');
