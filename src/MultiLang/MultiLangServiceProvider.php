@@ -32,14 +32,14 @@ class MultiLangServiceProvider extends ServiceProvider
     public function boot()
     {
 
-        \Route::get(
+        /*\Route::get(
             \Config::get('multilang.text-route.route'),
             \Config::get('multilang.text-route.controller') . '@index'
         );
         \Route::post(
             \Config::get('multilang.text-route.route'),
             \Config::get('multilang.text-route.controller') . '@save'
-        );
+        );*/
 
         // Publish config files
         $this->publishes([
