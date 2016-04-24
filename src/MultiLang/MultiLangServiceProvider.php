@@ -14,6 +14,7 @@ use Blade;
 use Illuminate\Support\ServiceProvider;
 use Longman\LaravelMultiLang\Console\MigrationCommand;
 use Longman\LaravelMultiLang\Console\TextsCommand;
+use Route;
 
 class MultiLangServiceProvider extends ServiceProvider
 {
@@ -32,14 +33,7 @@ class MultiLangServiceProvider extends ServiceProvider
     public function boot()
     {
 
-        /*\Route::get(
-            \Config::get('multilang.text-route.route'),
-            \Config::get('multilang.text-route.controller') . '@index'
-        );
-        \Route::post(
-            \Config::get('multilang.text-route.route'),
-            \Config::get('multilang.text-route.controller') . '@save'
-        );*/
+        $this->setRoutes();
 
         // Publish config files
         $this->publishes([
@@ -64,11 +58,32 @@ class MultiLangServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/../views', 'multilang');
 
-        /*$this->app['events']->listen(RouteMatched::class, function () {
+        /*
+        $this->app['events']->listen(RouteMatched::class, function () {
+        dump($this->app['router']);
+        die();
+        });
+        */
+    }
 
-    dump($this->app['router']);
-    die();
-    });*/
+    public function setRoutes()
+    {
+        $locales = $this->app['config']->get('multilang.locales');
+        $route = $this->app['config']->get('multilang.text-route.route', 'texts');
+        $controller = $this->app['config']->get('multilang.text-route.controller', '\Longman\LaravelMultiLang\Controllers\TextsController');
+        foreach($locales as $locale => $value) {
+            Route::group(['prefix' => $locale], function ($router) use ($route, $controller) {
+                $router->get(
+                    $route,
+                    $controller . '@index'
+                );
+                $router->post(
+                    $route,
+                    $controller . '@save'
+                );
+            });
+
+        }
     }
 
     /**
