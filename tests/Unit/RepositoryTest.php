@@ -19,9 +19,12 @@ class RepositoryTest extends AbstractTestCase
     /**
      * @test
      */
-    public function some_test()
+    public function get_from_database()
     {
+        $repository = $this->getRepository();
 
+        dump($repository);
+        die;
 
     }
 

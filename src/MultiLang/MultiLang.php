@@ -14,6 +14,8 @@ use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
+use Longman\LaravelMultiLang\Config;
+use Longman\LaravelMultiLang\Repository;
 
 class MultiLang
 {
@@ -41,7 +43,7 @@ class MultiLang
     /**
      * Config.
      *
-     * @var array
+     * @var \Longman\LaravelMultiLang\Config
      */
     protected $config;
 
@@ -88,35 +90,21 @@ class MultiLang
         $this->db          = $db;
 
         $this->setConfig($config);
+
+        //$this->setRepository(new Repository($this->config, $cache, $db));
+
     }
 
     public function setConfig(array $config)
     {
-        $this->config = $config;
+        $this->config = new Config($config);
         return $this;
     }
 
-    public function getConfig($key = null, $default = null)
+    public function setRepository(Repository $repository)
     {
-        $array = $this->config;
-
-        if ($key === null) {
-            return $array;
-        }
-
-        if (array_key_exists($key, $array)) {
-            return $array[$key];
-        }
-
-        foreach (explode('.', $key) as $segment) {
-            if (is_array($array) && array_key_exists($segment, $array)) {
-                $array = $array[$segment];
-            } else {
-                return $default;
-            }
-        }
-
-        return $array;
+        $this->repository = $repository;
+        return $this;
     }
 
     /**
@@ -126,10 +114,10 @@ class MultiLang
      */
     public function getCache()
     {
-        if ($this->getConfig('cache.enabled', true) === false) {
+        if ($this->config->get('cache.enabled', true) === false) {
             return null;
         }
-        $store = $this->getConfig('cache.store', 'default');
+        $store = $this->config->get('cache.store', 'default');
         if ($store == 'default') {
             return $this->cache->store();
         }
@@ -143,7 +131,7 @@ class MultiLang
      */
     public function getDb()
     {
-        $connection = $this->getConfig('db.connection');
+        $connection = $this->config->get('db.connection');
         if ($connection == 'default') {
             return $this->db->connection();
         }
@@ -231,10 +219,10 @@ class MultiLang
     public function getRedirectUrl(Request $request)
     {
         $locale          = $request->segment(1);
-        $fallback_locale = $this->getConfig('default_locale');
+        $fallback_locale = $this->config->get('default_locale');
 
         if (strlen($locale) == 2) {
-            $locales = $this->getConfig('locales');
+            $locales = $this->config->get('locales');
 
             if (!isset($locales[$locale])) {
                 $segments    = $request->segments();
@@ -261,13 +249,13 @@ class MultiLang
     public function detectLocale(Request $request)
     {
         $locale  = $request->segment(1);
-        $locales = $this->getConfig('locales');
+        $locales = $this->config->get('locales');
 
         if (isset($locales[$locale])) {
             return isset($locales[$locale]['locale']) ? $locales[$locale]['locale'] : $locale;
         }
 
-        return $this->getConfig('default_locale', 'en');
+        return $this->config->get('default_locale', 'en');
     }
 
     /**
@@ -322,7 +310,7 @@ class MultiLang
 
     protected function storeTextsInCache(array $texts)
     {
-        $this->getCache()->put($this->getCacheName(), $texts, $this->getConfig('cache.lifetime', 1440));
+        $this->getCache()->put($this->getCacheName(), $texts, $this->config->get('cache.lifetime', 1440));
         return $this;
     }
 
@@ -348,7 +336,7 @@ class MultiLang
 
     public function setCacheName($lang)
     {
-        $this->cache_name = $this->getConfig('db.texts_table') . '_' . $lang;
+        $this->cache_name = $this->config->get('db.texts_table') . '_' . $lang;
     }
 
     public function getCacheName()
@@ -367,7 +355,7 @@ class MultiLang
 
     public function autoSaveIsAllowed()
     {
-        if ($this->environment == 'local' && $this->getConfig('db.autosave', true) && $this->getDb() !== null) {
+        if ($this->environment == 'local' && $this->config->get('db.autosave', true) && $this->getDb() !== null) {
             return true;
         }
         return false;
@@ -378,6 +366,11 @@ class MultiLang
         return $this->lang;
     }
 
+    public function getLocales()
+    {
+        return $this->config->get('locales');
+    }
+
     public function saveTexts()
     {
         if (empty($this->new_texts)) {
@@ -385,7 +378,7 @@ class MultiLang
         }
 
         $table   = $this->getTableName();
-        $locales = $this->getConfig('locales');
+        $locales = $this->getLocales();
 
         foreach ($this->new_texts as $k => $v) {
             foreach ($locales as $lang => $locale_data) {
@@ -410,7 +403,7 @@ class MultiLang
 
     protected function getTableName()
     {
-        $table = $this->getConfig('db.texts_table', 'texts');
+        $table = $this->config->get('db.texts_table', 'texts');
         return $table;
     }
 }

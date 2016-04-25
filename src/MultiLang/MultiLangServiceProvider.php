@@ -68,7 +68,7 @@ class MultiLangServiceProvider extends ServiceProvider
 
     public function setRoutes()
     {
-        $locales = $this->app['config']->get('multilang.locales');
+        $locales = $this->app['config']->get('multilang.locales', []);
         $route = $this->app['config']->get('multilang.text-route.route', 'texts');
         $controller = $this->app['config']->get('multilang.text-route.controller', '\Longman\LaravelMultiLang\Controllers\TextsController');
         foreach($locales as $locale => $value) {
