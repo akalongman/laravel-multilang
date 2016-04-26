@@ -71,7 +71,7 @@ class MultiLangServiceProvider extends ServiceProvider
         $locales = $this->app['config']->get('multilang.locales', []);
         $route = $this->app['config']->get('multilang.text-route.route', 'texts');
         $controller = $this->app['config']->get('multilang.text-route.controller', '\Longman\LaravelMultiLang\Controllers\TextsController');
-        foreach($locales as $locale => $value) {
+        foreach ($locales as $locale => $value) {
             Route::group(['prefix' => $locale], function ($router) use ($route, $controller) {
                 $router->get(
                     $route,
@@ -82,7 +82,6 @@ class MultiLangServiceProvider extends ServiceProvider
                     $controller . '@save'
                 );
             });
-
         }
     }
 

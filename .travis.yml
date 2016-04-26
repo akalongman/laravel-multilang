@@ -15,7 +15,7 @@ install:
   - travis_retry composer install --no-interaction --prefer-source
 
 script:
-  - ./vendor/bin/phpcs --standard=phpcs.xml -sp --encoding=utf-8 src/ --report-width=150
+  - ./vendor/bin/phpcs --standard=phpcs.xml -spn --encoding=utf-8 src/ --report-width=150
   - if [ "$TRAVIS_PHP_VERSION" != "5.5.9" ] && [ "$TRAVIS_PHP_VERSION" != "5.5" ]; then ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi
 
 after_script:
