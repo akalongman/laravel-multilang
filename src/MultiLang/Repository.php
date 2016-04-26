@@ -12,19 +12,18 @@ namespace Longman\LaravelMultiLang;
 
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use InvalidArgumentException;
 use Longman\LaravelMultiLang\Config;
 
 class Repository
 {
+
     /**
-     * Language/Locale.
+     * The instance of the config.
      *
-     * @var string
+     * @var \Longman\LaravelMultiLang\Config
      */
-    protected $lang;
+    protected $config;
+
 
     /**
      * The instance of the cache.
@@ -34,27 +33,11 @@ class Repository
     protected $cache;
 
     /**
-     * Config.
-     *
-     * @var array
-     */
-    protected $config;
-
-    /**
      * The instance of the database.
      *
      * @var \Illuminate\Database\DatabaseManager
      */
     protected $db;
-
-    /**
-     * Name of the cache.
-     *
-     * @var string
-     */
-    protected $cache_name;
-
-
 
     /**
      * Create a new MultiLang instance.
@@ -66,18 +49,21 @@ class Repository
      */
     public function __construct(Config $config, Cache $cache, Database $db)
     {
-        $this->config       = $config;
-        $this->cache       = $cache;
-        $this->db          = $db;
-
+        $this->config = $config;
+        $this->cache  = $cache;
+        $this->db     = $db;
     }
 
+    public function getCacheName($lang)
+    {
+        return $this->config->get('db.texts_table', 'texts') . '_' . $lang;
+    }
 
     public function loadFromDatabase($lang)
     {
-        $texts = $lang ? $this->getDb()->table($this->getTableName())
+        $texts = $this->getDb()->table($this->getTableName())
             ->where('lang', $lang)
-            ->get(['key', 'value', 'lang', 'scope']) : $this->getDb()->table($this->getTableName())->get(['key', 'value', 'lang', 'scope']);
+            ->get(['key', 'value', 'lang', 'scope']);
 
         $array = [];
         foreach ($texts as $row) {
@@ -86,12 +72,35 @@ class Repository
         return $array;
     }
 
+    public function loadFromCache($lang)
+    {
+        $texts = $this->getCache()->get($this->getCacheName($lang));
+
+        return $texts;
+    }
+
+    public function storeInCache($lang, array $texts)
+    {
+        $this->getCache()->put($this->getCacheName($lang), $texts, $this->config->get('cache.lifetime', 1440));
+        return $this;
+    }
+
+    /**
+     * Check if we must load texts from cache
+     *
+     * @return bool
+     */
+    public function existsInCache($lang)
+    {
+        return $this->getCache()->has($this->getCacheName($lang));
+    }
+
     /**
      * Get a database connection instance.
      *
      * @return \Illuminate\Database\Connection
      */
-    public function getDb()
+    protected function getDb()
     {
         $connection = $this->config->get('db.connection');
         if ($connection == 'default') {
@@ -105,18 +114,14 @@ class Repository
      *
      * @return \Illuminate\Contracts\Cache\Repository
      */
-    public function getCache()
+    protected function getCache()
     {
-        if ($this->config->get('cache.enabled', true) === false) {
-            return null;
-        }
         $store = $this->config->get('cache.store', 'default');
         if ($store == 'default') {
             return $this->cache->store();
         }
         return $this->cache->store($store);
     }
-
 
     public function save($texts)
     {
@@ -125,7 +130,7 @@ class Repository
         }
 
         $table   = $this->getTableName();
-        $locales = $this->getLocales();
+        $locales = $this->config->get('locales', []);
 
         foreach ($texts as $k => $v) {
             foreach ($locales as $lang => $locale_data) {
@@ -148,12 +153,9 @@ class Repository
         return true;
     }
 
-
-    protected function getTableName()
+    public function getTableName()
     {
         $table = $this->config->get('db.texts_table', 'texts');
         return $table;
     }
-
-
 }

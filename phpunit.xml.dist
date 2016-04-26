@@ -35,9 +35,13 @@
     <filter>
         <whitelist>
             <directory suffix=".php" processUncoveredFilesFromWhitelist="true">./src</directory>
+            <exclude>
+                <file>./src/MultiLang/TextsTrait.php</file>
+                <directory suffix=".php">./src/MultiLang/Console</directory>
+                <directory suffix=".php">./src/config</directory>
+                <directory suffix=".stub">./src/stubs</directory>
+                <directory suffix=".php">./src/views</directory>
+            </exclude>
         </whitelist>
-        <blacklist>
-            <directory>./src/MultiLang/Commands</directory>
-        </blacklist>
     </filter>
 </phpunit>

@@ -7,6 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Longman\LaravelMultiLang\MultiLang;
 use Longman\LaravelMultiLang\MultiLangServiceProvider;
 use Longman\LaravelMultiLang\Repository;
+use Longman\LaravelMultiLang\Config;
 
 /**
  * This is the abstract test case class.
@@ -60,7 +61,7 @@ abstract class AbstractTestCase extends AbstractPackageTestCase
         return $multilang;
     }
 
-    protected function getRepository($env = 'testing', $config = [])
+    protected function getRepository($config = [])
     {
         $cache    = $this->app->cache;
         $database = $this->app->db;
@@ -68,11 +69,18 @@ abstract class AbstractTestCase extends AbstractPackageTestCase
         $default_config = include(__DIR__ . '/../../src/config/config.php');
         $config = array_replace_recursive($default_config, $config);
 
-        $repository = new Repository($env, $config, $cache, $database);
+        $config = $this->getConfig($config);
+
+        $repository = new Repository($config, $cache, $database);
 
         return $repository;
     }
 
+    protected function getConfig($config)
+    {
+        $configObject = new Config($config);
+        return $configObject;
+    }
 
 
 }

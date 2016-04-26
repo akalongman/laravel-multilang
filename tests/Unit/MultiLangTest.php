@@ -3,8 +3,6 @@
 namespace Tests\Unit;
 
 use Illuminate\Cache\CacheManager as Cache;
-use Illuminate\Database\Schema\Blueprint;
-use Longman\LaravelMultiLang\MultiLang;
 
 class MultiLangTest extends AbstractTestCase
 {
@@ -42,20 +40,6 @@ class MultiLangTest extends AbstractTestCase
 
         $this->assertEquals('ka/users', $multilang->getUrl('users'));
     }
-
-    /**
-     * @test
-     * @group test1
-     */
-    public function check_get_config()
-    {
-        $multilang = $this->getMultilang('testing', ['cache' => ['enabled' => false]]);
-        $multilang->setLocale('ka');
-
-        $this->assertEquals(false, $multilang->getConfig('cache.enabled'));
-    }
-
-
 
     /**
      * @test
@@ -168,18 +152,17 @@ class MultiLangTest extends AbstractTestCase
     {
         $multilang = $this->getMultilang('production');
         $multilang->setLocale('ka');
-        $multilang->setCacheName('somestring');
 
         $texts = [
             'text1' => 'value1',
             'text2' => 'value2',
         ];
 
-        $this->app->cache->put($multilang->getCacheName(), $texts, 1440);
+        $this->app->cache->put($multilang->getRepository()->getCacheName('ka'), $texts, 1440);
 
-        $this->assertTrue($multilang->mustLoadFromCache());
+        $this->assertTrue($multilang->getRepository()->existsInCache('ka'));
 
-        $this->app->cache->forget($multilang->getCacheName());
+        $this->app->cache->forget($multilang->getRepository()->getCacheName('ka'));
     }
 
     /**
@@ -190,26 +173,14 @@ class MultiLangTest extends AbstractTestCase
         $multilang = $this->getMultilang('production');
         $multilang->setLocale('ka');
 
-        $this->assertTrue($multilang->mustLoadFromCache());
+        $this->assertTrue($multilang->getRepository()->existsInCache('ka'));
 
         $texts = [];
         for ($i = 0; $i <= 10; $i++) {
             $texts['text key ' . $i] = 'text value ' . $i;
         }
 
-        $this->assertEquals($texts, $multilang->loadTextsFromCache());
-    }
-
-    /**
-     * @test
-     */
-    public function set_get_cache_name()
-    {
-        $multilang = $this->getMultilang('production');
-        $multilang->setLocale('ka');
-        $multilang->setCacheName('somestring');
-
-        $this->assertEquals($multilang->getConfig('db.texts_table') . '_somestring', $multilang->getCacheName());
+        $this->assertEquals($texts, $multilang->getRepository()->loadFromCache('ka'));
     }
 
     /**
@@ -328,6 +299,31 @@ class MultiLangTest extends AbstractTestCase
     }
 
     /**
+     * @test
+     */
+    public function get_locales()
+    {
+        $config = [
+            'locales' => [
+                'en' => [
+                    'name' => 'English',
+                ],
+                'ka' => [
+                    'name' => 'Georgian',
+                ],
+                'az' => [
+                    'name' => 'Azerbaijanian',
+                ],
+            ],
+        ];
+
+        $multilang = $this->getMultilang('local', $config);
+        $multilang->setLocale('en');
+
+        $this->assertEquals(3, count($multilang->getLocales()));
+    }
+
+    /**
      * @TODO
      */
     public function check_redirect_url()
@@ -350,33 +346,4 @@ class MultiLangTest extends AbstractTestCase
 
         $this->assertTrue($multilang->saveTexts());
     }
-
-
-
-
-    /**
-     * @1test
-     */
-    public function check_table_name()
-    {
-        $schema = $this->app->db->getSchemaBuilder();
-
-        $table_name = 'texts2';
-
-        $schema->create($table_name, function (Blueprint $table) {
-            $table->char('key');
-            $table->char('lang', 2);
-            $table->text('value')->default('');
-            $table->enum('scope', ['admin', 'site', 'global'])->default('global');
-            $table->timestamps();
-            $table->primary(['key', 'lang', 'scope']);
-        });
-
-        $multilang = $this->getMultilang('local', ['texts_table' => $table_name]);
-        $multilang->setLocale('ka');
-
-        $this->assertEquals($table_name, $multilang->getTableName(false));
-    }
-
-
 }
