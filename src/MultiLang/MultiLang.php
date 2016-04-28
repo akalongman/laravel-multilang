@@ -176,10 +176,14 @@ class MultiLang
     public function getRedirectUrl(Request $request)
     {
         $locale          = $request->segment(1);
-        $fallback_locale = $this->config->get('default_locale');
+        $fallback_locale = $this->config->get('default_locale', 'en');
+        $exclude_segments = $this->config->get('exclude_segments', []);
+        if (in_array($locale, $exclude_segments)) {
+            return null;
+        }
 
         if (strlen($locale) == 2) {
-            $locales = $this->config->get('locales');
+            $locales = $this->config->get('locales', []);
 
             if (!isset($locales[$locale])) {
                 $segments    = $request->segments();
