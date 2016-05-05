@@ -54,6 +54,11 @@ After updating composer, add the MultiLangServiceProvider to the providers array
 Longman\LaravelMultiLang\MultiLangServiceProvider::class,
 ```
 
+And add facade to the alias array in config/app.php
+```php
+'MultiLang' => Longman\LaravelMultiLang\Facades\MultiLang::class,
+```
+
 Copy the package config to your local config with the publish command:
 
 ```
@@ -72,7 +77,7 @@ Its creates multilang migration file in your database/migrations folder. After y
 php artisan migrate
 ```
 
-Also if you want change locale depending on url (like site.com/en/your-routes)
+Also if you want automatically change locale depending on url (like site.com/en/your-routes)
 you must add middleware in app/Http/Kernel.php
 
 I suggest add multilang after CheckForMaintenanceMode middleware
@@ -84,16 +89,26 @@ protected $middleware = [
 ];
 ```
 
-And add 'prefix' in all routes group. In your RoutesServiceProvider modify that:
+In your RoutesServiceProvider modify that:
 ```php
-$router->group([
-    'namespace' => $this->namespace, 'prefix' => $request->segment(1)
-], function ($router) {
+MultiLang::routeGroup(function($router) {
     require app_path('Http/routes.php');
 });
 ```
+or directly in app/Http/routes.php file add multilang group:
+```php
+MultiLang::routeGroup(function($router) {
+    // your routes and route groups here
+});
+```
 
-Or if you want only translating strings without modification urls, you must manually set locale in your app like:
+If you want managing texts, add in routes file:
+```php
+MultiLang::manageTextsRoutes();
+```
+
+
+Or if you want only translating strings without modification urls and routes, you must manually set locale in your app like:
 ```php
 App::setLocale('en');
 ```

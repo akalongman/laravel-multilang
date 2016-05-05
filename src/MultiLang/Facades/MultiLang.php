@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Longman\LaravelMultiLang;
+namespace Longman\LaravelMultiLang\Facades;
 
-class MultiLangFacade extends \Illuminate\Support\Facades\Facade
+class MultiLang extends \Illuminate\Support\Facades\Facade
 {
     /**
      * {@inheritDoc}

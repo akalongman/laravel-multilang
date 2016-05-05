@@ -10,9 +10,11 @@
 
 namespace Longman\LaravelMultiLang;
 
+use Closure;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use InvalidArgumentException;
 use Longman\LaravelMultiLang\Config;
 use Longman\LaravelMultiLang\Repository;
@@ -175,8 +177,8 @@ class MultiLang
      */
     public function getRedirectUrl(Request $request)
     {
-        $locale          = $request->segment(1);
-        $fallback_locale = $this->config->get('default_locale', 'en');
+        $locale           = $request->segment(1);
+        $fallback_locale  = $this->config->get('default_locale', 'en');
         $exclude_segments = $this->config->get('exclude_segments', []);
         if (in_array($locale, $exclude_segments)) {
             return null;
@@ -217,6 +219,37 @@ class MultiLang
         }
 
         return $this->config->get('default_locale', 'en');
+    }
+
+    public function routeGroup(Closure $callback)
+    {
+        $router = app('router');
+
+        $locales = $this->config->get('locales', []);
+
+        foreach ($locales as $locale => $val) {
+            $router->group([
+                'prefix' => $locale,
+                'as'     => $locale.'.',
+            ], $callback);
+        }
+
+    }
+
+    public function manageTextsRoutes()
+    {
+        $router = app('router');
+        $route = $this->config->get('text-route.route', 'texts');
+        $controller = $this->config->get('text-route.controller', '\Longman\LaravelMultiLang\Controllers\TextsController');
+
+        $router->get(
+            $route,
+            ['uses' => $controller . '@index']
+        );
+        $router->post(
+            $route,
+            ['uses' => $controller . '@save']
+        );
     }
 
     /**

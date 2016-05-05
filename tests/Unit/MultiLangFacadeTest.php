@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use Longman\LaravelMultiLang\MultiLang;
-use Longman\LaravelMultiLang\MultiLangFacade;
+use Longman\LaravelMultiLang\Facades\MultiLang as MultiLangFacade;
 use GrahamCampbell\TestBenchCore\FacadeTrait;
 use Illuminate\Database\Schema\Blueprint;
 

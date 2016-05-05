@@ -33,8 +33,6 @@ class MultiLangServiceProvider extends ServiceProvider
     public function boot()
     {
 
-        $this->setRoutes();
-
         // Publish config files
         $this->publishes([
             __DIR__ . '/../config/config.php' => config_path('multilang.php'),
@@ -56,6 +54,7 @@ class MultiLangServiceProvider extends ServiceProvider
             $this->app['multilang']->setLocale($locale);
         });
 
+
         $this->loadViewsFrom(__DIR__ . '/../views', 'multilang');
 
         /*
@@ -66,24 +65,6 @@ class MultiLangServiceProvider extends ServiceProvider
         */
     }
 
-    public function setRoutes()
-    {
-        $locales = $this->app['config']->get('multilang.locales', []);
-        $route = $this->app['config']->get('multilang.text-route.route', 'texts');
-        $controller = $this->app['config']->get('multilang.text-route.controller', '\Longman\LaravelMultiLang\Controllers\TextsController');
-        foreach ($locales as $locale => $value) {
-            Route::group(['prefix' => $locale], function ($router) use ($route, $controller) {
-                $router->get(
-                    $route,
-                    $controller . '@index'
-                );
-                $router->post(
-                    $route,
-                    $controller . '@save'
-                );
-            });
-        }
-    }
 
     /**
      * Register any application services.
