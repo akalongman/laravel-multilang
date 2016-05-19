@@ -5,7 +5,7 @@ Before you contribute code to this project, please make sure it conforms to the 
 and that the project unit tests still pass. The easiest way to contribute is to work on a checkout of the repository,
 or your own fork. If you do this, you can run the following commands to check if everything is ready to submit:
 
-    cd laravel-multilang
+    cd project
     composer update
     ./vendor/bin/phpcs --standard=phpcs.xml -spn --encoding=utf-8 src/ --report-width=150
 
