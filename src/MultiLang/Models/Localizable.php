@@ -14,7 +14,8 @@ trait Localizable
 {
 
 
-    public static function bootLocalizable(){
+    public static function bootLocalizable()
+    {
         static::addGlobalScope(new LocalizableScope);
     }
 
