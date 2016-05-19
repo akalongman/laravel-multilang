@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ScopeInterface;
 
-
 class LocalizableScope implements ScopeInterface
 {
     /**
@@ -36,7 +35,7 @@ class LocalizableScope implements ScopeInterface
     {
         $wheres = $builder->getQuery()->wheres;
         $column = $this->getLocalizableColumn($builder);
-        foreach($wheres as $where) {
+        foreach ($wheres as $where) {
             if ($where['column'] == $column) {
                 return true;
             }
@@ -73,13 +72,11 @@ class LocalizableScope implements ScopeInterface
 
         $query = $builder->getQuery();
 
-        foreach ((array) $query->wheres as $key => $where)
-        {
-            // If the where clause is a soft delete date constraint, we will remove it from
+        foreach ((array) $query->wheres as $key => $where) {
+        // If the where clause is a soft delete date constraint, we will remove it from
             // the query and reset the keys on the wheres. This allows this developer to
             // include deleted model in a relationship result set that is lazy loaded.
-            if ($this->isSoftDeleteConstraint($where, $column))
-            {
+            if ($this->isSoftDeleteConstraint($where, $column)) {
                 unset($query->wheres[$key]);
 
                 $query->wheres = array_values($query->wheres);
