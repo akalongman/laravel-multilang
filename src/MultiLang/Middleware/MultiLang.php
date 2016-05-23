@@ -60,7 +60,11 @@ class MultiLang
         $url = $this->multilang->getRedirectUrl($request);
 
         if ($url !== null) {
-            return $this->redirector->to($url);
+            if ($request->wantsJson()) {
+                return response('Not found', 404);
+            } else {
+                return $this->redirector->to($url);
+            }
         }
 
         $locale = $this->multilang->detectLocale($request);
