@@ -131,12 +131,14 @@ class Repository
 
         $table   = $this->getTableName();
         $locales = $this->config->get('locales', []);
+        $scope   = is_callable('config') ? config('app.scope', 'global') : 'global';
 
         foreach ($texts as $k => $v) {
             foreach ($locales as $lang => $locale_data) {
                 $exists = $this->getDb()->table($table)->where([
-                    'key'  => $k,
-                    'lang' => $lang,
+                    'key'   => $k,
+                    'lang'  => $lang,
+                    'scope' => $scope,
                 ])->first();
 
                 if ($exists) {
@@ -146,6 +148,7 @@ class Repository
                 $this->getDb()->table($table)->insert([
                     'key'   => $k,
                     'lang'  => $lang,
+                    'scope' => $scope,
                     'value' => $v,
                 ]);
             }
