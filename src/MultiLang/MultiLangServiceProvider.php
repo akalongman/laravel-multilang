@@ -33,13 +33,11 @@ class MultiLangServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        \DB::enableQueryLog();
-
         // Publish config files
         $this->publishes([
-            __DIR__ . '/../config/config.php' => config_path('multilang.php'),
-            __DIR__ . '/../views' => base_path('resources/views/vendor/multilang'),
-        ]);
+                             __DIR__ . '/../config/config.php' => config_path('multilang.php'),
+                             __DIR__ . '/../views'             => base_path('resources/views/vendor/multilang'),
+                         ]);
 
         // Append the country settings
         $this->mergeConfigFrom(
@@ -52,7 +50,7 @@ class MultiLangServiceProvider extends ServiceProvider
             return "<?php echo e(t({$expression})); ?>";
         });
 
-        $this->app['events']->listen(RouteMatched::class, function ($match) {
+        $this->app['events']->listen(RouteMatched::class, function () {
             $scope = $this->app['config']->get('app.scope');
             if ($scope && $scope != 'global') {
                 $this->app['multilang']->setScope($scope);
@@ -62,7 +60,6 @@ class MultiLangServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/../views', 'multilang');
     }
-
 
     /**
      * Register any application services.
@@ -76,7 +73,7 @@ class MultiLangServiceProvider extends ServiceProvider
 
         $this->app->singleton('multilang', function ($app) {
             $environment = $app->environment();
-            $config = $app['config']->get('multilang');
+            $config      = $app['config']->get('multilang');
 
             $multilang = new \Longman\LaravelMultiLang\MultiLang(
                 $environment,
@@ -91,7 +88,6 @@ class MultiLangServiceProvider extends ServiceProvider
                     if ($scope && $scope != 'global') {
                         $multilang->setScope($scope);
                     }
-                    dump(\DB::getQueryLog());
                     return $multilang->saveTexts();
                 });
             }
@@ -124,8 +120,10 @@ class MultiLangServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'multilang', 'command.multilang.migration',
-            'command.multilang.texts', 'Longman\LaravelMultiLang\MultiLang',
+            'multilang',
+            'command.multilang.migration',
+            'command.multilang.texts',
+            'Longman\LaravelMultiLang\MultiLang',
         ];
     }
 }

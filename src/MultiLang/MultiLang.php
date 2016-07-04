@@ -404,7 +404,7 @@ class MultiLang
     {
         return $this->config->get('locales');
     }
-
+    
     /**
      * Save missing texts
      *

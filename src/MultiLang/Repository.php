@@ -72,8 +72,8 @@ class Repository
     /**
      * Load texts from database storage
      *
-     * @param      $lang
-     * @param null $scope
+     * @param string $lang
+     * @param string $scope
      * @return array
      */
     public function loadFromDatabase($lang, $scope = null)
@@ -102,8 +102,8 @@ class Repository
     /**
      * Load texts from cache storage
      *
-     * @param      $lang
-     * @param null $scope
+     * @param string $lang
+     * @param string $scope
      * @return mixed
      */
     public function loadFromCache($lang, $scope = null)
@@ -116,9 +116,9 @@ class Repository
     /**
      * Store texts in cache
      *
-     * @param       $lang
-     * @param array $texts
-     * @param null  $scope
+     * @param string $lang
+     * @param array  $texts
+     * @param string $scope
      * @return $this
      */
     public function storeInCache($lang, array $texts, $scope = null)
