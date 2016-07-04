@@ -133,6 +133,10 @@ Also you can use lang_url() helper function for appending language in urls autom
 $url = lang_url('users'); // which returns /en/users depending on your language (locale)
 ```
 
+Note: Texts will be selected after firing Laravel's RouteMatched event. Therefore texts unavailable on artisan commands
+
+
+
 ## TODO
 
 write more tests

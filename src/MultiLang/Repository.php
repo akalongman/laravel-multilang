@@ -24,7 +24,6 @@ class Repository
      */
     protected $config;
 
-
     /**
      * The instance of the cache.
      *
@@ -54,16 +53,44 @@ class Repository
         $this->db     = $db;
     }
 
-    public function getCacheName($lang)
+    /**
+     * Get cache key name based on lang and scope
+     *
+     * @param      $lang
+     * @param null $scope
+     * @return string
+     */
+    public function getCacheName($lang, $scope = null)
     {
-        return $this->config->get('db.texts_table', 'texts') . '_' . $lang;
+        $key = $this->config->get('db.texts_table', 'texts') . '_' . $lang;
+        if (!is_null($scope)) {
+            $key .= '_' . $scope;
+        }
+        return $key;
     }
 
-    public function loadFromDatabase($lang)
+    /**
+     * Load texts from database storage
+     *
+     * @param      $lang
+     * @param null $scope
+     * @return array
+     */
+    public function loadFromDatabase($lang, $scope = null)
     {
-        $texts = $this->getDb()->table($this->getTableName())
-            ->where('lang', $lang)
-            ->get(['key', 'value', 'lang', 'scope']);
+        $query = $this->getDb()->table($this->getTableName())
+            ->where('lang', $lang);
+
+        if (!is_null($scope)) {
+            $query = $query->whereNested(function ($query) use ($scope) {
+                $query->where('scope', 'global');
+                $query->orWhere('scope', $scope);
+            });
+        } else {
+            $query = $query->where('scope', 'global');
+        }
+
+        $texts = $query->get(['key', 'value', 'lang', 'scope']);
 
         $array = [];
         foreach ($texts as $row) {
@@ -72,27 +99,44 @@ class Repository
         return $array;
     }
 
-    public function loadFromCache($lang)
+    /**
+     * Load texts from cache storage
+     *
+     * @param      $lang
+     * @param null $scope
+     * @return mixed
+     */
+    public function loadFromCache($lang, $scope = null)
     {
-        $texts = $this->getCache()->get($this->getCacheName($lang));
+        $texts = $this->getCache()->get($this->getCacheName($lang, $scope));
 
         return $texts;
     }
 
-    public function storeInCache($lang, array $texts)
+    /**
+     * Store texts in cache
+     *
+     * @param       $lang
+     * @param array $texts
+     * @param null  $scope
+     * @return $this
+     */
+    public function storeInCache($lang, array $texts, $scope = null)
     {
-        $this->getCache()->put($this->getCacheName($lang), $texts, $this->config->get('cache.lifetime', 1440));
+        $this->getCache()->put($this->getCacheName($lang, $scope), $texts, $this->config->get('cache.lifetime', 1440));
         return $this;
     }
 
     /**
      * Check if we must load texts from cache
      *
+     * @param      $lang
+     * @param null $scope
      * @return bool
      */
-    public function existsInCache($lang)
+    public function existsInCache($lang, $scope = null)
     {
-        return $this->getCache()->has($this->getCacheName($lang));
+        return $this->getCache()->has($this->getCacheName($lang, $scope));
     }
 
     /**
@@ -123,7 +167,14 @@ class Repository
         return $this->cache->store($store);
     }
 
-    public function save($texts)
+    /**
+     * Save missing texts in database
+     *
+     * @param      $texts
+     * @param null $scope
+     * @return bool
+     */
+    public function save($texts, $scope = null)
     {
         if (empty($texts)) {
             return false;
@@ -131,31 +182,42 @@ class Repository
 
         $table   = $this->getTableName();
         $locales = $this->config->get('locales', []);
-        $scope   = is_callable('config') ? config('app.scope', 'global') : 'global';
+        if (!$scope) {
+            $scope = 'global';
+        }
 
         foreach ($texts as $k => $v) {
             foreach ($locales as $lang => $locale_data) {
-                $exists = $this->getDb()->table($table)->where([
-                    'key'   => $k,
-                    'lang'  => $lang,
-                    'scope' => $scope,
-                ])->first();
+                $exists = $this->getDb()
+                    ->table($table)
+                    ->where([
+                                'key'   => $k,
+                                'lang'  => $lang,
+                                'scope' => $scope,
+                            ])->first();
 
                 if ($exists) {
                     continue;
                 }
 
-                $this->getDb()->table($table)->insert([
-                    'key'   => $k,
-                    'lang'  => $lang,
-                    'scope' => $scope,
-                    'value' => $v,
-                ]);
+                $this->getDb()
+                    ->table($table)
+                    ->insert([
+                                 'key'   => $k,
+                                 'lang'  => $lang,
+                                 'scope' => $scope,
+                                 'value' => $v,
+                             ]);
             }
         }
         return true;
     }
 
+    /**
+     * Get texts table name
+     *
+     * @return array|mixed|null
+     */
     public function getTableName()
     {
         $table = $this->config->get('db.texts_table', 'texts');
