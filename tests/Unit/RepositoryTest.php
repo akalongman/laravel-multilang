@@ -40,7 +40,7 @@ class RepositoryTest extends AbstractTestCase
      */
     public function save_and_load_from_database()
     {
-        $config = [
+        $config     = [
             'locales' => [
                 'en' => [
                     'name' => 'English',
@@ -60,7 +60,7 @@ class RepositoryTest extends AbstractTestCase
 
         $repository->save($texts);
 
-        $this->assertFalse($repository->save(null));
+        $this->assertFalse($repository->save([]));
         $this->assertEquals($texts, $repository->loadFromDatabase('en'));
         $this->assertEquals($texts, $repository->loadFromDatabase('az'));
 
@@ -71,7 +71,7 @@ class RepositoryTest extends AbstractTestCase
      */
     public function save_and_load_from_cache()
     {
-        $config = [
+        $config     = [
             'locales' => [
                 'en' => [
                     'name' => 'English',

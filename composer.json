@@ -44,10 +44,5 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "bash build/setup.sh"
-        ]
     }
 }
