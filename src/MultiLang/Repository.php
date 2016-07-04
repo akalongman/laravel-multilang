@@ -56,8 +56,8 @@ class Repository
     /**
      * Get cache key name based on lang and scope
      *
-     * @param      $lang
-     * @param null $scope
+     * @param string $lang
+     * @param string $scope
      * @return string
      */
     public function getCacheName($lang, $scope = null)
@@ -130,8 +130,8 @@ class Repository
     /**
      * Check if we must load texts from cache
      *
-     * @param      $lang
-     * @param null $scope
+     * @param string $lang
+     * @param string $scope
      * @return bool
      */
     public function existsInCache($lang, $scope = null)
@@ -170,8 +170,8 @@ class Repository
     /**
      * Save missing texts in database
      *
-     * @param      $texts
-     * @param null $scope
+     * @param string $texts
+     * @param string $scope
      * @return bool
      */
     public function save($texts, $scope = null)
@@ -216,7 +216,7 @@ class Repository
     /**
      * Get texts table name
      *
-     * @return array|mixed|null
+     * @return string
      */
     public function getTableName()
     {
