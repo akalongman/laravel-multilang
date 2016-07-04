@@ -302,8 +302,10 @@ class MultiLang
     {
         $router     = app('router');
         $route      = $this->config->get('text-route.route', 'texts');
-        $controller = $this->config->get('text-route.controller',
-                                         '\Longman\LaravelMultiLang\Controllers\TextsController');
+        $controller = $this->config->get(
+            'text-route.controller',
+            '\Longman\LaravelMultiLang\Controllers\TextsController'
+        );
 
         $router->get(
             $route,
