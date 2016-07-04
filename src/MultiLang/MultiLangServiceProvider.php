@@ -15,6 +15,7 @@ use Illuminate\Support\ServiceProvider;
 use Longman\LaravelMultiLang\Console\MigrationCommand;
 use Longman\LaravelMultiLang\Console\TextsCommand;
 use Route;
+use Illuminate\Routing\Events\RouteMatched;
 
 class MultiLangServiceProvider extends ServiceProvider
 {
@@ -32,6 +33,7 @@ class MultiLangServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        \DB::enableQueryLog();
 
         // Publish config files
         $this->publishes([
@@ -50,19 +52,15 @@ class MultiLangServiceProvider extends ServiceProvider
             return "<?php echo e(t({$expression})); ?>";
         });
 
-        $this->app['events']->listen('locale.changed', function ($locale) {
-            $this->app['multilang']->setLocale($locale);
+        $this->app['events']->listen(RouteMatched::class, function ($match) {
+            $scope = $this->app['config']->get('app.scope');
+            if ($scope && $scope != 'global') {
+                $this->app['multilang']->setScope($scope);
+            }
+            $this->app['multilang']->setLocale($this->app->getLocale());
         });
-
 
         $this->loadViewsFrom(__DIR__ . '/../views', 'multilang');
-
-        /*
-        $this->app['events']->listen(RouteMatched::class, function () {
-        dump($this->app['router']);
-        die();
-        });
-        */
     }
 
 
@@ -89,6 +87,11 @@ class MultiLangServiceProvider extends ServiceProvider
 
             if ($multilang->autoSaveIsAllowed()) {
                 $app->terminating(function () use ($multilang) {
+                    $scope = $this->app['config']->get('app.scope');
+                    if ($scope && $scope != 'global') {
+                        $multilang->setScope($scope);
+                    }
+                    dump(\DB::getQueryLog());
                     return $multilang->saveTexts();
                 });
             }
