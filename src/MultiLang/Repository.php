@@ -170,11 +170,11 @@ class Repository
     /**
      * Save missing texts in database
      *
-     * @param string $texts
+     * @param array  $texts
      * @param string $scope
      * @return bool
      */
-    public function save($texts, $scope = null)
+    public function save(array $texts, $scope = null)
     {
         if (empty($texts)) {
             return false;
@@ -182,7 +182,7 @@ class Repository
 
         $table   = $this->getTableName();
         $locales = $this->config->get('locales', []);
-        if (!$scope) {
+        if (is_null($scope)) {
             $scope = 'global';
         }
 
