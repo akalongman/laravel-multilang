@@ -67,10 +67,10 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-            'text1'    => 'value1',
-            'text2'    => 'value2',
-            'te.x-t/3' => 'value3',
-        ]);
+                                 'text1'    => 'value1',
+                                 'text2'    => 'value2',
+                                 'te.x-t/3' => 'value3',
+                             ]);
 
         $this->assertEquals('value1', $multilang->get('text1'));
 
@@ -96,10 +96,10 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-            'text1'    => 'value1',
-            'text2'    => 'value2',
-            'te.x-t/3' => 'value3',
-        ]);
+                                 'text1'    => 'value1',
+                                 'text2'    => 'value2',
+                                 'te.x-t/3' => 'value3',
+                             ]);
 
         $this->assertEquals('value5', $multilang->get('value5'));
     }
@@ -321,6 +321,27 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('en');
 
         $this->assertEquals(3, count($multilang->getLocales()));
+    }
+
+    /**
+     * @test
+     */
+    public function should_replace_markers()
+    {
+        $multilang = $this->getMultilang('local');
+        $multilang->setLocale('en');
+
+        $texts = [
+            'text1' => 'The :attribute must be a date after :date.',
+        ];
+
+        $multilang->setTexts($texts);
+
+        $this->assertEquals(
+            $multilang->get('text1', ['attribute' => 'Start Date', 'date' => '7 April 1986']),
+            'The Start Date must be a date after 7 April 1986.'
+        );
+
     }
 
     /**
