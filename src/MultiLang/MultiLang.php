@@ -343,7 +343,6 @@ class MultiLang
                                'as'     => $locale . '.',
                            ], $callback);
         }
-
     }
 
     /**
