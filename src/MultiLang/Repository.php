@@ -12,7 +12,6 @@ namespace Longman\LaravelMultiLang;
 
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
-use Longman\LaravelMultiLang\Config;
 
 class Repository
 {
@@ -41,8 +40,7 @@ class Repository
     /**
      * Create a new MultiLang instance.
      *
-     * @param string                               $environment
-     * @param array                                $config
+     * @param \Longman\LaravelMultiLang\Config     $config
      * @param \Illuminate\Cache\CacheManager       $cache
      * @param \Illuminate\Database\DatabaseManager $db
      */
