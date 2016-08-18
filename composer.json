@@ -2,7 +2,7 @@
     "name": "longman/laravel-multilang",
     "type": "library",
     "description": "Package to integrate multi language (multi locale) functionality in Laravel 5.x",
-    "keywords": ["locale", "language", "laravel", "package"],
+    "keywords": ["locale", "localization", "translation", "language", "laravel", "package"],
     "license": "MIT",
     "homepage": "https://github.com/akalongman/laravel-multilang",
     "support": {
