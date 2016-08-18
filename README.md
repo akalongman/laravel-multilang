@@ -9,9 +9,9 @@
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 This is a very useful package to integrate multi language (multi locale) functionality in Laravel 5.x.
-It includes a ServiceProvider to register the multilang and Middleware for modification routes.
+It includes a ServiceProvider to register the multilang and Middleware for automatic modification routes like `http://site.com/en/your-routes`.
 
-This package uses database for storing translations (also it caches data on production environment for improving performance)
+This package uses database for storing translations (it caches data on production environment for improving performance)
 Also package automatically adds in database missing keys (on the local environment only).
 
 ## Table of Contents
@@ -60,28 +60,24 @@ And add facade to the alias array in config/app.php
 ```
 
 Copy the package config to your local config with the publish command:
-
 ```
 php artisan vendor:publish --provider="Longman\LaravelMultiLang\MultiLangServiceProvider"
 ```
 
 After run multilang migration command
-
 ```
 php artisan multilang:migration
 ```
 
 Its creates multilang migration file in your database/migrations folder. After you can run
-
 ```
 php artisan migrate
 ```
 
-Also if you want automatically change locale depending on url (like site.com/en/your-routes)
+Also if you want automatically change locale depending on url (like `http://site.com/en/your-routes`)
 you must add middleware in app/Http/Kernel.php
 
 I suggest add multilang after CheckForMaintenanceMode middleware
-
 ```php
 protected $middleware = [
     \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
@@ -95,6 +91,7 @@ MultiLang::routeGroup(function($router) {
     require app_path('Http/routes.php');
 });
 ```
+
 or directly in app/Http/routes.php file add multilang group:
 ```php
 MultiLang::routeGroup(function($router) {
@@ -107,7 +104,6 @@ If you want managing texts, add in routes file:
 MultiLang::manageTextsRoutes();
 ```
 
-
 Or if you want only translating strings without modification urls and routes, you must manually set locale in your app like:
 ```php
 App::setLocale('en');
@@ -116,26 +112,30 @@ App::setLocale('en');
 
 ## Usage
 
-In application you can use t() function like:
+In application you can use t() helper function like:
 
 ```php
 $string = t('Your translatable string');
 ```
-or simple use
+
+You can use markers for dynamic texts and pass any data like
+```php
+$string = t('The :attribute must be a date after :date.', ['attribute' => 'Start Date', 'date' => '7 April 1986']);
+```
+
+In blade templates you can use just @t() notation like
 ```php
 @t('Your translatable string')
 ```
-in blade templates, which is equivalent to ```{{ t('Your translatable string') }}```
+which is equivalent to ```{{ t('Your translatable string') }}```
 
-Also you can use lang_url() helper function for appending language in urls automatically.
+Also you can use lang_url() helper function for appending current lang marker in urls automatically.
 
 ```php
 $url = lang_url('users'); // which returns /en/users depending on your language (locale)
 ```
 
 Note: Texts will be selected after firing Laravel's RouteMatched event. Therefore texts unavailable on artisan commands
-
-
 
 ## TODO
 
