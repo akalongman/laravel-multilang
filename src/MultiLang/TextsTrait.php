@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Laravel MultiLang package.
+ *
+ * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Longman\LaravelMultiLang;
 
@@ -8,6 +16,10 @@ use Longman\LaravelMultiLang\Models\Text;
 trait TextsTrait
 {
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index(Request $request)
     {
         $options['lang'] = config('multilang.default_locale');
@@ -42,12 +54,16 @@ trait TextsTrait
 
         $options['keyword'] = $request->keyword;
 
-        $data['texts'] = $texts;
+        $data['texts']   = $texts;
         $data['options'] = $options;
 
         return view($this->view, $data);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function save(Request $request)
     {
         $this->validate($request, [
