@@ -12,9 +12,9 @@ namespace Longman\LaravelMultiLang\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ScopeInterface;
+use Illuminate\Database\Eloquent\Scope;
 
-class LocalizableScope implements ScopeInterface
+class LocalizableScope implements Scope
 {
     /**
      * Apply the scope to a given Eloquent query builder.
@@ -31,6 +31,12 @@ class LocalizableScope implements ScopeInterface
         }
     }
 
+    /**
+     * Check if query has "localizable" column
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @return bool
+     */
     protected function queryHasLocalizableColumn(Builder $builder)
     {
         $wheres = $builder->getQuery()->wheres;
@@ -44,7 +50,7 @@ class LocalizableScope implements ScopeInterface
     }
 
     /**
-     * Get the "deleted at" column for the builder.
+     * Get the "localizable" column for the builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $builder
      * @return string
@@ -58,29 +64,4 @@ class LocalizableScope implements ScopeInterface
         }
     }
 
-
-    /**
-     * Remove the scope from the given Eloquent query builder.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return void
-     */
-    public function remove(Builder $builder, Model $model)
-    {
-        $column = $model->getQualifiedDeletedAtColumn();
-
-        $query = $builder->getQuery();
-
-        foreach ((array) $query->wheres as $key => $where) {
-        // If the where clause is a soft delete date constraint, we will remove it from
-            // the query and reset the keys on the wheres. This allows this developer to
-            // include deleted model in a relationship result set that is lazy loaded.
-            if ($this->isSoftDeleteConstraint($where, $column)) {
-                unset($query->wheres[$key]);
-
-                $query->wheres = array_values($query->wheres);
-            }
-        }
-    }
 }

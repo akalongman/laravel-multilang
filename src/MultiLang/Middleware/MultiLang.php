@@ -12,7 +12,6 @@ namespace Longman\LaravelMultiLang\Middleware;
 
 use Closure;
 use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Longman\LaravelMultiLang\MultiLang as MultiLangLib;
 
@@ -40,7 +39,13 @@ class MultiLang
      */
     protected $multilang;
 
-
+    /**
+     * MultiLang constructor.
+     *
+     * @param \Illuminate\Foundation\Application  $app
+     * @param \Illuminate\Routing\Redirector      $redirector
+     * @param \Longman\LaravelMultiLang\MultiLang $multilang
+     */
     public function __construct(Application $app, Redirector $redirector, MultiLangLib $multilang)
     {
         $this->app        = $app;

@@ -10,12 +10,6 @@
 
 namespace Longman\LaravelMultiLang;
 
-use Illuminate\Cache\CacheManager as Cache;
-use Illuminate\Database\DatabaseManager as Database;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use InvalidArgumentException;
-
 class Config
 {
     /**
@@ -26,18 +20,22 @@ class Config
     protected $data;
 
     /**
-     * Create a new MultiLang instance.
+     * Create a new MultiLang config instance.
      *
-     * @param string                               $environment
-     * @param array                                $config
-     * @param \Illuminate\Cache\CacheManager       $cache
-     * @param \Illuminate\Database\DatabaseManager $db
+     * @param array $data
      */
     public function __construct(array $data)
     {
         $this->data = $data;
     }
 
+    /**
+     * Get config parameter
+     *
+     * @param string $key
+     * @param mixed  $default
+     * @return array|mixed|null
+     */
     public function get($key = null, $default = null)
     {
         $array = $this->data;
@@ -60,6 +58,5 @@ class Config
 
         return $array;
     }
-
 
 }

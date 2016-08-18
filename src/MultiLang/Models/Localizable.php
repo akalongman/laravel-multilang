@@ -13,12 +13,19 @@ namespace Longman\LaravelMultiLang\Models;
 trait Localizable
 {
 
-
+    /**
+     * Boot trait
+     */
     public static function bootLocalizable()
     {
         static::addGlobalScope(new LocalizableScope);
     }
 
+    /**
+     * Get column name
+     *
+     * @return string
+     */
     public function getLocalizableColumn()
     {
         $localizableColumn = isset(static::$localizableColumn) ? static::$localizableColumn : 'lang';
@@ -26,11 +33,14 @@ trait Localizable
         return $localizableColumn;
     }
 
-
+    /**
+     * Get column name with table name
+     *
+     * @return string
+     */
     public function getQualifiedLocalizableColumn()
     {
-        return $this->getTable().'.'.$this->getLocalizableColumn();
+        return $this->getTable() . '.' . $this->getLocalizableColumn();
     }
-
 
 }

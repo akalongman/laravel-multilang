@@ -20,6 +20,7 @@ class Text extends Model
      * @var string
      */
     protected $table = 'texts';
+
     /**
      * The attributes that are mass assignable.
      *
