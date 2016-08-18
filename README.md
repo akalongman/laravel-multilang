@@ -122,6 +122,7 @@ You can use markers for dynamic texts and pass any data like
 ```php
 $string = t('The :attribute must be a date after :date.', ['attribute' => 'Start Date', 'date' => '7 April 1986']);
 ```
+which will be return `The Start Date must be a date after 7 April 1986.`
 
 In blade templates you can use just @t() notation like
 ```php
