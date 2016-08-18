@@ -12,15 +12,15 @@ if (!function_exists('lang_url')) {
     /**
      * Generate a url for the application.
      *
-     * @param  string                                             $path
-     * @param  mixed                                              $parameters
-     * @param  bool                                               $secure
+     * @param  string $path
+     * @param  mixed  $parameters
+     * @param  bool   $secure
      * @return Illuminate\Contracts\Routing\UrlGenerator|string
      */
     function lang_url($path = null, $parameters = [], $secure = null)
     {
         if (is_null($path)) {
-            return app(UrlGenerator::class);
+            return app(Illuminate\Contracts\Routing\UrlGenerator::class);
         }
 
         $multilang = app('multilang');
@@ -35,10 +35,10 @@ if (!function_exists('lang_redirect')) {
     /**
      * Get an instance of the redirector.
      *
-     * @param  string|null                                                        $to
-     * @param  int                                                                $status
-     * @param  array                                                              $headers
-     * @param  bool                                                               $secure
+     * @param  string|null $to
+     * @param  int         $status
+     * @param  array       $headers
+     * @param  bool        $secure
      * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
     function lang_redirect($to = null, $status = 302, $headers = [], $secure = null)
@@ -59,12 +59,13 @@ if (!function_exists('t')) {
     /**
      * Get translated text
      *
-     * @param  mixed   $text
-     * @return mixed
+     * @param  string $text
+     * @param  array  $replace
+     * @return string
      */
-    function t($text)
+    function t($text, array $replace = [])
     {
-        $text = app('multilang')->get($text);
+        $text = app('multilang')->get($text, $replace);
 
         return $text;
     }

@@ -14,10 +14,9 @@ use Closure;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use InvalidArgumentException;
-use Longman\LaravelMultiLang\Config;
-use Longman\LaravelMultiLang\Repository;
+use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 
 class MultiLang
 {
@@ -194,9 +193,10 @@ class MultiLang
      * Get translated text
      *
      * @param  string $key
+     * @param  array  $replace
      * @return string
      */
-    public function get($key)
+    public function get($key, array $replace = [])
     {
 
         if (empty($key)) {
@@ -209,12 +209,63 @@ class MultiLang
 
         if (!isset($this->texts[$key])) {
             $this->queueToSave($key);
-            return $key;
+            return $this->replaceMarkers($key, $replace);
         }
 
         $text = $this->texts[$key];
 
+        return $this->replaceMarkers($text, $replace);
+    }
+
+    /**
+     * Replace markers in text
+     *
+     * @param  string $text
+     * @param  array  $replace
+     * @return string
+     */
+    protected function replaceMarkers($text, array $replace = [])
+    {
+        if (empty($replace)) {
+            return $text;
+        }
+
+        return $this->makeReplacements($text, $replace);
+    }
+
+    /**
+     * Make the place-holder replacements on a line.
+     *
+     * @param  string $text
+     * @param  array  $replace
+     * @return string
+     */
+    protected function makeReplacements($text, array $replace)
+    {
+        $replace = $this->sortReplacements($replace);
+
+        foreach ($replace as $key => $value) {
+            $text = str_replace(
+                [':' . $key, ':' . Str::upper($key), ':' . Str::ucfirst($key)],
+                [$value, Str::upper($value), Str::ucfirst($value)],
+                $text
+            );
+        }
+
         return $text;
+    }
+
+    /**
+     * Sort the replacements array.
+     *
+     * @param  array $replace
+     * @return \Illuminate\Support\Collection
+     */
+    protected function sortReplacements(array $replace)
+    {
+        return (new Collection($replace))->sortBy(function ($value, $key) {
+            return mb_strlen($key) * -1;
+        });
     }
 
     /**
@@ -404,7 +455,7 @@ class MultiLang
     {
         return $this->config->get('locales');
     }
-    
+
     /**
      * Save missing texts
      *
