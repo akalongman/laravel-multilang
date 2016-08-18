@@ -36,7 +36,7 @@ Create *composer.json* file:
     "name": "yourproject/yourproject",
     "type": "project",
     "require": {
-        "longman/laravel-multilang": "dev_master"
+        "longman/laravel-multilang": "~1.0.0"
     }
 }
 ```
@@ -44,9 +44,8 @@ And run composer update
 
 **Or** run a command in your command line:
 
-```
-composer require longman/laravel-multilang
-```
+    composer require longman/laravel-multilang
+
 
 After updating composer, add the MultiLangServiceProvider to the providers array in config/app.php
 
@@ -60,19 +59,18 @@ And add facade to the alias array in config/app.php
 ```
 
 Copy the package config to your local config with the publish command:
-```
-php artisan vendor:publish --provider="Longman\LaravelMultiLang\MultiLangServiceProvider"
-```
+
+    php artisan vendor:publish --provider="Longman\LaravelMultiLang\MultiLangServiceProvider"
+
 
 After run multilang migration command
-```
-php artisan multilang:migration
-```
+
+    php artisan multilang:migration
 
 Its creates multilang migration file in your database/migrations folder. After you can run
-```
-php artisan migrate
-```
+
+    php artisan migrate
+
 
 Also if you want automatically change locale depending on url (like `http://site.com/en/your-routes`)
 you must add middleware in app/Http/Kernel.php
@@ -124,7 +122,7 @@ $string = t('The :attribute must be a date after :date.', ['attribute' => 'Start
 ```
 which will be return `The Start Date must be a date after 7 April 1986.`
 
-In blade templates you can use just @t() notation like
+In blade templates you can use just `@t()` notation like
 ```php
 @t('Your translatable string')
 ```
