@@ -42,7 +42,7 @@ class LocalizableScope implements Scope
         $wheres = $builder->getQuery()->wheres;
         $column = $this->getLocalizableColumn($builder);
         foreach ($wheres as $where) {
-            if ($where['column'] == $column) {
+            if (isset($where['column']) && $where['column'] == $column) {
                 return true;
             }
         }
