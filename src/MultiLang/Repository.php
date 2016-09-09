@@ -98,6 +98,37 @@ class Repository
     }
 
     /**
+     * Load all texts from database storage
+     *
+     * @param string $lang
+     * @param string $scope
+     * @return array
+     */
+    public function loadAllFromDatabase($lang = null, $scope = null)
+    {
+        $query = $this->getDb()->table($this->getTableName());
+
+        if (!is_null($lang)) {
+            $query = $query->where('lang', $lang);
+        }
+
+        if (!is_null($scope)) {
+            $query = $query->whereNested(function ($query) use ($scope) {
+                $query->where('scope', 'global');
+                $query->orWhere('scope', $scope);
+            });
+        }
+
+        $texts = $query->get();
+
+        $array = [];
+        foreach ($texts as $row) {
+            $array[$row->lang][$row->key] = $row;
+        }
+        return $array;
+    }
+
+    /**
      * Load texts from cache storage
      *
      * @param string $lang

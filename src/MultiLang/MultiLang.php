@@ -14,9 +14,9 @@ use Closure;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
 use Illuminate\Http\Request;
-use InvalidArgumentException;
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class MultiLang
 {
@@ -376,6 +376,18 @@ class MultiLang
     {
 
         return $this->texts;
+    }
+
+    /**
+     * Get all texts
+     *
+     * @param string $lang
+     * @param string $scope
+     * @return array
+     */
+    public function getAllTexts($lang = null, $scope = null)
+    {
+        return $this->repository->loadAllFromDatabase($lang, $scope);
     }
 
     /**

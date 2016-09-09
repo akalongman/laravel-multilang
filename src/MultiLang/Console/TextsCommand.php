@@ -19,7 +19,10 @@ class TextsCommand extends Command
      *
      * @var string
      */
-    protected $name = 'multilang:texts';
+    protected $signature = 'multilang:texts
+        {--lang= : The lang to show}
+        {--scope= : The scope to show}
+    ';
 
     /**
      * The console command description.
@@ -35,27 +38,27 @@ class TextsCommand extends Command
      */
     public function fire()
     {
-        $texts = app('multilang')->getTexts();
+        $lang = $this->option('lang');
+        $scope = $this->option('scope');
+
+        $texts = app('multilang')->getAllTexts($lang, $scope);
 
         if (empty($texts)) {
             $this->info('Application texts is empty');
             return false;
         }
 
-        $headers = ['#', 'Text Key', 'Text Value', 'Language'];
+        $headers = ['#', 'Text Key', 'Language', 'Scope', 'Text Value'];
 
         $rows = [];
         $i = 1;
         foreach ($texts as $lang => $items) {
             foreach ($items as $key => $item) {
-                $row = [$i, $key, $item, $lang];
+                $row = [$i, $key, $item->lang, $item->scope, $item->value];
                 $rows[] = $row;
                 $i++;
             }
         }
         $this->table($headers, $rows);
     }
-
-
-
 }
