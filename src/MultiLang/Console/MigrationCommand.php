@@ -37,6 +37,13 @@ class MigrationCommand extends Command
     public function fire()
     {
         $table = Config::get('multilang.db.texts_table');
+
+        if ('' == $table) {
+            $this->error('Couldn\'t create migration.'.PHP_EOL.'Table name can\'t be empty. Check your configuration.');
+
+            return;
+        }
+
         $this->line('');
         $this->info('Tables: ' . $table);
 
