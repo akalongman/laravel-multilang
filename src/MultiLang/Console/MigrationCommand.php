@@ -36,7 +36,7 @@ class MigrationCommand extends Command
      */
     public function fire()
     {
-        $table = Config::get('multilang.texts_table');
+        $table = Config::get('multilang.db.texts_table');
         $this->line('');
         $this->info('Tables: ' . $table);
 
