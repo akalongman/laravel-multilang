@@ -53,4 +53,22 @@ class ConfigTest extends AbstractTestCase
 
         $this->assertEquals('Georgian', $config->get('locales.ka.name'));
     }
+
+    /**
+     * @test
+     */
+    public function table_name()
+    {
+        $config = [
+            'db' => [
+                'autosave' => true,
+                'connection' => 'mysql',
+                'texts_table' => 'texts',
+            ],
+        ];
+
+        $config = $this->getConfig($config);
+
+        $this->assertEquals('texts', $config->get('db.texts_table'));
+    }
 }
