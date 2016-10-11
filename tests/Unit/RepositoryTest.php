@@ -28,6 +28,16 @@ class RepositoryTest extends AbstractTestCase
     /**
      * @test
      */
+    public function check_set_get_cache_name_with_scope()
+    {
+        $repository = $this->getRepository();
+
+        $this->assertEquals('texts_ka_scope_name', $repository->getCacheName('ka', 'scope_name'));
+    }
+
+    /**
+     * @test
+     */
     public function check_set_get_table_name()
     {
         $repository = $this->getRepository(['db' => ['texts_table' => 'mytable']]);
@@ -58,11 +68,20 @@ class RepositoryTest extends AbstractTestCase
             'text3' => 'value3',
         ];
 
+        $textsScoped = [
+            'text1' => 'value1 scoped',
+            'text2' => 'value2 scoped',
+            'text3' => 'value3 scoped',
+        ];
+
         $repository->save($texts);
+        $repository->save($textsScoped, 'scope_name');
 
         $this->assertFalse($repository->save([]));
         $this->assertEquals($texts, $repository->loadFromDatabase('en'));
         $this->assertEquals($texts, $repository->loadFromDatabase('az'));
+        $this->assertEquals($textsScoped, $repository->loadFromDatabase('en', 'scope_name'));
+        $this->assertEquals($textsScoped, $repository->loadFromDatabase('az', 'scope_name'));
 
     }
 

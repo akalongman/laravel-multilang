@@ -57,6 +57,23 @@ class ConfigTest extends AbstractTestCase
     /**
      * @test
      */
+    public function get_default_value()
+    {
+        $config = [
+            'locales' => [
+                'ka' => [
+                    'name' => 'Georgian',
+                ],
+            ],
+        ];
+        $config = $this->getConfig($config);
+
+        $this->assertEquals('Thai', $config->get('locales.th.name', 'Thai'));
+    }
+
+    /**
+     * @test
+     */
     public function table_name()
     {
         $config = [
