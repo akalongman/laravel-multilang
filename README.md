@@ -17,6 +17,10 @@ Also package automatically adds in database missing keys (on the local environme
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
+    - [Translating](#translating)
+    - [Blade Templates](#blade-templates)
+    - [URL Generation](#url-generation)
+    - [Import/Export Texts](#import-export-texts)
 - [TODO](#todo)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
@@ -97,11 +101,6 @@ MultiLang::routeGroup(function($router) {
 });
 ```
 
-If you want managing texts, add in routes file:
-```php
-MultiLang::manageTextsRoutes();
-```
-
 Or if you want only translating strings without modification urls and routes, you must manually set locale in your app like:
 ```php
 App::setLocale('en');
@@ -110,7 +109,8 @@ App::setLocale('en');
 
 ## Usage
 
-In application you can use t() helper function like:
+### Translating
+Everywhere in application you can use `t()` helper function like:
 
 ```php
 $string = t('Your translatable string');
@@ -122,19 +122,46 @@ $string = t('The :attribute must be a date after :date.', ['attribute' => 'Start
 ```
 which will be return `The Start Date must be a date after 7 April 1986.`
 
+### Blade Templates
 In blade templates you can use just `@t()` notation like
 ```php
 @t('Your translatable string')
 ```
-which is equivalent to ```{{ t('Your translatable string') }}```
+which is equivalent to `{{ t('Your translatable string') }}`
 
+### URL Generation
 Also you can use lang_url() helper function for appending current lang marker in urls automatically.
 
 ```php
 $url = lang_url('users'); // which returns /en/users depending on your language (locale)
 ```
 
-Note: Texts will be selected after firing Laravel's RouteMatched event. Therefore texts unavailable on artisan commands
+*Note*: Texts will be selected after firing Laravel's `RouteMatched` event. Therefore texts unavailable on artisan commands
+
+### Import/Export Texts
+For versioning texts with source code (git/svn) and easy management, there is possible import texts from yml file and also export in file.
+
+yml file format is:
+
+```yml
+-
+  key: 'authorization'
+  texts:
+    en: 'Authorization'
+    ge: 'ავტორიზაცია'
+-
+  key: 'registration'
+  texts:
+    en: 'Registration'
+    ge: 'რეგისტრაცია'
+```
+
+Run commands for possible options and more information:
+    
+    php artisan help multilang:import
+    
+    php artisan help multilang:export
+
 
 ## TODO
 
