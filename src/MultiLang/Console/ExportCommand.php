@@ -84,16 +84,16 @@ class ExportCommand extends Command
         $this->db    = $this->getDatabase();
 
         $lang = $this->option('lang');
-        if ( ! empty($lang)) {
+        if (! empty($lang)) {
             $this->langs = explode(',', $lang);
         }
 
         $scopes = $this->scopes;
         $scope  = $this->option('scope');
-        if ( ! empty($scope)) {
+        if (! empty($scope)) {
             $scopes = explode(',', $scope);
             foreach ($scopes as $scope) {
-                if ( ! in_array($scope, $this->scopes)) {
+                if (! in_array($scope, $this->scopes)) {
                     throw new InvalidArgumentException('Scope "' . $scope . '" is not found! Available scopes is ' . implode(', ', $this->scopes));
                 }
             }
@@ -101,10 +101,10 @@ class ExportCommand extends Command
 
         $path       = $this->option('path', 'storage/multilang');
         $this->path = base_path($path);
-        if ( ! is_dir($this->path)) {
+        if (! is_dir($this->path)) {
             throw new InvalidArgumentException('Folder "' . $this->path . '" is not accessible!');
         }
-        if ( ! is_writable($this->path)) {
+        if (! is_writable($this->path)) {
             throw new InvalidArgumentException('Folder "' . $this->path . '" is not writable!');
         }
 
@@ -149,9 +149,7 @@ class ExportCommand extends Command
 
         $fileTexts = ! $clear ? $this->getTextsFromFile($scope) : [];
 
-        $textsToWrite = $force
-            ? array_replace_recursive($fileTexts, $dbTexts)
-            : array_replace_recursive($dbTexts, $fileTexts);
+        $textsToWrite = $force ? array_replace_recursive($fileTexts, $dbTexts) : array_replace_recursive($dbTexts, $fileTexts);
 
         // Reset keys
         $textsToWrite = array_values($textsToWrite);
@@ -160,7 +158,7 @@ class ExportCommand extends Command
 
         $path    = $this->path . '/' . $scope . '.yml';
         $written = file_put_contents($path, $yaml);
-        if ( ! $written) {
+        if (! $written) {
             $this->error('Export texts of "' . $scope . '" is failed!');
         }
 
@@ -204,7 +202,7 @@ class ExportCommand extends Command
         foreach ($dbTexts as $text) {
             $key  = $text->key;
             $lang = $text->lang;
-            if ( ! isset($formattedDbTexts[$key])) {
+            if (! isset($formattedDbTexts[$key])) {
                 $formattedDbTexts[$key] = ['key' => $key];
             }
             $formattedDbTexts[$key]['texts'][$lang] = $text->value;

@@ -83,16 +83,16 @@ class ImportCommand extends Command
         $this->db    = $this->getDatabase();
 
         $lang = $this->option('lang');
-        if ( ! empty($lang)) {
+        if (! empty($lang)) {
             $this->langs = explode(',', $lang);
         }
 
         $scopes = $this->scopes;
         $scope  = $this->option('scope');
-        if ( ! empty($scope)) {
+        if (! empty($scope)) {
             $scopes = explode(',', $scope);
             foreach ($scopes as $scope) {
-                if ( ! in_array($scope, $this->scopes)) {
+                if (! in_array($scope, $this->scopes)) {
                     throw new InvalidArgumentException('Scope "' . $scope . '" is not found! Available scopes is ' . implode(', ', $this->scopes));
                 }
             }
@@ -100,7 +100,7 @@ class ImportCommand extends Command
 
         $path       = $this->option('path', 'storage/multilang');
         $this->path = base_path($path);
-        if ( ! is_dir($this->path)) {
+        if (! is_dir($this->path)) {
             throw new InvalidArgumentException('Folder "' . $this->path . '" is not accessible!');
         }
 
@@ -113,7 +113,7 @@ class ImportCommand extends Command
     protected function import($scope = 'global', $force = false)
     {
         $path = $this->path . '/' . $scope . '.yml';
-        if ( ! is_readable($path)) {
+        if (! is_readable($path)) {
             $this->warn('File "' . $path . '" is not readable!');
             return false;
         }
@@ -131,7 +131,7 @@ class ImportCommand extends Command
             $key = $text['key'];
 
             foreach ($text['texts'] as $lang => $value) {
-                if ( ! empty($this->langs) && ! in_array($lang, $this->langs)) {
+                if (! empty($this->langs) && ! in_array($lang, $this->langs)) {
                     continue;
                 }
 
