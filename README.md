@@ -20,7 +20,7 @@ Also package automatically adds in database missing keys (on the local environme
     - [Translating](#translating)
     - [Blade Templates](#blade-templates)
     - [URL Generation](#url-generation)
-    - [Import/Export Texts](#import-export-texts)
+    - [Import/Export Texts](#importexport-texts)
 - [TODO](#todo)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
