@@ -139,6 +139,7 @@ class ImportCommand extends Command
                     ->table($this->table)
                     ->where('scope', $scope)
                     ->where('key', $key)
+                    ->where('lang', $lang)
                     ->first();
 
                 if (empty($row)) {
