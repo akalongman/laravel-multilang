@@ -13,10 +13,10 @@ namespace Longman\LaravelMultiLang;
 use Blade;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\ServiceProvider;
+use Longman\LaravelMultiLang\Console\ExportCommand;
 use Longman\LaravelMultiLang\Console\ImportCommand;
 use Longman\LaravelMultiLang\Console\MigrationCommand;
 use Longman\LaravelMultiLang\Console\TextsCommand;
-use Route;
 
 class MultiLangServiceProvider extends ServiceProvider
 {
