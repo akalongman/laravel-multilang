@@ -100,25 +100,25 @@ class MultiLangServiceProvider extends ServiceProvider
 
         $this->app->alias('multilang', 'Longman\LaravelMultiLang\MultiLang');
 
-        $this->app['command.multilang.migration'] = $this->app->singletone(
+        $this->app['command.multilang.migration'] = $this->app->singleton(
             function () {
                 return new MigrationCommand();
             }
         );
 
-        $this->app['command.multilang.texts'] = $this->app->singletone(
+        $this->app['command.multilang.texts'] = $this->app->singleton(
             function () {
                 return new TextsCommand();
             }
         );
 
-        $this->app['command.multilang.import'] = $this->app->singletone(
+        $this->app['command.multilang.import'] = $this->app->singleton(
             function () {
                 return new ImportCommand();
             }
         );
 
-        $this->app['command.multilang.export'] = $this->app->singletone(
+        $this->app['command.multilang.export'] = $this->app->singleton(
             function () {
                 return new ExportCommand();
             }
