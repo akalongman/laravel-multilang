@@ -102,7 +102,9 @@ class ExportCommand extends Command
         $path       = $this->option('path', 'storage/multilang');
         $this->path = base_path($path);
         if (! is_dir($this->path)) {
-            throw new InvalidArgumentException('Folder "' . $this->path . '" is not accessible!');
+            if (! mkdir($this->path, 0777, true)) {
+                throw new InvalidArgumentException('unable to create the folder "' . $this->path . '"!');
+            }
         }
         if (! is_writable($this->path)) {
             throw new InvalidArgumentException('Folder "' . $this->path . '" is not writable!');
