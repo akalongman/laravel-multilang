@@ -20,6 +20,7 @@ Also package automatically adds in database missing keys (on the local environme
     - [Translating](#translating)
     - [Blade Templates](#blade-templates)
     - [URL Generation](#url-generation)
+    - [Text Scopes](#text-scopes)
     - [Import/Export Texts](#importexport-texts)
 - [TODO](#todo)
 - [Troubleshooting](#troubleshooting)
@@ -40,7 +41,7 @@ Create *composer.json* file:
     "name": "yourproject/yourproject",
     "type": "project",
     "require": {
-        "longman/laravel-multilang": "~1.1.0"
+        "longman/laravel-multilang": "~1.2"
     }
 }
 ```
@@ -101,7 +102,8 @@ MultiLang::routeGroup(function($router) {
 });
 ```
 
-Or if you want only translating strings without modification urls and routes, you must manually set locale in your app like:
+Or if you want only translate strings without automatic resolving locale and redirect, 
+you can manually set locale in your application like:
 ```php
 App::setLocale('en');
 ```
@@ -142,10 +144,22 @@ Or use named routes via `lang_route()` function
 $url = lang_route('users'); // which returns en.users depending on your language (locale)
 ```
 
-*Note*: Texts will be selected after firing Laravel's `RouteMatched` event. Therefore texts unavailable on artisan commands
+*Note*: Texts will be selected after firing Laravel's `LocaleUpdated` event. Therefore you should use MultiLang middleware, or manually set locale in the application.
+
+### Text Scopes
+If you want group translations by some scope, in package available defining of scopes.
+For example to define scope `admin` in application, you should call:
+
+```php
+app('multilang')->setScope('admin');
+```
+
+before setting the locale.
+
+*Note*: Default scope is `global`
 
 ### Import/Export Texts
-For versioning texts with source code (git/svn) and easy management, there is possible import texts from yml file and also export in file.
+For versioning texts with source code (git/svn) and easy management, there is possible import texts from yml file and also export in the file.
 
 yml file format is:
 
