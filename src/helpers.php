@@ -55,6 +55,25 @@ if (!function_exists('lang_redirect')) {
     }
 }
 
+if (! function_exists('lang_route')) {
+    /**
+     * Get route by name
+     *
+     * @param string $name
+     * @param array $parameters
+     * @param bool $absolute
+     * @return string
+     */
+    function site_route($name, array $parameters = [], $absolute = true)
+    {
+        $multilang = app('multilang');
+
+        $name = $multilang->getRoute($name);
+
+        return app('url')->route($name, $parameters, $absolute);
+    }
+}
+
 if (!function_exists('t')) {
     /**
      * Get translated text
