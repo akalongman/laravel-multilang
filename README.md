@@ -35,7 +35,7 @@ Install this package through [Composer](https://getcomposer.org/).
 Edit your project's `composer.json` file to require `longman/laravel-multilang`
 
 Create *composer.json* file:
-```js
+```json
 {
     "name": "yourproject/yourproject",
     "type": "project",
@@ -130,10 +130,16 @@ In blade templates you can use just `@t()` notation like
 which is equivalent to `{{ t('Your translatable string') }}`
 
 ### URL Generation
-Also you can use lang_url() helper function for appending current lang marker in urls automatically.
+Also you can use `lang_url()` helper function for appending current lang marker in urls automatically.
 
 ```php
 $url = lang_url('users'); // which returns /en/users depending on your language (locale)
+```
+
+Or use named routes via `lang_route()` function
+
+```php
+$url = lang_route('users'); // which returns en.users depending on your language (locale)
 ```
 
 *Note*: Texts will be selected after firing Laravel's `RouteMatched` event. Therefore texts unavailable on artisan commands
