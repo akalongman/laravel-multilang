@@ -76,7 +76,7 @@ class MultiLangServiceProvider extends ServiceProvider
 
         $this->app->singleton('multilang', function ($app) {
             $environment = $app->environment();
-            $config      = $app['config']->get('multilang');
+            $config = $app['config']->get('multilang');
 
             $multilang = new \Longman\LaravelMultiLang\MultiLang(
                 $environment,
@@ -91,6 +91,7 @@ class MultiLangServiceProvider extends ServiceProvider
                     if ($scope && $scope != 'global') {
                         $multilang->setScope($scope);
                     }
+
                     return $multilang->saveTexts();
                 });
             }

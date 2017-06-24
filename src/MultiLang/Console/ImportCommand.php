@@ -11,10 +11,10 @@
 namespace Longman\LaravelMultiLang\Console;
 
 use App;
-use Illuminate\Console\Command;
 use Carbon\Carbon;
-use InvalidArgumentException;
+use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager as Database;
+use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
 
 class ImportCommand extends Command
@@ -80,7 +80,7 @@ class ImportCommand extends Command
     public function handle()
     {
         $this->table = config('multilang.db.texts_table', 'texts');
-        $this->db    = $this->getDatabase();
+        $this->db = $this->getDatabase();
 
         $lang = $this->option('lang');
         if (! empty($lang)) {
@@ -88,7 +88,7 @@ class ImportCommand extends Command
         }
 
         $scopes = $this->scopes;
-        $scope  = $this->option('scope');
+        $scope = $this->option('scope');
         if (! empty($scope)) {
             $scopes = explode(',', $scope);
             foreach ($scopes as $scope) {
@@ -98,7 +98,7 @@ class ImportCommand extends Command
             }
         }
 
-        $path       = $this->option('path', 'storage/multilang');
+        $path = $this->option('path', 'storage/multilang');
         $this->path = base_path($path);
         if (! is_dir($this->path)) {
             throw new InvalidArgumentException('Folder "' . $this->path . '" is not accessible!');
@@ -115,18 +115,20 @@ class ImportCommand extends Command
         $path = $this->path . '/' . $scope . '.yml';
         if (! is_readable($path)) {
             $this->warn('File "' . $path . '" is not readable!');
+
             return false;
         }
         $data = Yaml::parse(file_get_contents($path));
         if (empty($data)) {
             $this->warn('File "' . $path . '" is empty!');
+
             return false;
         }
 
         $created_at = Carbon::now()->toDateTimeString();
         $updated_at = $created_at;
-        $inserted   = 0;
-        $updated    = 0;
+        $inserted = 0;
+        $updated = 0;
         foreach ($data as $text) {
             $key = $text['key'];
 
@@ -144,11 +146,11 @@ class ImportCommand extends Command
 
                 if (empty($row)) {
                     // insert row
-                    $ins               = [];
-                    $ins['key']        = $key;
-                    $ins['lang']       = $lang;
-                    $ins['scope']      = $scope;
-                    $ins['value']      = $value;
+                    $ins = [];
+                    $ins['key'] = $key;
+                    $ins['lang'] = $lang;
+                    $ins['scope'] = $scope;
+                    $ins['value'] = $value;
                     $ins['created_at'] = $created_at;
                     $ins['updated_at'] = $updated_at;
                     $this->db
@@ -158,11 +160,11 @@ class ImportCommand extends Command
                 } else {
                     if ($force) {
                         // force update row
-                        $upd               = [];
-                        $upd['key']        = $key;
-                        $upd['lang']       = $lang;
-                        $upd['scope']      = $scope;
-                        $upd['value']      = $value;
+                        $upd = [];
+                        $upd['key'] = $key;
+                        $upd['lang'] = $lang;
+                        $upd['scope'] = $scope;
+                        $upd['value'] = $value;
                         $upd['updated_at'] = $updated_at;
                         $this->db
                             ->table($this->table)
@@ -187,10 +189,11 @@ class ImportCommand extends Command
     protected function getDatabase()
     {
         $connection = config('multilang.db.connection', 'default');
-        $db         = App::make(Database::class);
+        $db = App::make(Database::class);
         if ($connection == 'default') {
             return $db->connection();
         }
+
         return $db->connection($connection);
     }
 }

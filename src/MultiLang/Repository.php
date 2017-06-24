@@ -40,15 +40,15 @@ class Repository
     /**
      * Create a new MultiLang instance.
      *
-     * @param \Longman\LaravelMultiLang\Config     $config
-     * @param \Illuminate\Cache\CacheManager       $cache
+     * @param \Longman\LaravelMultiLang\Config $config
+     * @param \Illuminate\Cache\CacheManager $cache
      * @param \Illuminate\Database\DatabaseManager $db
      */
     public function __construct(Config $config, Cache $cache, Database $db)
     {
         $this->config = $config;
-        $this->cache  = $cache;
-        $this->db     = $db;
+        $this->cache = $cache;
+        $this->db = $db;
     }
 
     /**
@@ -61,9 +61,10 @@ class Repository
     public function getCacheName($lang, $scope = null)
     {
         $key = $this->config->get('db.texts_table', 'texts') . '_' . $lang;
-        if (!is_null($scope)) {
+        if (! is_null($scope)) {
             $key .= '_' . $scope;
         }
+
         return $key;
     }
 
@@ -79,7 +80,7 @@ class Repository
         $query = $this->getDb()->table($this->getTableName())
             ->where('lang', $lang);
 
-        if (!is_null($scope)) {
+        if (! is_null($scope)) {
             $query = $query->whereNested(function ($query) use ($scope) {
                 $query->where('scope', 'global');
                 $query->orWhere('scope', $scope);
@@ -94,6 +95,7 @@ class Repository
         foreach ($texts as $row) {
             $array[$row->key] = $row->value;
         }
+
         return $array;
     }
 
@@ -108,11 +110,11 @@ class Repository
     {
         $query = $this->getDb()->table($this->getTableName());
 
-        if (!is_null($lang)) {
+        if (! is_null($lang)) {
             $query = $query->where('lang', $lang);
         }
 
-        if (!is_null($scope)) {
+        if (! is_null($scope)) {
             $query = $query->whereNested(function ($query) use ($scope) {
                 $query->where('scope', 'global');
                 $query->orWhere('scope', $scope);
@@ -125,6 +127,7 @@ class Repository
         foreach ($texts as $row) {
             $array[$row->lang][$row->key] = $row;
         }
+
         return $array;
     }
 
@@ -146,13 +149,14 @@ class Repository
      * Store texts in cache
      *
      * @param string $lang
-     * @param array  $texts
+     * @param array $texts
      * @param string $scope
      * @return $this
      */
     public function storeInCache($lang, array $texts, $scope = null)
     {
         $this->getCache()->put($this->getCacheName($lang, $scope), $texts, $this->config->get('cache.lifetime', 1440));
+
         return $this;
     }
 
@@ -179,6 +183,7 @@ class Repository
         if ($connection == 'default') {
             return $this->db->connection();
         }
+
         return $this->db->connection($connection);
     }
 
@@ -193,13 +198,14 @@ class Repository
         if ($store == 'default') {
             return $this->cache->store();
         }
+
         return $this->cache->store($store);
     }
 
     /**
      * Save missing texts in database
      *
-     * @param array  $texts
+     * @param array $texts
      * @param string $scope
      * @return bool
      */
@@ -209,7 +215,7 @@ class Repository
             return false;
         }
 
-        $table   = $this->getTableName();
+        $table = $this->getTableName();
         $locales = $this->config->get('locales', []);
         if (is_null($scope)) {
             $scope = 'global';
@@ -220,10 +226,10 @@ class Repository
                 $exists = $this->getDb()
                     ->table($table)
                     ->where([
-                                'key'   => $k,
-                                'lang'  => $lang,
-                                'scope' => $scope,
-                            ])->first();
+                        'key'   => $k,
+                        'lang'  => $lang,
+                        'scope' => $scope,
+                    ])->first();
 
                 if ($exists) {
                     continue;
@@ -232,13 +238,14 @@ class Repository
                 $this->getDb()
                     ->table($table)
                     ->insert([
-                                 'key'   => $k,
-                                 'lang'  => $lang,
-                                 'scope' => $scope,
-                                 'value' => $v,
-                             ]);
+                        'key'   => $k,
+                        'lang'  => $lang,
+                        'scope' => $scope,
+                        'value' => $v,
+                    ]);
             }
         }
+
         return true;
     }
 
@@ -250,6 +257,7 @@ class Repository
     public function getTableName()
     {
         $table = $this->config->get('db.texts_table', 'texts');
+
         return $table;
     }
 }

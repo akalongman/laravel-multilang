@@ -45,6 +45,7 @@ class TextsCommand extends Command
 
         if (empty($texts)) {
             $this->info('Application texts is empty');
+
             return false;
         }
 

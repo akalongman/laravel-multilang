@@ -72,16 +72,16 @@ class MultiLang
     /**
      * Create a new MultiLang instance.
      *
-     * @param string                               $environment
-     * @param array                                $config
-     * @param \Illuminate\Cache\CacheManager       $cache
+     * @param string $environment
+     * @param array $config
+     * @param \Illuminate\Cache\CacheManager $cache
      * @param \Illuminate\Database\DatabaseManager $db
      */
     public function __construct($environment, array $config, Cache $cache, Database $db)
     {
         $this->environment = $environment;
-        $this->cache       = $cache;
-        $this->db          = $db;
+        $this->cache = $cache;
+        $this->db = $db;
 
         $this->setConfig($config);
 
@@ -97,6 +97,7 @@ class MultiLang
     public function setConfig(array $config)
     {
         $this->config = new Config($config);
+
         return $this;
     }
 
@@ -109,6 +110,7 @@ class MultiLang
     public function setRepository(Repository $repository)
     {
         $this->repository = $repository;
+
         return $this;
     }
 
@@ -131,6 +133,7 @@ class MultiLang
     public function setScope($scope)
     {
         $this->scope = $scope;
+
         return $this;
     }
 
@@ -148,17 +151,17 @@ class MultiLang
      * Set locale and load texts
      *
      * @param  string $lang
-     * @param  array  $texts
+     * @param  array $texts
      * @return void
      */
     public function setLocale($lang, array $texts = null)
     {
-        if (!$lang) {
+        if (! $lang) {
             throw new InvalidArgumentException('Locale is empty');
         }
         $this->lang = $lang;
 
-        if (!is_array($texts)) {
+        if (! is_array($texts)) {
             $texts = $this->loadTexts($this->getLocale(), $this->scope);
         }
 
@@ -176,6 +179,7 @@ class MultiLang
     {
         if ($this->environment != 'production' || $this->config->get('cache.enabled', true) === false) {
             $texts = $this->repository->loadFromDatabase($lang, $scope);
+
             return $texts;
         }
 
@@ -193,7 +197,7 @@ class MultiLang
      * Get translated text
      *
      * @param  string $key
-     * @param  array  $replace
+     * @param  array $replace
      * @return string
      */
     public function get($key, array $replace = [])
@@ -203,12 +207,13 @@ class MultiLang
             throw new InvalidArgumentException('String key not provided');
         }
 
-        if (!$this->lang) {
+        if (! $this->lang) {
             return $key;
         }
 
-        if (!isset($this->texts[$key])) {
+        if (! isset($this->texts[$key])) {
             $this->queueToSave($key);
+
             return $this->replaceMarkers($key, $replace);
         }
 
@@ -221,7 +226,7 @@ class MultiLang
      * Replace markers in text
      *
      * @param  string $text
-     * @param  array  $replace
+     * @param  array $replace
      * @return string
      */
     protected function replaceMarkers($text, array $replace = [])
@@ -237,7 +242,7 @@ class MultiLang
      * Make the place-holder replacements on a line.
      *
      * @param  string $text
-     * @param  array  $replace
+     * @param  array $replace
      * @return string
      */
     protected function makeReplacements($text, array $replace)
@@ -276,8 +281,8 @@ class MultiLang
      */
     public function getRedirectUrl(Request $request)
     {
-        $locale           = $request->segment(1);
-        $fallback_locale  = $this->config->get('default_locale', 'en');
+        $locale = $request->segment(1);
+        $fallback_locale = $this->config->get('default_locale', 'en');
         $exclude_segments = $this->config->get('exclude_segments', []);
         if (in_array($locale, $exclude_segments)) {
             return null;
@@ -286,10 +291,10 @@ class MultiLang
         if (strlen($locale) == 2) {
             $locales = $this->config->get('locales', []);
 
-            if (!isset($locales[$locale])) {
-                $segments    = $request->segments();
+            if (! isset($locales[$locale])) {
+                $segments = $request->segments();
                 $segments[0] = $fallback_locale;
-                $url         = implode('/', $segments);
+                $url = implode('/', $segments);
                 if ($query_string = $request->server->get('QUERY_STRING')) {
                     $url .= '?' . $query_string;
                 }
@@ -298,10 +303,11 @@ class MultiLang
             }
         } else {
             $segments = $request->segments();
-            $url      = $fallback_locale . '/' . implode('/', $segments);
+            $url = $fallback_locale . '/' . implode('/', $segments);
             if ($query_string = $request->server->get('QUERY_STRING')) {
                 $url .= '?' . $query_string;
             }
+
             return $url;
         }
 
@@ -316,7 +322,7 @@ class MultiLang
      */
     public function detectLocale(Request $request)
     {
-        $locale  = $request->segment(1);
+        $locale = $request->segment(1);
         $locales = $this->config->get('locales');
 
         if (isset($locales[$locale])) {
@@ -339,9 +345,9 @@ class MultiLang
 
         foreach ($locales as $locale => $val) {
             $router->group([
-                               'prefix' => $locale,
-                               'as'     => $locale . '.',
-                           ], $callback);
+                'prefix' => $locale,
+                'as'     => $locale . '.',
+            ], $callback);
         }
     }
 
@@ -350,8 +356,8 @@ class MultiLang
      */
     public function manageTextsRoutes()
     {
-        $router     = app('router');
-        $route      = $this->config->get('text-route.route', 'texts');
+        $router = app('router');
+        $route = $this->config->get('text-route.route', 'texts');
         $controller = $this->config->get(
             'text-route.controller',
             '\Longman\LaravelMultiLang\Controllers\TextsController'
@@ -431,6 +437,7 @@ class MultiLang
         if ($locale) {
             $path = $locale . '/' . $path;
         }
+
         return $path;
     }
 
@@ -446,6 +453,7 @@ class MultiLang
         if ($locale) {
             $name = $locale . '.' . $name;
         }
+
         return $name;
     }
 
@@ -459,6 +467,7 @@ class MultiLang
         if ($this->environment == 'local' && $this->config->get('db.autosave', true)) {
             return true;
         }
+
         return false;
     }
 
@@ -494,6 +503,7 @@ class MultiLang
         }
 
         $this->repository->save($this->new_texts, $this->scope);
+
         return true;
     }
 }

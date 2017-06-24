@@ -19,14 +19,14 @@ class LocalizableScope implements Scope
     /**
      * Apply the scope to a given Eloquent query builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Builder $builder
+     * @param  \Illuminate\Database\Eloquent\Model $model
      * @return void
      */
     public function apply(Builder $builder, Model $model)
     {
 
-        if (!$this->queryHasLocalizableColumn($builder)) {
+        if (! $this->queryHasLocalizableColumn($builder)) {
             $builder->where($model->getQualifiedLocalizableColumn(), '=', app()->getLocale());
         }
     }
@@ -41,20 +41,21 @@ class LocalizableScope implements Scope
     {
         $wheres = $builder->getQuery()->wheres;
         $column = $this->getLocalizableColumn($builder);
-        if (!empty($wheres)) {
+        if (! empty($wheres)) {
             foreach ($wheres as $where) {
                 if (isset($where['column']) && $where['column'] == $column) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 
     /**
      * Get the "localizable" column for the builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
+     * @param  \Illuminate\Database\Eloquent\Builder $builder
      * @return string
      */
     protected function getLocalizableColumn(Builder $builder)

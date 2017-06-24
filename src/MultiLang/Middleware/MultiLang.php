@@ -42,22 +42,22 @@ class MultiLang
     /**
      * MultiLang constructor.
      *
-     * @param \Illuminate\Foundation\Application  $app
-     * @param \Illuminate\Routing\Redirector      $redirector
+     * @param \Illuminate\Foundation\Application $app
+     * @param \Illuminate\Routing\Redirector $redirector
      * @param \Longman\LaravelMultiLang\MultiLang $multilang
      */
     public function __construct(Application $app, Redirector $redirector, MultiLangLib $multilang)
     {
-        $this->app        = $app;
+        $this->app = $app;
         $this->redirector = $redirector;
-        $this->multilang  = $multilang;
+        $this->multilang = $multilang;
     }
 
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
+     * @param  \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)

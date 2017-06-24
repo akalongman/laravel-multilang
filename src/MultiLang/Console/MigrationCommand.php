@@ -39,7 +39,7 @@ class MigrationCommand extends Command
         $table = Config::get('multilang.db.texts_table');
 
         if ('' == $table) {
-            $this->error('Couldn\'t create migration.'.PHP_EOL.'Table name can\'t be empty. Check your configuration.');
+            $this->error('Couldn\'t create migration.' . PHP_EOL . 'Table name can\'t be empty. Check your configuration.');
 
             return;
         }
@@ -60,7 +60,7 @@ class MigrationCommand extends Command
                 $this->info('Migration successfully created!');
             } else {
                 $this->error(
-                    'Couldn\'t create migration.'.PHP_EOL.' Check the write permissions
+                    'Couldn\'t create migration.' . PHP_EOL . ' Check the write permissions
                     within the database/migrations directory.'
                 );
             }
@@ -84,14 +84,14 @@ class MigrationCommand extends Command
         }
 
         $stubPath = __DIR__ . '/../../stubs/migrations/texts.stub';
-        $content  = file_get_contents($stubPath);
+        $content = file_get_contents($stubPath);
         if (empty($content)) {
             return false;
         }
 
         $data = str_replace('{{TEXTS_TABLE}}', $table, $content);
 
-        if (!file_put_contents($migrationFile, $data)) {
+        if (! file_put_contents($migrationFile, $data)) {
             return false;
         }
 

@@ -54,7 +54,7 @@ trait TextsTrait
 
         $options['keyword'] = $request->keyword;
 
-        $data['texts']   = $texts;
+        $data['texts'] = $texts;
         $data['options'] = $options;
 
         return view($this->view, $data);
@@ -72,7 +72,7 @@ trait TextsTrait
 
         $locales = array_keys(config('multilang.locales'));
         foreach ($request->texts as $lang => $items) {
-            if (!in_array($lang, $locales)) {
+            if (! in_array($lang, $locales)) {
                 //to do must set errors
                 continue;
             }
@@ -82,6 +82,7 @@ trait TextsTrait
                     ->update(['value' => $value]);
             }
         }
+
         return redirect()->back();
     }
 }

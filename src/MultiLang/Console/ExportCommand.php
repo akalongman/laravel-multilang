@@ -12,8 +12,8 @@ namespace Longman\LaravelMultiLang\Console;
 
 use App;
 use Illuminate\Console\Command;
-use InvalidArgumentException;
 use Illuminate\Database\DatabaseManager as Database;
+use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
 
 class ExportCommand extends Command
@@ -81,7 +81,7 @@ class ExportCommand extends Command
     public function handle()
     {
         $this->table = config('multilang.db.texts_table', 'texts');
-        $this->db    = $this->getDatabase();
+        $this->db = $this->getDatabase();
 
         $lang = $this->option('lang');
         if (! empty($lang)) {
@@ -89,7 +89,7 @@ class ExportCommand extends Command
         }
 
         $scopes = $this->scopes;
-        $scope  = $this->option('scope');
+        $scope = $this->option('scope');
         if (! empty($scope)) {
             $scopes = explode(',', $scope);
             foreach ($scopes as $scope) {
@@ -99,7 +99,7 @@ class ExportCommand extends Command
             }
         }
 
-        $path       = $this->option('path', 'storage/multilang');
+        $path = $this->option('path', 'storage/multilang');
         $this->path = base_path($path);
         if (! is_dir($this->path)) {
             if (! mkdir($this->path, 0777, true)) {
@@ -158,7 +158,7 @@ class ExportCommand extends Command
 
         $yaml = Yaml::dump($textsToWrite, 3, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
 
-        $path    = $this->path . '/' . $scope . '.yml';
+        $path = $this->path . '/' . $scope . '.yml';
         $written = file_put_contents($path, $yaml);
         if (! $written) {
             $this->error('Export texts of "' . $scope . '" is failed!');
@@ -175,7 +175,7 @@ class ExportCommand extends Command
     protected function getTextsFromFile($scope)
     {
         $fileTexts = [];
-        $path      = $this->path . '/' . $scope . '.yml';
+        $path = $this->path . '/' . $scope . '.yml';
         if (is_readable($path)) {
             $fileTexts = Yaml::parse(file_get_contents($path));
         }
@@ -202,13 +202,14 @@ class ExportCommand extends Command
 
         $formattedDbTexts = [];
         foreach ($dbTexts as $text) {
-            $key  = $text->key;
+            $key = $text->key;
             $lang = $text->lang;
             if (! isset($formattedDbTexts[$key])) {
                 $formattedDbTexts[$key] = ['key' => $key];
             }
             $formattedDbTexts[$key]['texts'][$lang] = $text->value;
         }
+
         return $formattedDbTexts;
     }
 
@@ -220,10 +221,11 @@ class ExportCommand extends Command
     protected function getDatabase()
     {
         $connection = config('multilang.db.connection', 'default');
-        $db         = App::make(Database::class);
+        $db = App::make(Database::class);
         if ($connection == 'default') {
             return $db->connection();
         }
+
         return $db->connection($connection);
     }
 }

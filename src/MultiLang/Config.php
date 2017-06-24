@@ -33,7 +33,7 @@ class Config
      * Get config parameter
      *
      * @param string $key
-     * @param mixed  $default
+     * @param mixed $default
      * @return array|mixed|null
      */
     public function get($key = null, $default = null)
