@@ -44,6 +44,17 @@ class MultiLangTest extends AbstractTestCase
     /**
      * @test
      */
+    public function get_route()
+    {
+        $multilang = $this->getMultilang();
+        $multilang->setLocale('ka');
+
+        $this->assertEquals('ka.users', $multilang->getRoute('users'));
+    }
+
+    /**
+     * @test
+     */
     public function check_get_texts()
     {
         $multilang = $this->getMultilang('testing');
