@@ -67,7 +67,7 @@ class MultiLang
      *
      * @var string
      */
-    protected $scope;
+    protected $scope = 'global';
 
     /**
      * Create a new MultiLang instance.

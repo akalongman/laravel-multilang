@@ -11,6 +11,7 @@
 namespace Longman\LaravelMultiLang;
 
 use Blade;
+use Illuminate\Foundation\Events\LocaleUpdated;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\ServiceProvider;
 use Longman\LaravelMultiLang\Console\ExportCommand;
@@ -58,7 +59,10 @@ class MultiLangServiceProvider extends ServiceProvider
             if ($scope && $scope != 'global') {
                 $this->app['multilang']->setScope($scope);
             }
-            $this->app['multilang']->setLocale($this->app->getLocale());
+        });
+
+        $this->app['events']->listen(LocaleUpdated::class, function ($event) {
+            $this->app['multilang']->setLocale($event->locale);
         });
 
         $this->loadViewsFrom(__DIR__ . '/../views', 'multilang');
