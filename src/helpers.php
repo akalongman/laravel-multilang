@@ -64,7 +64,7 @@ if (! function_exists('lang_route')) {
      * @param bool $absolute
      * @return string
      */
-    function site_route($name, array $parameters = [], $absolute = true)
+    function lang_route($name, array $parameters = [], $absolute = true)
     {
         $multilang = app('multilang');
 
