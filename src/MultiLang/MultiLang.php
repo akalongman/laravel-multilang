@@ -435,6 +435,21 @@ class MultiLang
     }
 
     /**
+     * Get language prefixed route
+     *
+     * @param string $name
+     * @return string
+     */
+    public function getRoute($name)
+    {
+        $locale = $this->getLocale();
+        if ($locale) {
+            $name = $locale . '.' . $name;
+        }
+        return $name;
+    }
+
+    /**
      * Check if autosave allowed
      *
      * @return bool
