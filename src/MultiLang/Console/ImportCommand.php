@@ -28,7 +28,9 @@ class ImportCommand extends Command
         {--path=storage/multilang : The path to multilang folder}
         {--lang= : Comma separated langs to import, default all}
         {--scope= : Comma separated scopes, default all}
-        {--force : Force update existing texts in database}';
+        {--force : Force update existing texts in database}
+        {--clear : Clear texts from database before import}
+        ';
 
     /**
      * The console command description.
@@ -105,12 +107,13 @@ class ImportCommand extends Command
         }
 
         $force = $this->option('force');
+        $clear = $this->option('clear');
         foreach ($scopes as $scope) {
-            $this->import($scope, $force);
+            $this->import($scope, $force, $clear);
         }
     }
 
-    protected function import($scope = 'global', $force = false)
+    protected function import($scope = 'global', $force = false, $clear = false)
     {
         $path = $this->path . '/' . $scope . '.yml';
         if (! is_readable($path)) {
@@ -123,6 +126,13 @@ class ImportCommand extends Command
             $this->warn('File "' . $path . '" is empty!');
 
             return false;
+        }
+
+        if ($clear) {
+            $this->db
+                ->table($this->table)
+                ->where('scope', $scope)
+                ->delete();
         }
 
         $created_at = Carbon::now()->toDateTimeString();
