@@ -144,6 +144,8 @@ Or use named routes via `lang_route()` function
 $url = lang_route('users'); // which returns en.users depending on your language (locale)
 ```
 
+Also `Request::locale()` always will return current locale.
+
 *Note*: Texts will be selected after firing Laravel's `LocaleUpdated` event. Therefore you should use MultiLang middleware, or manually set locale in the application.
 
 ### Text Scopes

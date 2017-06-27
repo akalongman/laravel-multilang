@@ -12,6 +12,7 @@ namespace Longman\LaravelMultiLang;
 
 use Blade;
 use Illuminate\Foundation\Events\LocaleUpdated;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\ServiceProvider;
 use Longman\LaravelMultiLang\Console\ExportCommand;
@@ -141,6 +142,10 @@ class MultiLangServiceProvider extends ServiceProvider
                 'command.multilang.export',
             ]
         );
+
+        Request::macro('locale', function () {
+            return app('multilang')->getLocale();
+        });
     }
 
     /**
