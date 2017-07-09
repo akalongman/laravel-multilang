@@ -2,8 +2,6 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Cache\CacheManager as Cache;
-
 class MultiLangTest extends AbstractTestCase
 {
 
@@ -44,6 +42,34 @@ class MultiLangTest extends AbstractTestCase
     /**
      * @test
      */
+    public function get_url_with_forced_locale()
+    {
+        $config = [
+            'locales' => [
+                'en' => [
+                    'name'        => 'English',
+                    'native_name' => 'English',
+                    'default'     => true,
+                ],
+                'ka' => [
+                    'name'        => 'Georgian',
+                    'native_name' => 'ქართული',
+                    'default'     => false,
+                ],
+            ],
+        ];
+        $multilang = $this->getMultilang('local', $config);
+        $multilang->setLocale('ka');
+
+        $this->assertEquals('en/users', $multilang->getUrl('users', 'en'));
+        $this->assertEquals('en/users', $multilang->getUrl('ka/users', 'en'));
+        // With locale which not exists
+        $this->assertEquals('en/ss/users', $multilang->getUrl('ss/users', 'en'));
+    }
+
+    /**
+     * @test
+     */
     public function get_route()
     {
         $multilang = $this->getMultilang();
@@ -58,7 +84,7 @@ class MultiLangTest extends AbstractTestCase
     public function check_get_texts()
     {
         $multilang = $this->getMultilang('testing');
-        $texts     = [
+        $texts = [
             'text1'    => 'value1',
             'text2'    => 'value2',
             'te.x-t/3' => 'value3',
@@ -78,10 +104,10 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-                                 'text1'    => 'value1',
-                                 'text2'    => 'value2',
-                                 'te.x-t/3' => 'value3',
-                             ]);
+            'text1'    => 'value1',
+            'text2'    => 'value2',
+            'te.x-t/3' => 'value3',
+        ]);
 
         $this->assertEquals('value1', $multilang->get('text1'));
 
@@ -107,10 +133,10 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-                                 'text1'    => 'value1',
-                                 'text2'    => 'value2',
-                                 'te.x-t/3' => 'value3',
-                             ]);
+            'text1'    => 'value1',
+            'text2'    => 'value2',
+            'te.x-t/3' => 'value3',
+        ]);
 
         $this->assertEquals('value5', $multilang->get('value5'));
     }
