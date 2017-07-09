@@ -15,9 +15,10 @@ if (! function_exists('lang_url')) {
      * @param  string $path
      * @param  mixed $parameters
      * @param  bool $secure
+     * @param  string $locale
      * @return Illuminate\Contracts\Routing\UrlGenerator|string
      */
-    function lang_url($path = null, $parameters = [], $secure = null)
+    function lang_url($path = null, $parameters = [], $secure = null, $locale = null)
     {
         if (is_null($path)) {
             return app(Illuminate\Contracts\Routing\UrlGenerator::class);
@@ -25,7 +26,7 @@ if (! function_exists('lang_url')) {
 
         $multilang = app('multilang');
 
-        $path = $multilang->getUrl($path);
+        $path = $multilang->getUrl($path, $locale);
 
         return url($path, $parameters, $secure);
     }

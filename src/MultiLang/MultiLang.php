@@ -428,14 +428,32 @@ class MultiLang
     /**
      * Get language prefixed url
      *
-     * @param $path
+     * @param string $path
+     * @param string $lang
      * @return string
      */
-    public function getUrl($path)
+    public function getUrl($path, $lang = null)
     {
-        $locale = $this->getLocale();
+        $locale = $lang ? $lang : $this->getLocale();
         if ($locale) {
-            $path = $locale . '/' . $path;
+            $path = $locale . '/' . $this->removeLocaleFromPath($path);
+        }
+
+        return $path;
+    }
+
+    /**
+     * Remove locale from the path
+     *
+     * @param string $path
+     * @return string
+     */
+    private function removeLocaleFromPath($path)
+    {
+        $locales = $this->config->get('locales');
+        $locale = mb_substr($path, 0, 2);
+        if (isset($locales[$locale])) {
+            return mb_substr($path, 3);
         }
 
         return $path;
