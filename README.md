@@ -138,7 +138,17 @@ Also you can use `lang_url()` helper function for appending current lang marker 
 $url = lang_url('users'); // which returns /en/users depending on your language (locale)
 ```
 
-Or use named routes via `lang_route()` function
+You can force locale and get localized url for current url for example.
+
+```php
+$url = lang_url('users', [], null, 'ka'); // which returns /ka/users ignoring current locale
+```
+or
+```php
+$url = lang_url('en/users', [], null, 'ka'); // also returns /ka/users
+```
+
+Also you use named routes via `lang_route()` function
 
 ```php
 $url = lang_route('users'); // which returns en.users depending on your language (locale)
