@@ -36,7 +36,7 @@ class TextsCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         $lang = $this->option('lang');
         $scope = $this->option('scope');

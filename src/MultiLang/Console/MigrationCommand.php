@@ -34,7 +34,7 @@ class MigrationCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         $table = Config::get('multilang.db.texts_table');
 
