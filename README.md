@@ -51,14 +51,14 @@ And run composer update
 
     composer require longman/laravel-multilang
 
-
-After updating composer, add the MultiLangServiceProvider to the providers array in config/app.php
+In Laravel 5.5 the service provider will automatically get registered. 
+In older versions of the framework just add the service provider in `config/app.php` file:
 
 ```php
 Longman\LaravelMultiLang\MultiLangServiceProvider::class,
 ```
 
-And add facade to the alias array in config/app.php
+Also you can add facade to the alias array in the `config/app.php`
 ```php
 'MultiLang' => Longman\LaravelMultiLang\Facades\MultiLang::class,
 ```
