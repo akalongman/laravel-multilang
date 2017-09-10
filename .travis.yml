@@ -11,7 +11,7 @@ before_install:
   - composer self-update
 
 install:
-  - travis_retry composer install --no-interaction --prefer-source
+  - travis_retry composer update --no-interaction --prefer-source
 
 script:
   - ./vendor/bin/phpcs --standard=phpcs.xml -spn --encoding=utf-8 src/ --report-width=150
