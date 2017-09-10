@@ -10,6 +10,7 @@
 
 namespace Longman\LaravelMultiLang;
 
+use Carbon\Carbon;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
 
@@ -221,6 +222,7 @@ class Repository
             $scope = 'global';
         }
 
+        $now = Carbon::now()->toDateTimeString();
         foreach ($texts as $k => $v) {
             foreach ($locales as $lang => $locale_data) {
                 $exists = $this->getDb()
@@ -238,10 +240,12 @@ class Repository
                 $this->getDb()
                     ->table($table)
                     ->insert([
-                        'key'   => $k,
-                        'lang'  => $lang,
-                        'scope' => $scope,
-                        'value' => $v,
+                        'key'        => $k,
+                        'lang'       => $lang,
+                        'scope'      => $scope,
+                        'value'      => $v,
+                        'created_at' => $now,
+                        'updated_at' => $now,
                     ]);
             }
         }
