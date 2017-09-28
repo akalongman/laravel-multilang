@@ -2,6 +2,9 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Http\Request;
+use Longman\LaravelMultiLang\MultiLang;
+
 class MultiLangTest extends AbstractTestCase
 {
 
@@ -47,14 +50,14 @@ class MultiLangTest extends AbstractTestCase
         $config = [
             'locales' => [
                 'en' => [
-                    'name'        => 'English',
+                    'name' => 'English',
                     'native_name' => 'English',
-                    'default'     => true,
+                    'default' => true,
                 ],
                 'ka' => [
-                    'name'        => 'Georgian',
+                    'name' => 'Georgian',
                     'native_name' => 'ქართული',
-                    'default'     => false,
+                    'default' => false,
                 ],
             ],
         ];
@@ -85,8 +88,8 @@ class MultiLangTest extends AbstractTestCase
     {
         $multilang = $this->getMultilang('testing');
         $texts = [
-            'text1'    => 'value1',
-            'text2'    => 'value2',
+            'text1' => 'value1',
+            'text2' => 'value2',
             'te.x-t/3' => 'value3',
         ];
 
@@ -104,8 +107,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-            'text1'    => 'value1',
-            'text2'    => 'value2',
+            'text1' => 'value1',
+            'text2' => 'value2',
             'te.x-t/3' => 'value3',
         ]);
 
@@ -133,8 +136,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-            'text1'    => 'value1',
-            'text2'    => 'value2',
+            'text1' => 'value1',
+            'text2' => 'value2',
             'te.x-t/3' => 'value3',
         ]);
 
@@ -150,8 +153,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $texts = [
-            'text1'                   => 'value1',
-            'text2'                   => 'value2',
+            'text1' => 'value1',
+            'text2' => 'value2',
             'te.x-t/3 dsasad sadadas' => 'value3',
         ];
 
@@ -271,14 +274,14 @@ class MultiLangTest extends AbstractTestCase
         $config = [
             'locales' => [
                 'en' => [
-                    'name'        => 'English',
+                    'name' => 'English',
                     'native_name' => 'English',
-                    'default'     => true,
+                    'default' => true,
                 ],
                 'ka' => [
-                    'name'        => 'Georgian',
+                    'name' => 'Georgian',
                     'native_name' => 'ქართული',
-                    'default'     => false,
+                    'default' => false,
                 ],
             ],
         ];
@@ -403,5 +406,44 @@ class MultiLangTest extends AbstractTestCase
         $this->assertTrue($multilang->saveTexts());
 
         $this->assertTrue($multilang->saveTexts());
+    }
+
+    /** @test */
+    public function scope_setter_and_getter()
+    {
+        $instance = $this->getMultilang();
+        $instance->setScope('test-scope');
+
+        $this->assertInstanceOf(MultiLang::class, $instance);
+        $this->assertEquals('test-scope', $instance->getScope());
+    }
+
+    /** @test */
+    public function load_texts_from_cache_repository()
+    {
+        $multilang = $this->getMultilang('production');
+        $multilang->setLocale('ka');
+        $texts = $multilang->getRepository()->loadFromDatabase('ka', 'global');
+        $multilang->getRepository()->storeInCache('ka', $texts, 'global');
+
+        $this->assertTrue($multilang->getRepository()->existsInCache('ka', 'global'));
+        $cacheTexts = $multilang->loadTexts('ka', 'global');
+        $this->assertCount(count($texts), $cacheTexts);
+    }
+
+    /** @test */
+    public function detect_locale_should_return_default_locale_if_non_set()
+    {
+        $multilang = $this->getMultilang();
+        $fallback = $multilang->detectLocale(new Request());
+
+        $this->assertEquals('en', $fallback);
+    }
+
+    /** @test */
+    public function get_all_texts_should_return_all_from_database()
+    {
+        $multilang = $this->getMultilang();
+        $this->assertCount(11, $multilang->getAllTexts('ka', 'global')['ka']);
     }
 }
