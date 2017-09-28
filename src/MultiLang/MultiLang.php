@@ -183,7 +183,7 @@ class MultiLang
             return $texts;
         }
 
-        if ($this->repository->existsInCache($lang)) {
+        if ($this->repository->existsInCache($lang, $scope)) {
             $texts = $this->repository->loadFromCache($lang, $scope);
         } else {
             $texts = $this->repository->loadFromDatabase($lang, $scope);
