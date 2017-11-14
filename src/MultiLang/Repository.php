@@ -81,7 +81,7 @@ class Repository
         $query = $this->getDb()->table($this->getTableName())
             ->where('lang', $lang);
 
-        if (! is_null($scope)) {
+        if (! is_null($scope) && $scope !== 'global') {
             $query = $query->whereNested(function ($query) use ($scope) {
                 $query->where('scope', 'global');
                 $query->orWhere('scope', $scope);
