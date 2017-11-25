@@ -80,6 +80,13 @@ class MultiLang
             Carbon::setLocale($locale);
         }
 
+        if ($this->multilang->getConfig()->get('set_system_locale')) {
+            $locales = $this->multilang->getLocales();
+            if (! empty($locales[$locale]['full_locale'])) {
+                setlocale(LC_ALL, $locales[$locale]['full_locale']);
+            }
+        }
+
         return $next($request);
     }
 }

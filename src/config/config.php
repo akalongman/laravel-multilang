@@ -35,10 +35,20 @@ return [
     | Set Carbon locale
     |--------------------------------------------------------------------------
     |
-    | Call Carbon::setLocale and set current locale in middleware
+    | Call Carbon::setLocale($locale) and set current locale in middleware
     |
      */
     'set_carbon_locale' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Set System locale
+    |--------------------------------------------------------------------------
+    |
+    | Call setlocale(LC_ALL, $locale) and set current locale in middleware
+    |
+     */
+    'set_system_locale' => true,
 
     /*
     |--------------------------------------------------------------------------
