@@ -104,7 +104,7 @@ class MultiLang
      *
      * @return \Longman\LaravelMultiLang\Config
      */
-    public function getConfig(): Config
+    public function getConfig()
     {
 
         return $this->config;
