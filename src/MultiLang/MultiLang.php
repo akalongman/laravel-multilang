@@ -80,8 +80,6 @@ class MultiLang
     public function __construct($environment, array $config, Cache $cache, Database $db)
     {
         $this->environment = $environment;
-        $this->cache = $cache;
-        $this->db = $db;
 
         $this->setConfig($config);
 
