@@ -100,6 +100,17 @@ class MultiLang
     }
 
     /**
+     * Get multilang config
+     *
+     * @return \Longman\LaravelMultiLang\Config
+     */
+    public function getConfig(): Config
+    {
+
+        return $this->config;
+    }
+
+    /**
      * Set repository object
      *
      * @param \Longman\LaravelMultiLang\Repository $repository

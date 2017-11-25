@@ -10,6 +10,7 @@
 
 namespace Longman\LaravelMultiLang\Middleware;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Redirector;
@@ -17,7 +18,6 @@ use Longman\LaravelMultiLang\MultiLang as MultiLangLib;
 
 class MultiLang
 {
-
     /**
      * Application.
      *
@@ -76,7 +76,10 @@ class MultiLang
 
         $this->app->setLocale($locale);
 
+        if ($this->multilang->getConfig()->get('set_carbon_locale')) {
+            Carbon::setLocale($locale);
+        }
+
         return $next($request);
     }
-
 }
