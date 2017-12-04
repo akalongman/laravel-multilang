@@ -13,11 +13,12 @@ return [
         'en' => [
             'name'             => 'English',
             'native_name'      => 'English',
-            'flag'             => 'gb.svg',
             'locale'           => 'en', // ISO 639-1
             'canonical_locale' => 'en_GB', // ISO 3166-1
             'full_locale'      => 'en_GB.UTF-8',
         ],
+
+        // Add yours here
     ],
 
     /*
@@ -64,19 +65,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Route Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Basic route
-    |
-     */
-    'text-route'        => [
-        'route'      => 'texts',
-        'controller' => '\Longman\LaravelMultiLang\Controllers\TextsController',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Cache Configuration
     |--------------------------------------------------------------------------
     |
@@ -98,7 +86,7 @@ return [
     |
      */
     'db'                => [
-        'autosave'    => true, // Autosave missing texts in database. Only when environment is local
+        'autosave'    => true, // Autosave missing texts in the database. Only when environment is local
         'connection'  => env('DB_CONNECTION', 'default'),
         'texts_table' => 'texts',
     ],
