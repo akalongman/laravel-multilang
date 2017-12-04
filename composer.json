@@ -27,6 +27,7 @@
     ],
     "require": {
         "php": ">=7.0",
+        "ext-mbstring": "*",
         "symfony/yaml": "~2.1|~3.0",
         "illuminate/console": "5.*",
         "illuminate/support": "5.*",
