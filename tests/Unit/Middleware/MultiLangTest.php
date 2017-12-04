@@ -35,7 +35,8 @@ class MultiLangTest extends AbstractTestCase
             $content = null
         );
 
-        $result = $middleware->handle($request, function () {
+        $result = $middleware->handle($request, function (Request $request) {
+
             return 'no_redirect';
         });
 

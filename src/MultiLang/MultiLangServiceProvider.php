@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
 
@@ -83,7 +84,7 @@ class MultiLangServiceProvider extends ServiceProvider
             $environment = $app->environment();
             $config = $app['config']->get('multilang');
 
-            $multilang = new \Longman\LaravelMultiLang\MultiLang(
+            $multilang = new MultiLang(
                 $environment,
                 $config,
                 $app['cache'],
@@ -104,7 +105,7 @@ class MultiLangServiceProvider extends ServiceProvider
             return $multilang;
         });
 
-        $this->app->alias('multilang', 'Longman\LaravelMultiLang\MultiLang');
+        $this->app->alias('multilang', MultiLang::class);
 
         $this->app->singleton(
             'command.multilang.migration',
@@ -161,7 +162,7 @@ class MultiLangServiceProvider extends ServiceProvider
             'command.multilang.texts',
             'command.multilang.import',
             'command.multilang.export',
-            'Longman\LaravelMultiLang\MultiLang',
+            MultiLang::class,
         ];
     }
 }

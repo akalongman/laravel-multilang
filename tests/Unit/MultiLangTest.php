@@ -50,14 +50,14 @@ class MultiLangTest extends AbstractTestCase
         $config = [
             'locales' => [
                 'en' => [
-                    'name' => 'English',
+                    'name'        => 'English',
                     'native_name' => 'English',
-                    'default' => true,
+                    'default'     => true,
                 ],
                 'ka' => [
-                    'name' => 'Georgian',
+                    'name'        => 'Georgian',
                     'native_name' => 'ქართული',
-                    'default' => false,
+                    'default'     => false,
                 ],
             ],
         ];
@@ -88,8 +88,8 @@ class MultiLangTest extends AbstractTestCase
     {
         $multilang = $this->getMultilang('testing');
         $texts = [
-            'text1' => 'value1',
-            'text2' => 'value2',
+            'text1'    => 'value1',
+            'text2'    => 'value2',
             'te.x-t/3' => 'value3',
         ];
 
@@ -107,8 +107,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-            'text1' => 'value1',
-            'text2' => 'value2',
+            'text1'    => 'value1',
+            'text2'    => 'value2',
             'te.x-t/3' => 'value3',
         ]);
 
@@ -136,8 +136,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-            'text1' => 'value1',
-            'text2' => 'value2',
+            'text1'    => 'value1',
+            'text2'    => 'value2',
             'te.x-t/3' => 'value3',
         ]);
 
@@ -153,8 +153,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $texts = [
-            'text1' => 'value1',
-            'text2' => 'value2',
+            'text1'                   => 'value1',
+            'text2'                   => 'value2',
             'te.x-t/3 dsasad sadadas' => 'value3',
         ];
 
@@ -165,7 +165,7 @@ class MultiLangTest extends AbstractTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
+     * @expectedException \TypeError
      */
     public function set_empty_locale()
     {
@@ -175,7 +175,7 @@ class MultiLangTest extends AbstractTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
+     * @expectedException \TypeError
      */
     public function get_string_without_key()
     {
@@ -274,14 +274,14 @@ class MultiLangTest extends AbstractTestCase
         $config = [
             'locales' => [
                 'en' => [
-                    'name' => 'English',
+                    'name'        => 'English',
                     'native_name' => 'English',
-                    'default' => true,
+                    'default'     => true,
                 ],
                 'ka' => [
-                    'name' => 'Georgian',
+                    'name'        => 'Georgian',
                     'native_name' => 'ქართული',
-                    'default' => false,
+                    'default'     => false,
                 ],
             ],
         ];

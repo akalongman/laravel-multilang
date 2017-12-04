@@ -7,12 +7,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Middleware;
 
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Longman\LaravelMultiLang\MultiLang as MultiLangLib;
 
@@ -60,11 +62,11 @@ class MultiLang
      * @param  \Closure $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         $url = $this->multilang->getRedirectUrl($request);
 
-        if ($url !== null) {
+        if (! empty($url)) {
             if ($request->expectsJson()) {
                 return response('Not found', 404);
             } else {

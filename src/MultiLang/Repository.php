@@ -7,12 +7,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
 
 use Carbon\Carbon;
 use Illuminate\Cache\CacheManager as Cache;
+use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager as Database;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 class Repository
 {
@@ -59,7 +62,7 @@ class Repository
      * @param string $scope
      * @return string
      */
-    public function getCacheName($lang, $scope = null)
+    public function getCacheName(string $lang, string $scope = null): string
     {
         $key = $this->config->get('db.texts_table', 'texts') . '_' . $lang;
         if (! is_null($scope)) {
@@ -76,7 +79,7 @@ class Repository
      * @param string $scope
      * @return array
      */
-    public function loadFromDatabase($lang, $scope = null)
+    public function loadFromDatabase(string $lang, string $scope = null): array
     {
         $query = $this->getDb()->table($this->getTableName())
             ->where('lang', $lang);
@@ -107,7 +110,7 @@ class Repository
      * @param string $scope
      * @return array
      */
-    public function loadAllFromDatabase($lang = null, $scope = null)
+    public function loadAllFromDatabase(string $lang = null, string $scope = null): array
     {
         $query = $this->getDb()->table($this->getTableName());
 
@@ -137,9 +140,9 @@ class Repository
      *
      * @param string $lang
      * @param string $scope
-     * @return mixed
+     * @return array
      */
-    public function loadFromCache($lang, $scope = null)
+    public function loadFromCache(string $lang, string $scope = null): array
     {
         $texts = $this->getCache()->get($this->getCacheName($lang, $scope));
 
@@ -154,7 +157,7 @@ class Repository
      * @param string $scope
      * @return $this
      */
-    public function storeInCache($lang, array $texts, $scope = null)
+    public function storeInCache(string $lang, array $texts, string $scope = null): Repository
     {
         $this->getCache()->put($this->getCacheName($lang, $scope), $texts, $this->config->get('cache.lifetime', 1440));
 
@@ -168,7 +171,7 @@ class Repository
      * @param string $scope
      * @return bool
      */
-    public function existsInCache($lang, $scope = null)
+    public function existsInCache(string $lang, string $scope = null): bool
     {
         return $this->getCache()->has($this->getCacheName($lang, $scope));
     }
@@ -178,7 +181,7 @@ class Repository
      *
      * @return \Illuminate\Database\Connection
      */
-    protected function getDb()
+    protected function getDb(): Connection
     {
         $connection = $this->config->get('db.connection');
         if ($connection == 'default') {
@@ -193,7 +196,7 @@ class Repository
      *
      * @return \Illuminate\Contracts\Cache\Repository
      */
-    protected function getCache()
+    protected function getCache(): CacheRepository
     {
         $store = $this->config->get('cache.store', 'default');
         if ($store == 'default') {
@@ -210,7 +213,7 @@ class Repository
      * @param string $scope
      * @return bool
      */
-    public function save(array $texts, $scope = null)
+    public function save(array $texts, string $scope = null): bool
     {
         if (empty($texts)) {
             return false;
@@ -258,10 +261,10 @@ class Repository
      *
      * @return string
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         $table = $this->config->get('db.texts_table', 'texts');
 
-        return $table;
+        return (string) $table;
     }
 }

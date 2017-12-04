@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
 
@@ -77,7 +78,7 @@ class MultiLang
      * @param \Illuminate\Cache\CacheManager $cache
      * @param \Illuminate\Database\DatabaseManager $db
      */
-    public function __construct($environment, array $config, Cache $cache, Database $db)
+    public function __construct(string $environment, array $config, Cache $cache, Database $db)
     {
         $this->environment = $environment;
 
@@ -92,7 +93,7 @@ class MultiLang
      * @param array $config
      * @return $this
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): MultiLang
     {
         $this->config = new Config($config);
 
@@ -104,7 +105,7 @@ class MultiLang
      *
      * @return \Longman\LaravelMultiLang\Config
      */
-    public function getConfig()
+    public function getConfig(): Config
     {
 
         return $this->config;
@@ -116,7 +117,7 @@ class MultiLang
      * @param \Longman\LaravelMultiLang\Repository $repository
      * @return $this
      */
-    public function setRepository(Repository $repository)
+    public function setRepository(Repository $repository): MultiLang
     {
         $this->repository = $repository;
 
@@ -128,7 +129,7 @@ class MultiLang
      *
      * @return \Longman\LaravelMultiLang\Repository
      */
-    public function getRepository()
+    public function getRepository(): Repository
     {
         return $this->repository;
     }
@@ -139,7 +140,7 @@ class MultiLang
      * @param $scope
      * @return $this
      */
-    public function setScope($scope)
+    public function setScope($scope): MultiLang
     {
         $this->scope = $scope;
 
@@ -151,7 +152,7 @@ class MultiLang
      *
      * @return string
      */
-    public function getScope()
+    public function getScope(): string
     {
         return $this->scope;
     }
@@ -163,7 +164,7 @@ class MultiLang
      * @param  array $texts
      * @return void
      */
-    public function setLocale($lang, array $texts = null)
+    public function setLocale(string $lang, array $texts = null)
     {
         if (! $lang) {
             throw new InvalidArgumentException('Locale is empty');
@@ -184,7 +185,7 @@ class MultiLang
      * @param  string $scope
      * @return array
      */
-    public function loadTexts($lang, $scope = null)
+    public function loadTexts(string $lang, $scope = null): array
     {
         if ($this->environment != 'production' || $this->config->get('cache.enabled', true) === false) {
             $texts = $this->repository->loadFromDatabase($lang, $scope);
@@ -209,7 +210,7 @@ class MultiLang
      * @param  array $replace
      * @return string
      */
-    public function get($key, array $replace = [])
+    public function get(string $key, array $replace = []): string
     {
 
         if (empty($key)) {
@@ -238,7 +239,7 @@ class MultiLang
      * @param  array $replace
      * @return string
      */
-    protected function replaceMarkers($text, array $replace = [])
+    protected function replaceMarkers(string $text, array $replace = []): string
     {
         if (empty($replace)) {
             return $text;
@@ -254,7 +255,7 @@ class MultiLang
      * @param  array $replace
      * @return string
      */
-    protected function makeReplacements($text, array $replace)
+    protected function makeReplacements(string $text, array $replace): string
     {
         $replace = $this->sortReplacements($replace);
 
@@ -275,7 +276,7 @@ class MultiLang
      * @param  array $replace
      * @return \Illuminate\Support\Collection
      */
-    protected function sortReplacements(array $replace)
+    protected function sortReplacements(array $replace): Collection
     {
         return (new Collection($replace))->sortBy(function ($value, $key) {
             return mb_strlen($key) * -1;
@@ -286,15 +287,15 @@ class MultiLang
      * Get redirect url in middleware
      *
      * @param \Illuminate\Http\Request $request
-     * @return null|string
+     * @return string
      */
-    public function getRedirectUrl(Request $request)
+    public function getRedirectUrl(Request $request): string
     {
         $locale = $request->segment(1);
         $fallback_locale = $this->config->get('default_locale', 'en');
         $exclude_segments = $this->config->get('exclude_segments', []);
         if (in_array($locale, $exclude_segments)) {
-            return null;
+            return '';
         }
 
         if (strlen($locale) == 2) {
@@ -320,7 +321,7 @@ class MultiLang
             return $url;
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -329,7 +330,7 @@ class MultiLang
      * @param \Illuminate\Http\Request $request
      * @return string
      */
-    public function detectLocale(Request $request)
+    public function detectLocale(Request $request): string
     {
         $locale = $request->segment(1);
         $locales = $this->config->get('locales');
@@ -338,13 +339,14 @@ class MultiLang
             return isset($locales[$locale]['locale']) ? $locales[$locale]['locale'] : $locale;
         }
 
-        return $this->config->get('default_locale', 'en');
+        return (string) $this->config->get('default_locale', 'en');
     }
 
     /**
      * Wrap routes to available languages group
      *
      * @param \Closure $callback
+     * @return void
      */
     public function routeGroup(Closure $callback)
     {
@@ -361,33 +363,11 @@ class MultiLang
     }
 
     /**
-     *  Manage texts
-     */
-    public function manageTextsRoutes()
-    {
-        $router = app('router');
-        $route = $this->config->get('text-route.route', 'texts');
-        $controller = $this->config->get(
-            'text-route.controller',
-            '\Longman\LaravelMultiLang\Controllers\TextsController'
-        );
-
-        $router->get(
-            $route,
-            ['uses' => $controller . '@index']
-        );
-        $router->post(
-            $route,
-            ['uses' => $controller . '@save']
-        );
-    }
-
-    /**
      * Get texts
      *
      * @return array
      */
-    public function getTexts()
+    public function getTexts(): array
     {
 
         return $this->texts;
@@ -400,7 +380,7 @@ class MultiLang
      * @param string $scope
      * @return array
      */
-    public function getAllTexts($lang = null, $scope = null)
+    public function getAllTexts(string $lang = null, string $scope = null): array
     {
         return $this->repository->loadAllFromDatabase($lang, $scope);
     }
@@ -411,7 +391,7 @@ class MultiLang
      * @param  array $texts_array
      * @return \Longman\LaravelMultiLang\MultiLang
      */
-    public function setTexts(array $texts_array)
+    public function setTexts(array $texts_array): MultiLang
     {
         $texts = [];
         foreach ($texts_array as $key => $value) {
@@ -429,7 +409,7 @@ class MultiLang
      * @param  string $key
      * @return void
      */
-    protected function queueToSave($key)
+    protected function queueToSave(string $key)
     {
         $this->new_texts[$key] = $key;
     }
@@ -441,7 +421,7 @@ class MultiLang
      * @param string $lang
      * @return string
      */
-    public function getUrl($path, $lang = null)
+    public function getUrl(string $path, string $lang = null): string
     {
         $locale = $lang ? $lang : $this->getLocale();
         if ($locale) {
@@ -457,7 +437,7 @@ class MultiLang
      * @param string $path
      * @return string
      */
-    private function removeLocaleFromPath($path)
+    private function removeLocaleFromPath(string $path): string
     {
         $locales = $this->config->get('locales');
         $locale = mb_substr($path, 0, 2);
@@ -474,7 +454,7 @@ class MultiLang
      * @param string $name
      * @return string
      */
-    public function getRoute($name)
+    public function getRoute(string $name): string
     {
         $locale = $this->getLocale();
         if ($locale) {
@@ -513,9 +493,9 @@ class MultiLang
      *
      * @return array
      */
-    public function getLocales()
+    public function getLocales(): array
     {
-        return $this->config->get('locales');
+        return (array) $this->config->get('locales');
     }
 
     /**
@@ -523,14 +503,12 @@ class MultiLang
      *
      * @return bool
      */
-    public function saveTexts()
+    public function saveTexts(): bool
     {
         if (empty($this->new_texts)) {
             return false;
         }
 
-        $this->repository->save($this->new_texts, $this->scope);
-
-        return true;
+        return $this->repository->save($this->new_texts, $this->scope);
     }
 }

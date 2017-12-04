@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Console;
 
@@ -75,7 +76,7 @@ class MigrationCommand extends Command
      * @param  string $table
      * @return bool
      */
-    protected function createMigration($table)
+    protected function createMigration(string $table): bool
     {
         $migrationFile = base_path("database/migrations") . "/" . date('Y_m_d_His') . "_create_multi_lang_texts_table.php";
 

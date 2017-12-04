@@ -7,12 +7,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Console;
 
 use App;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager as Database;
 use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
@@ -113,7 +115,7 @@ class ImportCommand extends Command
         }
     }
 
-    protected function import($scope = 'global', $force = false, $clear = false)
+    protected function import(string $scope = 'global', bool $force = false, bool $clear = false)
     {
         $path = $this->path . '/' . $scope . '.yml';
         if (! is_readable($path)) {
@@ -196,7 +198,7 @@ class ImportCommand extends Command
      *
      * @return \Illuminate\Database\Connection
      */
-    protected function getDatabase()
+    protected function getDatabase(): Connection
     {
         $connection = config('multilang.db.connection', 'default');
         $db = App::make(Database::class);
