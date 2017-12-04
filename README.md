@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 *This version of MultiLang package requires minimum PHP 7.0 version. 
-For older versions use MultiLang [1.X](https://github.com/akalongman/laravel-multilang/releases/tag/1.3.3)*
+For older PHP versions use MultiLang [1.x](https://github.com/akalongman/laravel-multilang/releases/tag/1.3.3)*
 
 This is a very useful package to integrate multi language (multi locale) functionality in Laravel 5.x.
 It includes a ServiceProvider to register the multilang and Middleware for automatic modification routes like `http://site.com/en/your-routes`.
