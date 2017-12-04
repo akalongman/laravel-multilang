@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use Longman\LaravelMultiLang\MultiLang;
-use Longman\LaravelMultiLang\Facades\MultiLang as MultiLangFacade;
 use GrahamCampbell\TestBenchCore\FacadeTrait;
 use Illuminate\Database\Schema\Blueprint;
+use Longman\LaravelMultiLang\Facades\MultiLang as MultiLangFacade;
+use Longman\LaravelMultiLang\MultiLang;
 
 class MultiLangFacadeTest extends AbstractTestCase
 {
@@ -26,8 +27,6 @@ class MultiLangFacadeTest extends AbstractTestCase
             $table->primary(['key', 'lang', 'scope']);
         });
 
-
-
         $this->inited = true;
     }
 
@@ -36,12 +35,10 @@ class MultiLangFacadeTest extends AbstractTestCase
         return 'multilang';
     }
 
-
     protected function getFacadeClass()
     {
         return MultiLangFacade::class;
     }
-
 
     protected function getFacadeRoot()
     {

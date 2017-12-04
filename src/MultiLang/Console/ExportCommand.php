@@ -112,8 +112,8 @@ class ExportCommand extends Command
             throw new InvalidArgumentException('Folder "' . $this->path . '" is not writable!');
         }
 
-        $force = $this->option('force');
-        $clear = $this->option('clear');
+        $force = (bool) $this->option('force');
+        $clear = (bool) $this->option('clear');
         foreach ($scopes as $scope) {
             $this->export($scope, $force, $clear);
         }

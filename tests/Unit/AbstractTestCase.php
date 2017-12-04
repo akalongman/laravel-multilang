@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit;
 
@@ -48,7 +49,7 @@ abstract class AbstractTestCase extends AbstractPackageTestCase
         }
     }
 
-    protected function getMultilang($env = 'testing', $config = [])
+    protected function getMultilang(string $env = 'testing', array $config = []): MultiLang
     {
         $cache    = $this->app->cache;
         $database = $this->app->db;
@@ -61,7 +62,7 @@ abstract class AbstractTestCase extends AbstractPackageTestCase
         return $multilang;
     }
 
-    protected function getRepository($config = [])
+    protected function getRepository(array $config = []): Repository
     {
         $cache    = $this->app->cache;
         $database = $this->app->db;
@@ -76,11 +77,9 @@ abstract class AbstractTestCase extends AbstractPackageTestCase
         return $repository;
     }
 
-    protected function getConfig($config)
+    protected function getConfig(array $config): Config
     {
         $configObject = new Config($config);
         return $configObject;
     }
-
-
 }
