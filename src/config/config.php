@@ -14,8 +14,8 @@ return [
             'name'             => 'English',
             'native_name'      => 'English',
             'flag'             => 'gb.svg',
-            'locale'           => 'en',
-            'canonical_locale' => 'en_GB',
+            'locale'           => 'en', // ISO 639-1
+            'canonical_locale' => 'en_GB', // ISO 3166-1
             'full_locale'      => 'en_GB.UTF-8',
         ],
     ],
@@ -55,11 +55,11 @@ return [
     | Exclude segments from redirect
     |--------------------------------------------------------------------------
     |
-    | Exclude segments from redirects in middleware
+    | Exclude segments from redirects in the middleware
     |
      */
     'exclude_segments'  => [
-
+        //
     ],
 
     /*
