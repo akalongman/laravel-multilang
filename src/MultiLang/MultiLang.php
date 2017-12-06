@@ -298,7 +298,7 @@ class MultiLang
             return '';
         }
 
-        if (strlen($locale) == 2) {
+        if (! empty($locale) && strlen($locale) == 2) {
             $locales = $this->config->get('locales', []);
 
             if (! isset($locales[$locale])) {
