@@ -144,7 +144,7 @@ class Repository
      */
     public function loadFromCache(string $lang, string $scope = null): array
     {
-        $texts = $this->getCache()->get($this->getCacheName($lang, $scope));
+        $texts = $this->getCache()->get($this->getCacheName($lang, $scope), []);
 
         return $texts;
     }
