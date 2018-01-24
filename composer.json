@@ -61,7 +61,10 @@
         "laravel": {
             "providers": [
                 "Longman\\LaravelMultiLang\\MultiLangServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "MultiLang": "Longman\\LaravelMultiLang\\Facades\\MultiLang"
+            }
         }
     }
 }
