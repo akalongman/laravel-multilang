@@ -94,7 +94,8 @@ class MultiLangTest extends AbstractTestCase
             'te.x-t/3' => 'value3',
         ];
 
-        $multilang->setLocale('ka', $texts);
+        $multilang->setLocale('ka');
+        $multilang->setTexts($texts);
 
         $this->assertEquals($texts, $multilang->getTexts());
     }
@@ -382,7 +383,7 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setTexts($texts);
 
         $this->assertEquals(
-            $multilang->get('text1', ['attribute' => 'Start Date', 'date' => '7 April 1986']),
+            $multilang->get('text1', [':attribute' => 'Start Date', ':date' => '7 April 1986']),
             'The Start Date must be a date after 7 April 1986.'
         );
 

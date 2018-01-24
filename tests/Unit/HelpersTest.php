@@ -27,6 +27,7 @@ class HelpersTest extends AbstractTestCase
      */
     public function t_should_return_valid_translation()
     {
+        /** @var \Longman\LaravelMultiLang\MultiLang $multilang */
         $multilang = app('multilang');
 
         $texts = [
@@ -35,7 +36,8 @@ class HelpersTest extends AbstractTestCase
             'te.x-t/3' => 'value3',
         ];
 
-        $multilang->setLocale('ka', $texts);
+        $multilang->setLocale('ka');
+        $multilang->setTexts($texts);
 
         $this->assertEquals('value1', t('text1'));
     }
