@@ -15,9 +15,10 @@ use Closure;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Symfony\Component\Translation\Loader\ArrayLoader;
+use Symfony\Component\Translation\MessageSelector;
+use Symfony\Component\Translation\Translator;
 
 class MultiLang
 {
@@ -69,6 +70,13 @@ class MultiLang
      * @var string
      */
     protected $scope = 'global';
+
+    /**
+     * Translator instance
+     *
+     * @var \Symfony\Component\Translation\Translator
+     */
+    protected $translator;
 
     /**
      * Create a new MultiLang instance.
@@ -158,34 +166,23 @@ class MultiLang
     }
 
     /**
-     * Set locale and load texts
+     * Set locale
      *
      * @param  string $lang
-     * @param  array $texts
      * @return void
      */
-    public function setLocale(string $lang, array $texts = null)
+    public function setLocale(string $lang)
     {
         if (! $lang) {
             throw new InvalidArgumentException('Locale is empty');
         }
         $this->lang = $lang;
-        if (! empty($texts)) {
-            $this->texts = $texts;
-        }
     }
 
-    /**
-     * Load texts
-     *
-     * @param  string $lang
-     * @param  string $scope
-     * @return array
-     */
-    public function loadTexts(string $lang = null, $scope = null): array
+    public function loadTexts(string $locale = null, string $scope = null): array
     {
-        if (is_null($lang)) {
-            $lang = $this->getLocale();
+        if (is_null($locale)) {
+            $locale = $this->getLocale();
         }
 
         if (is_null($scope)) {
@@ -193,19 +190,30 @@ class MultiLang
         }
 
         if ($this->environment != 'production' || $this->config->get('cache.enabled', true) === false) {
-            $this->texts = $this->repository->loadFromDatabase($lang, $scope);
-
-            return $this->texts;
-        }
-
-        if ($this->repository->existsInCache($lang, $scope)) {
-            $this->texts = $this->repository->loadFromCache($lang, $scope);
+            $texts = $this->repository->loadFromDatabase($locale, $scope);
         } else {
-            $this->texts = $this->repository->loadFromDatabase($lang, $scope);
-            $this->repository->storeInCache($lang, $this->texts, $scope);
+            if ($this->repository->existsInCache($locale, $scope)) {
+                $texts = $this->repository->loadFromCache($locale, $scope);
+            } else {
+                $texts = $this->repository->loadFromDatabase($locale, $scope);
+                $this->repository->storeInCache($locale, $texts, $scope);
+            }
         }
 
-        return $this->texts;
+        $this->createTranslator($locale, $scope, $texts);
+
+        $this->texts = $texts;
+
+        return $texts;
+    }
+
+    protected function createTranslator(string $locale, string $scope, array $texts): Translator
+    {
+        $this->translator = new Translator($locale, new MessageSelector());
+        $this->translator->addLoader('array', new ArrayLoader());
+        $this->translator->addResource('array', $texts, $locale, $scope);
+
+        return $this->translator;
     }
 
     /**
@@ -217,7 +225,6 @@ class MultiLang
      */
     public function get(string $key, array $replace = []): string
     {
-
         if (empty($key)) {
             throw new InvalidArgumentException('String key not provided');
         }
@@ -228,69 +235,14 @@ class MultiLang
 
         if (is_null($this->texts)) {
             // Load texts from storage
-            $this->loadTexts($this->getLocale(), $this->scope);
+            $this->loadTexts();
         }
 
         if (! isset($this->texts[$key])) {
             $this->queueToSave($key);
-
-            return $this->replaceMarkers($key, $replace);
         }
 
-        $text = $this->texts[$key];
-
-        return $this->replaceMarkers($text, $replace);
-    }
-
-    /**
-     * Replace markers in text
-     *
-     * @param  string $text
-     * @param  array $replace
-     * @return string
-     */
-    protected function replaceMarkers(string $text, array $replace = []): string
-    {
-        if (empty($replace)) {
-            return $text;
-        }
-
-        return $this->makeReplacements($text, $replace);
-    }
-
-    /**
-     * Make the place-holder replacements on a line.
-     *
-     * @param  string $text
-     * @param  array $replace
-     * @return string
-     */
-    protected function makeReplacements(string $text, array $replace): string
-    {
-        $replace = $this->sortReplacements($replace);
-
-        foreach ($replace as $key => $value) {
-            $text = str_replace(
-                [':' . $key, ':' . Str::upper($key), ':' . Str::ucfirst($key)],
-                [$value, Str::upper($value), Str::ucfirst($value)],
-                $text
-            );
-        }
-
-        return $text;
-    }
-
-    /**
-     * Sort the replacements array.
-     *
-     * @param  array $replace
-     * @return \Illuminate\Support\Collection
-     */
-    protected function sortReplacements(array $replace): Collection
-    {
-        return (new Collection($replace))->sortBy(function ($value, $key) {
-            return mb_strlen($key) * -1;
-        });
+        return $this->translator->trans($key, $replace, $this->getScope());
     }
 
     /**
@@ -411,6 +363,8 @@ class MultiLang
         }
 
         $this->texts = $texts;
+
+        $this->createTranslator($this->getLocale(), $this->getScope(), $texts);
 
         return $this;
     }
