@@ -11,11 +11,10 @@ declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
 
-use Blade;
 use Illuminate\Foundation\Events\LocaleUpdated;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\Compilers\BladeCompiler;
 use Longman\LaravelMultiLang\Console\ExportCommand;
 use Longman\LaravelMultiLang\Console\ImportCommand;
 use Longman\LaravelMultiLang\Console\MigrationCommand;
@@ -28,7 +27,7 @@ class MultiLangServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * Bootstrap any application services.
@@ -52,7 +51,7 @@ class MultiLangServiceProvider extends ServiceProvider
         );
 
         // Register blade directives
-        Blade::directive('t', function ($expression) {
+        $this->getBlade()->directive('t', function ($expression) {
             return "<?php echo e(t({$expression})); ?>";
         });
 
@@ -144,9 +143,14 @@ class MultiLangServiceProvider extends ServiceProvider
             ]
         );
 
-        Request::macro('locale', function () {
+        $this->app->make('request')->macro('locale', function () {
             return app('multilang')->getLocale();
         });
+    }
+
+    private function getBlade(): BladeCompiler
+    {
+        return $this->app->make('view')->getEngineResolver()->resolve('blade')->getCompiler();
     }
 
     /**
@@ -158,11 +162,11 @@ class MultiLangServiceProvider extends ServiceProvider
     {
         return [
             'multilang',
+            MultiLang::class,
             'command.multilang.migration',
             'command.multilang.texts',
             'command.multilang.import',
             'command.multilang.export',
-            MultiLang::class,
         ];
     }
 }
