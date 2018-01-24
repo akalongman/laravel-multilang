@@ -213,6 +213,7 @@ class MultiLangTest extends AbstractTestCase
     {
         $multilang = $this->getMultilang('production');
         $multilang->setLocale('ka');
+        $multilang->loadTexts();
 
         $this->assertTrue($multilang->getRepository()->existsInCache('ka', 'global'));
 
@@ -263,6 +264,7 @@ class MultiLangTest extends AbstractTestCase
 
         $multilang = $this->getMultilang('local');
         $multilang->setLocale('en');
+        $multilang->loadTexts();
 
         $this->assertEquals($strings, $multilang->getTexts());
     }
@@ -305,6 +307,7 @@ class MultiLangTest extends AbstractTestCase
 
         $multilang = $this->getMultilang('local');
         $multilang->setLocale('ka');
+        $multilang->loadTexts();
 
         $this->assertEquals('ka', $multilang->getLocale('ka'));
 

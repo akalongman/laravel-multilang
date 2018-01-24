@@ -170,12 +170,9 @@ class MultiLang
             throw new InvalidArgumentException('Locale is empty');
         }
         $this->lang = $lang;
-
-        if (! is_array($texts)) {
-            $texts = $this->loadTexts($this->getLocale(), $this->scope);
+        if (! empty($texts)) {
+            $this->texts = $texts;
         }
-
-        $this->texts = $texts;
     }
 
     /**
@@ -185,22 +182,30 @@ class MultiLang
      * @param  string $scope
      * @return array
      */
-    public function loadTexts(string $lang, $scope = null): array
+    public function loadTexts(string $lang = null, $scope = null): array
     {
-        if ($this->environment != 'production' || $this->config->get('cache.enabled', true) === false) {
-            $texts = $this->repository->loadFromDatabase($lang, $scope);
+        if (is_null($lang)) {
+            $lang = $this->getLocale();
+        }
 
-            return $texts;
+        if (is_null($scope)) {
+            $scope = $this->getScope();
+        }
+
+        if ($this->environment != 'production' || $this->config->get('cache.enabled', true) === false) {
+            $this->texts = $this->repository->loadFromDatabase($lang, $scope);
+
+            return $this->texts;
         }
 
         if ($this->repository->existsInCache($lang, $scope)) {
-            $texts = $this->repository->loadFromCache($lang, $scope);
+            $this->texts = $this->repository->loadFromCache($lang, $scope);
         } else {
-            $texts = $this->repository->loadFromDatabase($lang, $scope);
-            $this->repository->storeInCache($lang, $texts, $scope);
+            $this->texts = $this->repository->loadFromDatabase($lang, $scope);
+            $this->repository->storeInCache($lang, $this->texts, $scope);
         }
 
-        return $texts;
+        return $this->texts;
     }
 
     /**
@@ -219,6 +224,11 @@ class MultiLang
 
         if (! $this->lang) {
             return $key;
+        }
+
+        if (is_null($this->texts)) {
+            // Load texts from storage
+            $this->loadTexts($this->getLocale(), $this->scope);
         }
 
         if (! isset($this->texts[$key])) {
