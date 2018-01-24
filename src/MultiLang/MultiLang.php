@@ -220,13 +220,13 @@ class MultiLang
      * Get translated text
      *
      * @param  string $key
-     * @param  array $replace
+     * @param  array $replacements
      * @return string
      */
-    public function get(string $key, array $replace = []): string
+    public function get(string $key, array $replacements = []): string
     {
         if (empty($key)) {
-            throw new InvalidArgumentException('String key not provided');
+            throw new InvalidArgumentException('Text key not provided');
         }
 
         if (! $this->lang) {
@@ -242,7 +242,15 @@ class MultiLang
             $this->queueToSave($key);
         }
 
-        return $this->translator->trans($key, $replace, $this->getScope());
+        if (! empty($replacements)) {
+            $keys = array_keys($replacements);
+            $keys = array_map(function ($v) {
+                return ':' . $v;
+            }, $keys);
+            $replacements = array_combine($keys, $replacements);
+        }
+
+        return $this->translator->trans($key, $replacements, $this->getScope());
     }
 
     /**
