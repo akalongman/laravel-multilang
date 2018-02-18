@@ -413,10 +413,18 @@ class MultiLang
      */
     private function removeLocaleFromPath(string $path): string
     {
+        $lang_path = $path;
+
+        // Remove domain from path
+        $app_url = config('app.url', '');
+        if (! empty($app_url) && mb_substr($lang_path, 0, mb_strlen($app_url)) === $app_url) {
+            $lang_path = ltrim(str_replace($app_url, '', $lang_path), '/');
+        }
+
         $locales = $this->config->get('locales');
-        $locale = mb_substr($path, 0, 2);
+        $locale = mb_substr($lang_path, 0, 2);
         if (isset($locales[$locale])) {
-            return mb_substr($path, 3);
+            return mb_substr($lang_path, 3);
         }
 
         return $path;
