@@ -7,12 +7,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Console;
 
 use App;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager as Database;
 use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
@@ -74,12 +76,7 @@ class ImportCommand extends Command
      */
     protected $scopes = ['global', 'site', 'admin'];
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
+    public function handle(): void
     {
         $this->table = config('multilang.db.texts_table', 'texts');
         $this->db = $this->getDatabase();
@@ -106,26 +103,26 @@ class ImportCommand extends Command
             throw new InvalidArgumentException('Folder "' . $this->path . '" is not accessible!');
         }
 
-        $force = $this->option('force');
-        $clear = $this->option('clear');
+        $force = (bool) $this->option('force');
+        $clear = (bool) $this->option('clear');
         foreach ($scopes as $scope) {
             $this->import($scope, $force, $clear);
         }
     }
 
-    protected function import($scope = 'global', $force = false, $clear = false)
+    protected function import(string $scope = 'global', bool $force = false, bool $clear = false): void
     {
         $path = $this->path . '/' . $scope . '.yml';
         if (! is_readable($path)) {
             $this->warn('File "' . $path . '" is not readable!');
 
-            return false;
+            return;
         }
         $data = Yaml::parse(file_get_contents($path));
         if (empty($data)) {
             $this->warn('File "' . $path . '" is empty!');
 
-            return false;
+            return;
         }
 
         if ($clear) {
@@ -191,12 +188,7 @@ class ImportCommand extends Command
         $this->info('Import texts of "' . $scope . '" is finished. Inserted: ' . $inserted . ', Updated: ' . $updated);
     }
 
-    /**
-     * Get a database connection instance.
-     *
-     * @return \Illuminate\Database\Connection
-     */
-    protected function getDatabase()
+    protected function getDatabase(): Connection
     {
         $connection = config('multilang.db.connection', 'default');
         $db = App::make(Database::class);

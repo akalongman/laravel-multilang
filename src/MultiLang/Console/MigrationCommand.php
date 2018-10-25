@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Console;
 
@@ -29,12 +30,7 @@ class MigrationCommand extends Command
      */
     protected $description = 'Creates a migration following the multilang specifications.';
 
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(): void
     {
         $table = Config::get('multilang.db.texts_table');
 
@@ -69,15 +65,9 @@ class MigrationCommand extends Command
         }
     }
 
-    /**
-     * Create the migration.
-     *
-     * @param  string $table
-     * @return bool
-     */
-    protected function createMigration($table)
+    protected function createMigration(string $table): bool
     {
-        $migrationFile = base_path("database/migrations") . "/" . date('Y_m_d_His') . "_create_multi_lang_texts_table.php";
+        $migrationFile = base_path('database/migrations') . '/' . date('Y_m_d_His') . '_create_multi_lang_texts_table.php';
 
         if (file_exists($migrationFile)) {
             return false;

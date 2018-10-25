@@ -7,11 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Console;
 
 use App;
 use Illuminate\Console\Command;
+use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager as Database;
 use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
@@ -76,9 +78,9 @@ class ExportCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->table = config('multilang.db.texts_table', 'texts');
         $this->db = $this->getDatabase();
@@ -110,8 +112,8 @@ class ExportCommand extends Command
             throw new InvalidArgumentException('Folder "' . $this->path . '" is not writable!');
         }
 
-        $force = $this->option('force');
-        $clear = $this->option('clear');
+        $force = (bool) $this->option('force');
+        $clear = (bool) $this->option('clear');
         foreach ($scopes as $scope) {
             $this->export($scope, $force, $clear);
         }
@@ -145,7 +147,7 @@ class ExportCommand extends Command
         //$this->info('Database backup restored successfully');
     }
 
-    protected function export($scope = 'global', $force = false, $clear = false)
+    protected function export(string $scope = 'global', bool $force = false, bool $clear = false): void
     {
         $dbTexts = $this->getTextsFromDb($scope);
 
@@ -167,12 +169,7 @@ class ExportCommand extends Command
         $this->info('Export texts of "' . $scope . '" is finished in "' . $path . '"');
     }
 
-    /**
-     * Get a texts from file.
-     *
-     * @return array
-     */
-    protected function getTextsFromFile($scope)
+    protected function getTextsFromFile(string $scope): array
     {
         $fileTexts = [];
         $path = $this->path . '/' . $scope . '.yml';
@@ -188,12 +185,7 @@ class ExportCommand extends Command
         return $formattedFileTexts;
     }
 
-    /**
-     * Get a texts from database.
-     *
-     * @return array
-     */
-    protected function getTextsFromDb($scope)
+    protected function getTextsFromDb(string $scope): array
     {
         $dbTexts = $this->db
             ->table($this->table)
@@ -213,12 +205,7 @@ class ExportCommand extends Command
         return $formattedDbTexts;
     }
 
-    /**
-     * Get a database connection instance.
-     *
-     * @return \Illuminate\Database\Connection
-     */
-    protected function getDatabase()
+    protected function getDatabase(): Connection
     {
         $connection = config('multilang.db.connection', 'default');
         $db = App::make(Database::class);

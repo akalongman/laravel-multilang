@@ -7,10 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
 
 use Blade;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Events\LocaleUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
@@ -29,12 +31,7 @@ class MultiLangServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
         // Publish config files
         $this->publishes(
@@ -69,21 +66,16 @@ class MultiLangServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../views', 'multilang');
     }
 
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
         $configPath = __DIR__ . '/../config/config.php';
         $this->mergeConfigFrom($configPath, 'debugbar');
 
-        $this->app->singleton('multilang', function ($app) {
+        $this->app->singleton('multilang', function (Application $app) {
             $environment = $app->environment();
             $config = $app['config']->get('multilang');
 
-            $multilang = new \Longman\LaravelMultiLang\MultiLang(
+            $multilang = new MultiLang(
                 $environment,
                 $config,
                 $app['cache'],
@@ -104,64 +96,19 @@ class MultiLangServiceProvider extends ServiceProvider
             return $multilang;
         });
 
-        $this->app->alias('multilang', 'Longman\LaravelMultiLang\MultiLang');
-
-        $this->app->singleton(
-            'command.multilang.migration',
-            function () {
-                return new MigrationCommand();
-            }
-        );
-
-        $this->app->singleton(
-            'command.multilang.texts',
-            function () {
-                return new TextsCommand();
-            }
-        );
-
-        $this->app->singleton(
-            'command.multilang.import',
-            function () {
-                return new ImportCommand();
-            }
-        );
-
-        $this->app->singleton(
-            'command.multilang.export',
-            function () {
-                return new ExportCommand();
-            }
-        );
+        $this->app->alias('multilang', MultiLang::class);
 
         $this->commands(
             [
-                'command.multilang.migration',
-                'command.multilang.texts',
-                'command.multilang.import',
-                'command.multilang.export',
+                MigrationCommand::class,
+                TextsCommand::class,
+                ImportCommand::class,
+                ExportCommand::class,
             ]
         );
 
         Request::macro('locale', function () {
             return app('multilang')->getLocale();
         });
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            'multilang',
-            'command.multilang.migration',
-            'command.multilang.texts',
-            'command.multilang.import',
-            'command.multilang.export',
-            'Longman\LaravelMultiLang\MultiLang',
-        ];
     }
 }

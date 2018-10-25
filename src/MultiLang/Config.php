@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
 
@@ -36,7 +37,7 @@ class Config
      * @param mixed $default
      * @return array|mixed|null
      */
-    public function get($key = null, $default = null)
+    public function get(?string $key = null, $default = null)
     {
         $array = $this->data;
 
