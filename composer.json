@@ -30,10 +30,10 @@
         "ext-mbstring": "*",
         "symfony/yaml": "~4.2",
         "symfony/translation": "~4.2",
-        "illuminate/console": "5.8.*",
-        "illuminate/support": "5.8.*",
-        "illuminate/database": "5.8.*",
-        "illuminate/http": "5.8.*"
+        "illuminate/console": "5.7.*|5.8.*",
+        "illuminate/support": "5.7.*|5.8.*",
+        "illuminate/database": "5.7.*|5.8.*",
+        "illuminate/http": "5.7.*|5.8.*"
     },
     "require-dev": {
         "mockery/mockery": "~1.2",
