@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use GrahamCampbell\TestBenchCore\ServiceProviderTrait;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager as Database;
@@ -14,8 +13,6 @@ use Illuminate\Database\DatabaseManager as Database;
  */
 class ServiceProviderTest extends AbstractTestCase
 {
-    use ServiceProviderTrait;
-
     /**
      * @test
      */

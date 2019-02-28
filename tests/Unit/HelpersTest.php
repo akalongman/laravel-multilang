@@ -15,7 +15,7 @@ use Longman\LaravelMultiLang\MultiLang;
 class HelpersTest extends AbstractTestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

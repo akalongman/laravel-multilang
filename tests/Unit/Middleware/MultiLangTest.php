@@ -9,7 +9,7 @@ use Tests\Unit\AbstractTestCase;
 
 class MultiLangTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

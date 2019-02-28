@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use GrahamCampbell\TestBench\AbstractPackageTestCase;
+use Orchestra\Testbench\TestCase as BaseTestCase;
 use Illuminate\Database\Schema\Blueprint;
 use Longman\LaravelMultiLang\MultiLang;
 use Longman\LaravelMultiLang\MultiLangServiceProvider;
@@ -14,7 +14,7 @@ use Longman\LaravelMultiLang\Config;
  * This is the abstract test case class.
  *
  */
-abstract class AbstractTestCase extends AbstractPackageTestCase
+abstract class AbstractTestCase extends BaseTestCase
 {
     /**
      * Get the service provider class.
@@ -29,7 +29,8 @@ abstract class AbstractTestCase extends AbstractPackageTestCase
 
     protected function createTable()
     {
-        $schema = $this->app->db->getSchemaBuilder();
+        /** @var \Illuminate\Database\Schema\MySqlBuilder $schema */
+        $schema = $this->app['db']->getSchemaBuilder();
 
         $schema->create('texts', function (Blueprint $table) {
             $table->char('key');

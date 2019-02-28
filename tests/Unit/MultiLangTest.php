@@ -9,7 +9,7 @@ use Longman\LaravelMultiLang\MultiLang;
 class MultiLangTest extends AbstractTestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

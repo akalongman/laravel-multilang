@@ -3,20 +3,18 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use GrahamCampbell\TestBenchCore\FacadeTrait;
 use Illuminate\Database\Schema\Blueprint;
 use Longman\LaravelMultiLang\Facades\MultiLang as MultiLangFacade;
 use Longman\LaravelMultiLang\MultiLang;
 
 class MultiLangFacadeTest extends AbstractTestCase
 {
-    use FacadeTrait;
-
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $schema = $this->app->db->getSchemaBuilder();
+        /** @var \Illuminate\Database\Schema\MySqlBuilder $schema */
+        $schema = $this->app['db']->getSchemaBuilder();
 
         $schema->create('texts', function (Blueprint $table) {
             $table->char('key');
