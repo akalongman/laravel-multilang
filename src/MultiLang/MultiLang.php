@@ -16,6 +16,7 @@ use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Database\DatabaseManager as Database;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
+use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Translation\Loader\ArrayLoader;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator;
@@ -209,7 +210,7 @@ class MultiLang
 
     protected function createTranslator(string $locale, string $scope, array $texts): Translator
     {
-        $this->translator = new Translator($locale, new MessageSelector());
+        $this->translator = new Translator($locale);
         $this->translator->addLoader('array', new ArrayLoader());
         $this->translator->addResource('array', $texts, $locale, $scope);
 
