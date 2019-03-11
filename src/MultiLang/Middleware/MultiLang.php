@@ -35,24 +35,15 @@ class MultiLang
     protected $redirector;
 
     /**
-     * Multilang.
-     *
-     * @var \Longman\LaravelMultiLang\Multilang
-     */
-    protected $multilang;
-
-    /**
      * MultiLang constructor.
      *
      * @param \Illuminate\Foundation\Application $app
      * @param \Illuminate\Routing\Redirector $redirector
-     * @param \Longman\LaravelMultiLang\MultiLang $multilang
      */
-    public function __construct(Application $app, Redirector $redirector, MultiLangLib $multilang)
+    public function __construct(Application $app, Redirector $redirector)
     {
         $this->app = $app;
         $this->redirector = $redirector;
-        $this->multilang = $multilang;
     }
 
     /**
@@ -64,7 +55,12 @@ class MultiLang
      */
     public function handle(Request $request, Closure $next)
     {
-        $url = $this->multilang->getRedirectUrl($request);
+        if (! $this->app->bound(MultiLangLib::class)) {
+            return $next($request);
+        }
+        $multilang = $this->app->make(MultiLangLib::class);
+
+        $url = $multilang->getRedirectUrl($request);
 
         if (! empty($url)) {
             if ($request->expectsJson()) {
@@ -74,16 +70,16 @@ class MultiLang
             }
         }
 
-        $locale = $this->multilang->detectLocale($request);
+        $locale = $multilang->detectLocale($request);
 
         $this->app->setLocale($locale);
 
-        if ($this->multilang->getConfig()->get('set_carbon_locale')) {
+        if ($multilang->getConfig()->get('set_carbon_locale')) {
             Carbon::setLocale($locale);
         }
 
-        if ($this->multilang->getConfig()->get('set_system_locale')) {
-            $locales = $this->multilang->getLocales();
+        if ($multilang->getConfig()->get('set_system_locale')) {
+            $locales = $multilang->getLocales();
             if (! empty($locales[$locale]['full_locale'])) {
                 setlocale(LC_ALL, $locales[$locale]['full_locale']);
             }
