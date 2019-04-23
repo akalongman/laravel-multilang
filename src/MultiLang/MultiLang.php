@@ -226,6 +226,10 @@ class MultiLang
      */
     public function get(string $key, array $replacements = []): string
     {
+        if (! $this->getConfig()->get('use_texts', true)) {
+            throw new InvalidArgumentException('Using texts from database is disabled in config');
+        }
+
         if (empty($key)) {
             throw new InvalidArgumentException('Text key not provided');
         }
