@@ -1,12 +1,5 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 declare(strict_types=1);
 
 if (! function_exists('lang_url')) {
@@ -17,9 +10,9 @@ if (! function_exists('lang_url')) {
      * @param  array $parameters
      * @param  bool $secure
      * @param  string $locale
-     * @return Illuminate\Contracts\Routing\UrlGenerator|string
+     * @return \Illuminate\Contracts\Routing\UrlGenerator|string
      */
-    function lang_url(string $path = null, array $parameters = [], bool $secure = null, string $locale = null)
+    function lang_url(?string $path = null, array $parameters = [], ?bool $secure = null, ?string $locale = null)
     {
         if (is_null($path)) {
             return app(Illuminate\Contracts\Routing\UrlGenerator::class);
@@ -43,7 +36,7 @@ if (! function_exists('lang_redirect')) {
      * @param  bool $secure
      * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
-    function lang_redirect(string $to = null, int $status = 302, array $headers = [], bool $secure = null)
+    function lang_redirect(?string $to = null, int $status = 302, array $headers = [], ?bool $secure = null)
     {
         if (is_null($to)) {
             return app('redirect');

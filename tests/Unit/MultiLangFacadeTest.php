@@ -16,7 +16,7 @@ class MultiLangFacadeTest extends AbstractTestCase
         /** @var \Illuminate\Database\Schema\MySqlBuilder $schema */
         $schema = $this->app['db']->getSchemaBuilder();
 
-        $schema->create('texts', function (Blueprint $table) {
+        $schema->create('texts', static function (Blueprint $table) {
             $table->char('key');
             $table->char('lang', 2);
             $table->text('value')->default('');

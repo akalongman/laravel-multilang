@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit;
@@ -7,11 +8,9 @@ use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use InvalidArgumentException;
-use Longman\LaravelMultiLang\MultiLang;
 
 class HelpersTest extends AbstractTestCase
 {
-
     public function setUp(): void
     {
         parent::setUp();
@@ -44,7 +43,7 @@ class HelpersTest extends AbstractTestCase
      */
     public function lang_url_should_return_valid_url()
     {
-        /** @var MultiLang $multilang */
+        /** @var \Longman\LaravelMultiLang\MultiLang $multilang */
         $multilang = app('multilang');
 
         $texts = [
@@ -75,7 +74,7 @@ class HelpersTest extends AbstractTestCase
     /** @test */
     public function lang_redirect_should_return_redirect_response()
     {
-        /** @var MultiLang $multilang */
+        /** @var \Longman\LaravelMultiLang\MultiLang $multilang */
         $multilang = app('multilang');
         $multilang->setLocale('ka');
 

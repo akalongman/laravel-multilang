@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit;
@@ -26,7 +27,7 @@ abstract class AbstractTestCase extends BaseTestCase
         /** @var \Illuminate\Database\Schema\MySqlBuilder $schema */
         $schema = $this->app['db']->getSchemaBuilder();
         $schema->dropIfExists('texts');
-        $schema->create('texts', function (Blueprint $table) {
+        $schema->create('texts', static function (Blueprint $table) {
             $table->char('key');
             $table->char('lang', 2);
             $table->text('value')->nullable();
@@ -49,7 +50,7 @@ abstract class AbstractTestCase extends BaseTestCase
         $cache    = $this->app->cache;
         $database = $this->app->db;
 
-        $default_config = include(__DIR__ . '/../../src/config/config.php');
+        $default_config = include __DIR__ . '/../../src/config/config.php';
         $config = array_replace_recursive($default_config, $config);
 
         $multilang = new MultiLang($env, $config, $cache, $database);
@@ -62,7 +63,7 @@ abstract class AbstractTestCase extends BaseTestCase
         $cache    = $this->app->cache;
         $database = $this->app->db;
 
-        $default_config = include(__DIR__ . '/../../src/config/config.php');
+        $default_config = include __DIR__ . '/../../src/config/config.php';
         $config = array_replace_recursive($default_config, $config);
 
         $config = $this->getConfig($config);

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Middleware;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Longman\LaravelMultiLang\Middleware\MultiLang as MultiLangMiddleware;
 use Tests\Unit\AbstractTestCase;
 
@@ -35,7 +36,7 @@ class MultiLangTest extends AbstractTestCase
             $content = null
         );
 
-        $result = $middleware->handle($request, function (Request $request) {
+        $result = $middleware->handle($request, static function (Request $request) {
 
             return 'no_redirect';
         });
@@ -62,7 +63,7 @@ class MultiLangTest extends AbstractTestCase
             $content = null
         );
 
-        $result = $middleware->handle($request, function () {
+        $result = $middleware->handle($request, static function () {
             return 'no_redirect';
         });
 
@@ -90,7 +91,7 @@ class MultiLangTest extends AbstractTestCase
             $content = null
         );
 
-        $result = $middleware->handle($request, function () {
+        $result = $middleware->handle($request, static function () {
             return 'no_redirect';
         });
 
@@ -121,7 +122,7 @@ class MultiLangTest extends AbstractTestCase
             $content = null
         );
 
-        $result = $middleware->handle($request, function () {
+        $result = $middleware->handle($request, static function () {
             return 'no_redirect';
         });
 
@@ -150,8 +151,8 @@ class MultiLangTest extends AbstractTestCase
         );
         $request->headers->set('accept', 'application/json');
 
-        /** @var Response $response */
-        $response = $middleware->handle($request, function () {
+        /** @var \Illuminate\Http\Response $response */
+        $response = $middleware->handle($request, static function () {
             return '404';
         });
 
@@ -159,5 +160,4 @@ class MultiLangTest extends AbstractTestCase
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('Not found', $response->getContent());
     }
-
 }

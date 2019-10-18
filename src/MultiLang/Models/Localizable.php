@@ -1,24 +1,17 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Models;
 
 trait Localizable
 {
-
     /**
      * Boot trait
      */
     public static function bootLocalizable()
     {
-        static::addGlobalScope(new LocalizableScope);
+        static::addGlobalScope(new LocalizableScope());
     }
 
     /**
@@ -28,7 +21,7 @@ trait Localizable
      */
     public function getLocalizableColumn()
     {
-        $localizableColumn = isset(static::$localizableColumn) ? static::$localizableColumn : 'lang';
+        $localizableColumn = static::$localizableColumn ?? 'lang';
 
         return $localizableColumn;
     }
@@ -42,5 +35,4 @@ trait Localizable
     {
         return $this->getTable() . '.' . $this->getLocalizableColumn();
     }
-
 }

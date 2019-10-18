@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit;
@@ -83,7 +84,6 @@ class RepositoryTest extends AbstractTestCase
         $this->assertEquals($texts, $repository->loadFromDatabase('az'));
         $this->assertEquals($textsScoped, $repository->loadFromDatabase('en', 'site'));
         $this->assertEquals($textsScoped, $repository->loadFromDatabase('az', 'site'));
-
     }
 
     /**
@@ -117,6 +117,5 @@ class RepositoryTest extends AbstractTestCase
 
         $this->assertEquals($texts, $repository->loadFromCache('en'));
         $this->assertEquals($texts, $repository->loadFromCache('az'));
-
     }
 }

@@ -1,12 +1,5 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
@@ -45,13 +38,13 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
         );
 
         // Register blade directives
-        $this->getBlade()->directive('t', function ($expression) {
+        $this->getBlade()->directive('t', static function ($expression) {
             return "<?php echo e(t({$expression})); ?>";
         });
 
         $this->app['events']->listen(RouteMatched::class, function () {
             $scope = $this->app['config']->get('app.scope');
-            if ($scope && $scope != 'global') {
+            if ($scope && $scope !== 'global') {
                 $this->app['multilang']->setScope($scope);
             }
         });
@@ -87,7 +80,7 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
             if ($multilang->autoSaveIsAllowed()) {
                 $app->terminating(function () use ($multilang) {
                     $scope = $this->app['config']->get('app.scope');
-                    if ($scope && $scope != 'global') {
+                    if ($scope && $scope !== 'global') {
                         $multilang->setScope($scope);
                     }
 
@@ -102,28 +95,28 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
 
         $this->app->singleton(
             'command.multilang.migration',
-            function () {
+            static function () {
                 return new MigrationCommand();
             }
         );
 
         $this->app->singleton(
             'command.multilang.texts',
-            function () {
+            static function () {
                 return new TextsCommand();
             }
         );
 
         $this->app->singleton(
             'command.multilang.import',
-            function () {
+            static function () {
                 return new ImportCommand();
             }
         );
 
         $this->app->singleton(
             'command.multilang.export',
-            function () {
+            static function () {
                 return new ExportCommand();
             }
         );
@@ -137,7 +130,7 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
             ]
         );
 
-        $this->app->make('request')->macro('locale', function () {
+        $this->app->make('request')->macro('locale', static function () {
             return app('multilang')->getLocale();
         });
     }

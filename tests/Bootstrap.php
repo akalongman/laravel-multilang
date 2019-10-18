@@ -1,12 +1,5 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 declare(strict_types=1);
 
 /*
@@ -25,8 +18,8 @@ $root = realpath(dirname(dirname(__FILE__)));
  */
 if (! file_exists($root . '/vendor/autoload.php')) {
     throw new Exception(
-        'Please run "php composer.phar install --dev" in root directory '
-        . 'to setup unit test dependencies before running the tests'
+        'Please run "php composer.phar install --dev" in root directory 
+        to setup unit test dependencies before running the tests'
     );
 }
 
