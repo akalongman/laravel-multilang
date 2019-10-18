@@ -26,20 +26,20 @@
         }
     ],
     "require": {
-        "php": "^7.1.0",
+        "php": "^7.2",
         "ext-mbstring": "*",
-        "symfony/yaml": "~4.2",
-        "symfony/translation": "~4.2",
-        "illuminate/console": "5.7.*|5.8.*",
-        "illuminate/support": "5.7.*|5.8.*",
-        "illuminate/database": "5.7.*|5.8.*",
-        "illuminate/http": "5.7.*|5.8.*"
+        "symfony/yaml": "~4.3",
+        "symfony/translation": "~4.3",
+        "illuminate/console": "^6.3",
+        "illuminate/support": "^6.3",
+        "illuminate/database": "^6.3",
+        "illuminate/http": "^6.3"
     },
     "require-dev": {
         "mockery/mockery": "~1.2",
-        "phpunit/phpunit": "~8.0",
-        "longman/php-code-style": "^2.0",
-        "orchestra/testbench": "^3.8"
+        "phpunit/phpunit": "~8.4",
+        "longman/php-code-style": "^3.0",
+        "orchestra/testbench": "^4.2"
     },
     "autoload": {
         "psr-4": {
@@ -66,5 +66,12 @@
                 "MultiLang": "Longman\\LaravelMultiLang\\Facades\\MultiLang"
             }
         }
+    },
+    "scripts": {
+        "phpcs": "./vendor/bin/phpcs --standard=phpcs.xml -spn --encoding=utf-8 src/ tests/ --report-width=150",
+        "phpcbf": "./vendor/bin/phpcbf --standard=phpcs.xml -spn --encoding=utf-8 src/ tests/ --report-width=150",
+        "test": "./vendor/bin/phpunit -c phpunit.xml.dist",
+        "coverage-clover": "./vendor/bin/phpunit --stop-on-failure --coverage-clover build/logs/clover.xml",
+        "coverage-html": "./vendor/bin/phpunit --stop-on-failure --coverage-html build/coverage"
     }
 }
