@@ -76,13 +76,13 @@ class RepositoryTest extends AbstractTestCase
         ];
 
         $repository->save($texts);
-        $repository->save($textsScoped, 'scope_name');
+        $repository->save($textsScoped, 'site');
 
         $this->assertFalse($repository->save([]));
         $this->assertEquals($texts, $repository->loadFromDatabase('en'));
         $this->assertEquals($texts, $repository->loadFromDatabase('az'));
-        $this->assertEquals($textsScoped, $repository->loadFromDatabase('en', 'scope_name'));
-        $this->assertEquals($textsScoped, $repository->loadFromDatabase('az', 'scope_name'));
+        $this->assertEquals($textsScoped, $repository->loadFromDatabase('en', 'site'));
+        $this->assertEquals($textsScoped, $repository->loadFromDatabase('az', 'site'));
 
     }
 

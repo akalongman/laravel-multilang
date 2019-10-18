@@ -5,6 +5,7 @@ namespace Tests\Unit;
 
 use Illuminate\Http\Request;
 use Longman\LaravelMultiLang\MultiLang;
+use TypeError;
 
 class MultiLangTest extends AbstractTestCase
 {
@@ -165,22 +166,18 @@ class MultiLangTest extends AbstractTestCase
         $this->assertEquals($texts, $multilang->getTexts());
     }
 
-    /**
-     * @test
-     * @expectedException \TypeError
-     */
+    /** @test */
     public function set_empty_locale()
     {
+        $this->expectException(TypeError::class);
         $multilang = $this->getMultilang();
         $multilang->setLocale(null);
     }
 
-    /**
-     * @test
-     * @expectedException \TypeError
-     */
+    /** @test */
     public function get_string_without_key()
     {
+        $this->expectException(TypeError::class);
         $multilang = $this->getMultilang();
         $multilang->setLocale('ka');
 

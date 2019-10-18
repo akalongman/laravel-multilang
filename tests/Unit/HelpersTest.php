@@ -9,9 +9,6 @@ use Illuminate\Routing\Redirector;
 use InvalidArgumentException;
 use Longman\LaravelMultiLang\MultiLang;
 
-/**
- * This is the service provider test class.
- */
 class HelpersTest extends AbstractTestCase
 {
 
@@ -90,12 +87,10 @@ class HelpersTest extends AbstractTestCase
         $this->assertEquals($redirect->getStatusCode(), 302);
     }
 
-    /**
-     * @test
-     * @expectedException InvalidArgumentException
-     */
+    /** @test */
     public function lang_route_should_throw_exception_if_route_is_not_defined()
     {
+        $this->expectException(InvalidArgumentException::class);
         lang_route('missing-route');
     }
 }

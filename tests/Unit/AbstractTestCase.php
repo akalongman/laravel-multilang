@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use Orchestra\Testbench\TestCase as BaseTestCase;
 use Illuminate\Database\Schema\Blueprint;
+use Longman\LaravelMultiLang\Config;
 use Longman\LaravelMultiLang\MultiLang;
 use Longman\LaravelMultiLang\MultiLangServiceProvider;
 use Longman\LaravelMultiLang\Repository;
-use Longman\LaravelMultiLang\Config;
+use Orchestra\Testbench\TestCase as BaseTestCase;
 
 /**
  * This is the abstract test case class.
@@ -16,26 +16,20 @@ use Longman\LaravelMultiLang\Config;
  */
 abstract class AbstractTestCase extends BaseTestCase
 {
-    /**
-     * Get the service provider class.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application $app
-     * @return string
-     */
-    protected function getServiceProviderClass($app)
+    protected function getPackageProviders($app)
     {
-        return MultiLangServiceProvider::class;
+        return [MultiLangServiceProvider::class];
     }
 
     protected function createTable()
     {
         /** @var \Illuminate\Database\Schema\MySqlBuilder $schema */
         $schema = $this->app['db']->getSchemaBuilder();
-
+        $schema->dropIfExists('texts');
         $schema->create('texts', function (Blueprint $table) {
             $table->char('key');
             $table->char('lang', 2);
-            $table->text('value')->default('');
+            $table->text('value')->nullable();
             $table->enum('scope', ['admin', 'site', 'global'])->default('global');
             $table->timestamps();
             $table->primary(['key', 'lang', 'scope']);

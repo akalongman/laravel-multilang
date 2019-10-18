@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit;
 
 use Illuminate\Database\Schema\Blueprint;
 use Longman\LaravelMultiLang\Facades\MultiLang as MultiLangFacade;
-use Longman\LaravelMultiLang\MultiLang;
 
 class MultiLangFacadeTest extends AbstractTestCase
 {
@@ -28,18 +28,15 @@ class MultiLangFacadeTest extends AbstractTestCase
         $this->inited = true;
     }
 
-    protected function getFacadeAccessor()
+    /** @test */
+    public function call_facade()
     {
-        return 'multilang';
-    }
+        MultiLangFacade::setLocale('en');
+        $texts = [
+            'text1' => 'Custom Text',
+        ];
+        MultiLangFacade::setTexts($texts);
 
-    protected function getFacadeClass()
-    {
-        return MultiLangFacade::class;
-    }
-
-    protected function getFacadeRoot()
-    {
-        return MultiLang::class;
+        $this->assertEquals(MultiLangFacade::get('text1'), 'Custom Text');
     }
 }

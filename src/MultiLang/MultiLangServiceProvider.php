@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Foundation\Events\LocaleUpdated;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\ServiceProvider;
@@ -20,15 +21,8 @@ use Longman\LaravelMultiLang\Console\ImportCommand;
 use Longman\LaravelMultiLang\Console\MigrationCommand;
 use Longman\LaravelMultiLang\Console\TextsCommand;
 
-class MultiLangServiceProvider extends ServiceProvider
+class MultiLangServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
     /**
      * Bootstrap any application services.
      *
@@ -77,7 +71,7 @@ class MultiLangServiceProvider extends ServiceProvider
     public function register()
     {
         $configPath = __DIR__ . '/../config/config.php';
-        $this->mergeConfigFrom($configPath, 'debugbar');
+        $this->mergeConfigFrom($configPath, 'multilang');
 
         $this->app->singleton('multilang', function ($app) {
             $environment = $app->environment();
