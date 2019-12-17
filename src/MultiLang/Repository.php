@@ -1,12 +1,5 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
@@ -19,7 +12,6 @@ use Illuminate\Database\DatabaseManager as Database;
 
 class Repository
 {
-
     /**
      * The instance of the config.
      *
@@ -55,6 +47,13 @@ class Repository
         $this->db = $db;
     }
 
+    /**
+     * Get cache key name based on lang and scope
+     *
+     * @param string $lang
+     * @param string $scope
+     * @return string
+     */
     public function getCacheName(string $lang, ?string $scope = null): string
     {
         $key = $this->config->get('db.texts_table', 'texts') . '_' . $lang;
@@ -78,7 +77,7 @@ class Repository
             ->where('lang', $lang);
 
         if (! is_null($scope) && $scope !== 'global') {
-            $query = $query->whereNested(function ($query) use ($scope) {
+            $query = $query->whereNested(static function ($query) use ($scope) {
                 $query->where('scope', 'global');
                 $query->orWhere('scope', $scope);
             });
@@ -112,7 +111,7 @@ class Repository
         }
 
         if (! is_null($scope)) {
-            $query = $query->whereNested(function ($query) use ($scope) {
+            $query = $query->whereNested(static function ($query) use ($scope) {
                 $query->where('scope', 'global');
                 $query->orWhere('scope', $scope);
             });
@@ -137,7 +136,7 @@ class Repository
      */
     public function loadFromCache(string $lang, ?string $scope = null): array
     {
-        $texts = $this->getCache()->get($this->getCacheName($lang, $scope));
+        $texts = $this->getCache()->get($this->getCacheName($lang, $scope), []);
 
         return $texts;
     }
@@ -177,7 +176,7 @@ class Repository
     protected function getDb(): Connection
     {
         $connection = $this->config->get('db.connection');
-        if ($connection == 'default') {
+        if ($connection === 'default') {
             return $this->db->connection();
         }
 
@@ -192,7 +191,7 @@ class Repository
     protected function getCache(): CacheRepository
     {
         $store = $this->config->get('cache.store', 'default');
-        if ($store == 'default') {
+        if ($store === 'default') {
             return $this->cache->store();
         }
 
@@ -258,6 +257,6 @@ class Repository
     {
         $table = $this->config->get('db.texts_table', 'texts');
 
-        return $table;
+        return (string) $table;
     }
 }

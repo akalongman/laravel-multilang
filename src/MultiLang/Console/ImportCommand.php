@@ -1,12 +1,5 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Console;
@@ -76,7 +69,12 @@ class ImportCommand extends Command
      */
     protected $scopes = ['global', 'site', 'admin'];
 
-    public function handle(): void
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
     {
         $this->table = config('multilang.db.texts_table', 'texts');
         $this->db = $this->getDatabase();
@@ -103,26 +101,26 @@ class ImportCommand extends Command
             throw new InvalidArgumentException('Folder "' . $this->path . '" is not accessible!');
         }
 
-        $force = (bool) $this->option('force');
-        $clear = (bool) $this->option('clear');
+        $force = $this->option('force');
+        $clear = $this->option('clear');
         foreach ($scopes as $scope) {
             $this->import($scope, $force, $clear);
         }
     }
 
-    protected function import(string $scope = 'global', bool $force = false, bool $clear = false): void
+    protected function import(string $scope = 'global', bool $force = false, bool $clear = false)
     {
         $path = $this->path . '/' . $scope . '.yml';
         if (! is_readable($path)) {
             $this->warn('File "' . $path . '" is not readable!');
 
-            return;
+            return false;
         }
         $data = Yaml::parse(file_get_contents($path));
         if (empty($data)) {
             $this->warn('File "' . $path . '" is empty!');
 
-            return;
+            return false;
         }
 
         if ($clear) {
@@ -188,11 +186,16 @@ class ImportCommand extends Command
         $this->info('Import texts of "' . $scope . '" is finished. Inserted: ' . $inserted . ', Updated: ' . $updated);
     }
 
+    /**
+     * Get a database connection instance.
+     *
+     * @return \Illuminate\Database\Connection
+     */
     protected function getDatabase(): Connection
     {
         $connection = config('multilang.db.connection', 'default');
         $db = App::make(Database::class);
-        if ($connection == 'default') {
+        if ($connection === 'default') {
             return $db->connection();
         }
 

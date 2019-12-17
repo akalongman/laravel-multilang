@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -13,11 +15,12 @@ return [
         'en' => [
             'name'             => 'English',
             'native_name'      => 'English',
-            'flag'             => 'gb.svg',
             'locale'           => 'en', // ISO 639-1
             'canonical_locale' => 'en_GB', // ISO 3166-1
             'full_locale'      => 'en_GB.UTF-8',
         ],
+
+        // Add yours here
     ],
 
     /*
@@ -62,18 +65,22 @@ return [
         //
     ],
 
+
     /*
     |--------------------------------------------------------------------------
-    | Route Configuration
+    | Texts Management
+    |--------------------------------------------------------------------------
+    */
+
+    /*
+    |--------------------------------------------------------------------------
+    | Use Texts from Database/Cache
     |--------------------------------------------------------------------------
     |
-    | Basic route
+    | Load or not translations from database/cache
     |
      */
-    'text-route'        => [
-        'route'      => 'texts',
-        'controller' => '\Longman\LaravelMultiLang\Controllers\TextsController',
-    ],
+    'use_texts' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -98,7 +105,7 @@ return [
     |
      */
     'db'                => [
-        'autosave'    => true, // Autosave missing texts in database. Only when environment is local
+        'autosave'    => true, // Autosave missing texts in the database. Only when environment is local
         'connection'  => env('DB_CONNECTION', 'default'),
         'texts_table' => 'texts',
     ],

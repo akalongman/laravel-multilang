@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit;
 
 use Illuminate\Http\Request;
 use Longman\LaravelMultiLang\MultiLang;
+use TypeError;
 
 class MultiLangTest extends AbstractTestCase
 {
-
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -50,14 +52,14 @@ class MultiLangTest extends AbstractTestCase
         $config = [
             'locales' => [
                 'en' => [
-                    'name' => 'English',
+                    'name'        => 'English',
                     'native_name' => 'English',
-                    'default' => true,
+                    'default'     => true,
                 ],
                 'ka' => [
-                    'name' => 'Georgian',
+                    'name'        => 'Georgian',
                     'native_name' => 'ქართული',
-                    'default' => false,
+                    'default'     => false,
                 ],
             ],
         ];
@@ -88,12 +90,13 @@ class MultiLangTest extends AbstractTestCase
     {
         $multilang = $this->getMultilang('testing');
         $texts = [
-            'text1' => 'value1',
-            'text2' => 'value2',
+            'text1'    => 'value1',
+            'text2'    => 'value2',
             'te.x-t/3' => 'value3',
         ];
 
-        $multilang->setLocale('ka', $texts);
+        $multilang->setLocale('ka');
+        $multilang->setTexts($texts);
 
         $this->assertEquals($texts, $multilang->getTexts());
     }
@@ -107,8 +110,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-            'text1' => 'value1',
-            'text2' => 'value2',
+            'text1'    => 'value1',
+            'text2'    => 'value2',
             'te.x-t/3' => 'value3',
         ]);
 
@@ -136,8 +139,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $multilang->setTexts([
-            'text1' => 'value1',
-            'text2' => 'value2',
+            'text1'    => 'value1',
+            'text2'    => 'value2',
             'te.x-t/3' => 'value3',
         ]);
 
@@ -153,8 +156,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('ka');
 
         $texts = [
-            'text1' => 'value1',
-            'text2' => 'value2',
+            'text1'                   => 'value1',
+            'text2'                   => 'value2',
             'te.x-t/3 dsasad sadadas' => 'value3',
         ];
 
@@ -163,22 +166,18 @@ class MultiLangTest extends AbstractTestCase
         $this->assertEquals($texts, $multilang->getTexts());
     }
 
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
+    /** @test */
     public function set_empty_locale()
     {
+        $this->expectException(TypeError::class);
         $multilang = $this->getMultilang();
         $multilang->setLocale(null);
     }
 
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
+    /** @test */
     public function get_string_without_key()
     {
+        $this->expectException(TypeError::class);
         $multilang = $this->getMultilang();
         $multilang->setLocale('ka');
 
@@ -212,6 +211,7 @@ class MultiLangTest extends AbstractTestCase
     {
         $multilang = $this->getMultilang('production');
         $multilang->setLocale('ka');
+        $multilang->loadTexts();
 
         $this->assertTrue($multilang->getRepository()->existsInCache('ka', 'global'));
 
@@ -262,6 +262,7 @@ class MultiLangTest extends AbstractTestCase
 
         $multilang = $this->getMultilang('local');
         $multilang->setLocale('en');
+        $multilang->loadTexts();
 
         $this->assertEquals($strings, $multilang->getTexts());
     }
@@ -274,14 +275,14 @@ class MultiLangTest extends AbstractTestCase
         $config = [
             'locales' => [
                 'en' => [
-                    'name' => 'English',
+                    'name'        => 'English',
                     'native_name' => 'English',
-                    'default' => true,
+                    'default'     => true,
                 ],
                 'ka' => [
-                    'name' => 'Georgian',
+                    'name'        => 'Georgian',
                     'native_name' => 'ქართული',
-                    'default' => false,
+                    'default'     => false,
                 ],
             ],
         ];
@@ -304,6 +305,7 @@ class MultiLangTest extends AbstractTestCase
 
         $multilang = $this->getMultilang('local');
         $multilang->setLocale('ka');
+        $multilang->loadTexts();
 
         $this->assertEquals('ka', $multilang->getLocale('ka'));
 
@@ -381,7 +383,6 @@ class MultiLangTest extends AbstractTestCase
             $multilang->get('text1', ['attribute' => 'Start Date', 'date' => '7 April 1986']),
             'The Start Date must be a date after 7 April 1986.'
         );
-
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -8,7 +10,7 @@ class RepositoryTest extends AbstractTestCase
 {
     use DatabaseMigrations;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -50,7 +52,7 @@ class RepositoryTest extends AbstractTestCase
      */
     public function save_and_load_from_database()
     {
-        $config     = [
+        $config = [
             'locales' => [
                 'en' => [
                     'name' => 'English',
@@ -75,14 +77,13 @@ class RepositoryTest extends AbstractTestCase
         ];
 
         $repository->save($texts);
-        $repository->save($textsScoped, 'scope_name');
+        $repository->save($textsScoped, 'site');
 
         $this->assertFalse($repository->save([]));
         $this->assertEquals($texts, $repository->loadFromDatabase('en'));
         $this->assertEquals($texts, $repository->loadFromDatabase('az'));
-        $this->assertEquals($textsScoped, $repository->loadFromDatabase('en', 'scope_name'));
-        $this->assertEquals($textsScoped, $repository->loadFromDatabase('az', 'scope_name'));
-
+        $this->assertEquals($textsScoped, $repository->loadFromDatabase('en', 'site'));
+        $this->assertEquals($textsScoped, $repository->loadFromDatabase('az', 'site'));
     }
 
     /**
@@ -90,7 +91,7 @@ class RepositoryTest extends AbstractTestCase
      */
     public function save_and_load_from_cache()
     {
-        $config     = [
+        $config = [
             'locales' => [
                 'en' => [
                     'name' => 'English',
@@ -116,7 +117,5 @@ class RepositoryTest extends AbstractTestCase
 
         $this->assertEquals($texts, $repository->loadFromCache('en'));
         $this->assertEquals($texts, $repository->loadFromCache('az'));
-
     }
-
 }

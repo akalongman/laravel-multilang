@@ -1,12 +1,5 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Console;
@@ -32,7 +25,12 @@ class TextsCommand extends Command
      */
     protected $description = 'Show multilang texts and translations.';
 
-    public function handle(): void
+    /**
+     * Execute the console command.
+     *
+     * @return void
+     */
+    public function handle()
     {
         $lang = $this->option('lang');
         $scope = $this->option('scope');
@@ -42,7 +40,7 @@ class TextsCommand extends Command
         if (empty($texts)) {
             $this->info('Application texts is empty');
 
-            return;
+            return false;
         }
 
         $headers = ['#', 'Text Key', 'Language', 'Scope', 'Text Value'];

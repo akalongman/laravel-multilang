@@ -1,24 +1,18 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
 
 if (! function_exists('lang_url')) {
     /**
      * Generate a url for the application.
      *
      * @param  string $path
-     * @param  mixed $parameters
+     * @param  array $parameters
      * @param  bool $secure
      * @param  string $locale
-     * @return Illuminate\Contracts\Routing\UrlGenerator|string
+     * @return \Illuminate\Contracts\Routing\UrlGenerator|string
      */
-    function lang_url($path = null, $parameters = [], $secure = null, $locale = null)
+    function lang_url(?string $path = null, array $parameters = [], ?bool $secure = null, ?string $locale = null)
     {
         if (is_null($path)) {
             return app(Illuminate\Contracts\Routing\UrlGenerator::class);
@@ -42,7 +36,7 @@ if (! function_exists('lang_redirect')) {
      * @param  bool $secure
      * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
-    function lang_redirect($to = null, $status = 302, $headers = [], $secure = null)
+    function lang_redirect(?string $to = null, int $status = 302, array $headers = [], ?bool $secure = null)
     {
         if (is_null($to)) {
             return app('redirect');
@@ -65,7 +59,7 @@ if (! function_exists('lang_route')) {
      * @param bool $absolute
      * @return string
      */
-    function lang_route($name, array $parameters = [], $absolute = true)
+    function lang_route(string $name, array $parameters = [], bool $absolute = true): string
     {
         $multilang = app('multilang');
 
@@ -83,7 +77,7 @@ if (! function_exists('t')) {
      * @param  array $replace
      * @return string
      */
-    function t($text, array $replace = [])
+    function t(string $text, array $replace = []): string
     {
         $text = app('multilang')->get($text, $replace);
 

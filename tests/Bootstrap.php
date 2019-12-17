@@ -1,12 +1,6 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
+declare(strict_types=1);
 
 /*
  * Set error reporting to the level to which Mockery code must comply.
@@ -18,16 +12,14 @@ error_reporting(-1);
  */
 date_default_timezone_set('UTC');
 
-
-
 $root = realpath(dirname(dirname(__FILE__)));
 /**
  * Check that --dev composer installation was done
  */
-if (!file_exists($root . '/vendor/autoload.php')) {
+if (! file_exists($root . '/vendor/autoload.php')) {
     throw new Exception(
-        'Please run "php composer.phar install --dev" in root directory '
-        . 'to setup unit test dependencies before running the tests'
+        'Please run "php composer.phar install --dev" in root directory 
+        to setup unit test dependencies before running the tests'
     );
 }
 

@@ -1,37 +1,27 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
 
-use Blade;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Foundation\Events\LocaleUpdated;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\Compilers\BladeCompiler;
 use Longman\LaravelMultiLang\Console\ExportCommand;
 use Longman\LaravelMultiLang\Console\ImportCommand;
 use Longman\LaravelMultiLang\Console\MigrationCommand;
 use Longman\LaravelMultiLang\Console\TextsCommand;
 
-class MultiLangServiceProvider extends ServiceProvider
+class MultiLangServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
+     * Bootstrap any application services.
      *
-     * @var bool
+     * @return void
      */
-    protected $defer = false;
-
-    public function boot(): void
+    public function boot()
     {
         // Publish config files
         $this->publishes(
@@ -48,13 +38,13 @@ class MultiLangServiceProvider extends ServiceProvider
         );
 
         // Register blade directives
-        Blade::directive('t', function ($expression) {
+        $this->getBlade()->directive('t', static function ($expression) {
             return "<?php echo e(t({$expression})); ?>";
         });
 
         $this->app['events']->listen(RouteMatched::class, function () {
             $scope = $this->app['config']->get('app.scope');
-            if ($scope && $scope != 'global') {
+            if ($scope && $scope !== 'global') {
                 $this->app['multilang']->setScope($scope);
             }
         });
@@ -66,12 +56,17 @@ class MultiLangServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../views', 'multilang');
     }
 
-    public function register(): void
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
     {
         $configPath = __DIR__ . '/../config/config.php';
-        $this->mergeConfigFrom($configPath, 'debugbar');
+        $this->mergeConfigFrom($configPath, 'multilang');
 
-        $this->app->singleton('multilang', function (Application $app) {
+        $this->app->singleton('multilang', function ($app) {
             $environment = $app->environment();
             $config = $app['config']->get('multilang');
 
@@ -85,7 +80,7 @@ class MultiLangServiceProvider extends ServiceProvider
             if ($multilang->autoSaveIsAllowed()) {
                 $app->terminating(function () use ($multilang) {
                     $scope = $this->app['config']->get('app.scope');
-                    if ($scope && $scope != 'global') {
+                    if ($scope && $scope !== 'global') {
                         $multilang->setScope($scope);
                     }
 
@@ -98,17 +93,67 @@ class MultiLangServiceProvider extends ServiceProvider
 
         $this->app->alias('multilang', MultiLang::class);
 
+        $this->app->singleton(
+            'command.multilang.migration',
+            static function () {
+                return new MigrationCommand();
+            }
+        );
+
+        $this->app->singleton(
+            'command.multilang.texts',
+            static function () {
+                return new TextsCommand();
+            }
+        );
+
+        $this->app->singleton(
+            'command.multilang.import',
+            static function () {
+                return new ImportCommand();
+            }
+        );
+
+        $this->app->singleton(
+            'command.multilang.export',
+            static function () {
+                return new ExportCommand();
+            }
+        );
+
         $this->commands(
             [
-                MigrationCommand::class,
-                TextsCommand::class,
-                ImportCommand::class,
-                ExportCommand::class,
+                'command.multilang.migration',
+                'command.multilang.texts',
+                'command.multilang.import',
+                'command.multilang.export',
             ]
         );
 
-        Request::macro('locale', function () {
+        $this->app->make('request')->macro('locale', static function () {
             return app('multilang')->getLocale();
         });
+    }
+
+    private function getBlade(): BladeCompiler
+    {
+        return $this->app->make('view')->getEngineResolver()->resolve('blade')->getCompiler();
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'multilang',
+            MultiLang::class,
+            'command.multilang.migration',
+            'command.multilang.texts',
+            'command.multilang.import',
+            'command.multilang.export',
+        ];
     }
 }

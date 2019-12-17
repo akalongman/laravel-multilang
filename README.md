@@ -8,6 +8,9 @@
 [![Downloads Month](https://img.shields.io/packagist/dm/Longman/laravel-multilang.svg)](https://packagist.org/packages/longman/laravel-multilang)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
+*This version of MultiLang package requires minimum PHP 7.0. 
+For older PHP versions use MultiLang [1.x](https://github.com/akalongman/laravel-multilang/releases/tag/1.3.3)*
+
 This is a very useful package to integrate multi language (multi locale) functionality in Laravel 5.x.
 It includes a ServiceProvider to register the multilang and Middleware for automatic modification routes like `http://site.com/en/your-routes`.
 
@@ -41,7 +44,7 @@ Create *composer.json* file:
     "name": "yourproject/yourproject",
     "type": "project",
     "require": {
-        "longman/laravel-multilang": "~1.2"
+        "longman/laravel-multilang": "~2.0"
     }
 }
 ```
@@ -51,22 +54,11 @@ And run composer update
 
     composer require longman/laravel-multilang
 
-In Laravel 5.5 the service provider will automatically get registered. 
-In older versions of the framework just add the service provider in `config/app.php` file:
-
-```php
-Longman\LaravelMultiLang\MultiLangServiceProvider::class,
-```
-
-Also you can add facade to the alias array in the `config/app.php`
-```php
-'MultiLang' => Longman\LaravelMultiLang\Facades\MultiLang::class,
-```
+In Laravel the service provider and facade will automatically get registered. 
 
 Copy the package config to your local config with the publish command:
 
     php artisan vendor:publish --provider="Longman\LaravelMultiLang\MultiLangServiceProvider"
-
 
 After run multilang migration command
 
@@ -75,7 +67,6 @@ After run multilang migration command
 Its creates multilang migration file in your database/migrations folder. After you can run
 
     php artisan migrate
-
 
 Also if you want automatically change locale depending on url (like `http://site.com/en/your-routes`)
 you must add middleware in app/Http/Kernel.php

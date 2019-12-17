@@ -1,12 +1,5 @@
 <?php
-/*
- * This file is part of the Laravel MultiLang package.
- *
- * (c) Avtandil Kikabidze aka LONGMAN <akalongman@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Console;
@@ -78,9 +71,9 @@ class ExportCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return void
+     * @return mixed
      */
-    public function handle(): void
+    public function handle()
     {
         $this->table = config('multilang.db.texts_table', 'texts');
         $this->db = $this->getDatabase();
@@ -147,7 +140,7 @@ class ExportCommand extends Command
         //$this->info('Database backup restored successfully');
     }
 
-    protected function export(string $scope = 'global', bool $force = false, bool $clear = false): void
+    protected function export(string $scope = 'global', bool $force = false, bool $clear = false)
     {
         $dbTexts = $this->getTextsFromDb($scope);
 
@@ -169,6 +162,12 @@ class ExportCommand extends Command
         $this->info('Export texts of "' . $scope . '" is finished in "' . $path . '"');
     }
 
+    /**
+     * Get a texts from file.
+     *
+     * @param string $scope
+     * @return array
+     */
     protected function getTextsFromFile(string $scope): array
     {
         $fileTexts = [];
@@ -185,6 +184,12 @@ class ExportCommand extends Command
         return $formattedFileTexts;
     }
 
+    /**
+     * Get a texts from database.
+     *
+     * @param string $scope
+     * @return array
+     */
     protected function getTextsFromDb(string $scope): array
     {
         $dbTexts = $this->db
@@ -205,11 +210,16 @@ class ExportCommand extends Command
         return $formattedDbTexts;
     }
 
+    /**
+     * Get a database connection instance.
+     *
+     * @return \Illuminate\Database\Connection
+     */
     protected function getDatabase(): Connection
     {
         $connection = config('multilang.db.connection', 'default');
         $db = App::make(Database::class);
-        if ($connection == 'default') {
+        if ($connection === 'default') {
             return $db->connection();
         }
 

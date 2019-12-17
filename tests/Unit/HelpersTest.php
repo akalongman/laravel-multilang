@@ -1,20 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit;
 
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use InvalidArgumentException;
-use Longman\LaravelMultiLang\MultiLang;
 
-/**
- * This is the service provider test class.
- */
 class HelpersTest extends AbstractTestCase
 {
-
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -26,6 +23,7 @@ class HelpersTest extends AbstractTestCase
      */
     public function t_should_return_valid_translation()
     {
+        /** @var \Longman\LaravelMultiLang\MultiLang $multilang */
         $multilang = app('multilang');
 
         $texts = [
@@ -34,7 +32,8 @@ class HelpersTest extends AbstractTestCase
             'te.x-t/3' => 'value3',
         ];
 
-        $multilang->setLocale('ka', $texts);
+        $multilang->setLocale('ka');
+        $multilang->setTexts($texts);
 
         $this->assertEquals('value1', t('text1'));
     }
@@ -44,7 +43,7 @@ class HelpersTest extends AbstractTestCase
      */
     public function lang_url_should_return_valid_url()
     {
-        /** @var MultiLang $multilang */
+        /** @var \Longman\LaravelMultiLang\MultiLang $multilang */
         $multilang = app('multilang');
 
         $texts = [
@@ -75,7 +74,7 @@ class HelpersTest extends AbstractTestCase
     /** @test */
     public function lang_redirect_should_return_redirect_response()
     {
-        /** @var MultiLang $multilang */
+        /** @var \Longman\LaravelMultiLang\MultiLang $multilang */
         $multilang = app('multilang');
         $multilang->setLocale('ka');
 
@@ -87,12 +86,10 @@ class HelpersTest extends AbstractTestCase
         $this->assertEquals($redirect->getStatusCode(), 302);
     }
 
-    /**
-     * @test
-     * @expectedException InvalidArgumentException
-     */
+    /** @test */
     public function lang_route_should_throw_exception_if_route_is_not_defined()
     {
+        $this->expectException(InvalidArgumentException::class);
         lang_route('missing-route');
     }
 }
