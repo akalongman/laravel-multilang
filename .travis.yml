@@ -1,9 +1,7 @@
 language: php
 
 php:
-    - 7.0
-    - 7.1
-    - 7.2
+    - 7.3
 
 sudo: false
 
@@ -14,8 +12,8 @@ install:
   - travis_retry composer update --no-interaction --prefer-source
 
 script:
-  - ./vendor/bin/phpcs --standard=phpcs.xml -spn --encoding=utf-8 src/ --report-width=150
-  - ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  - composer phpcs
+  - composer coverage-clover
 
 
 after_script:
