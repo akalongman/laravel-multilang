@@ -59,11 +59,11 @@ class LocalizableScope implements Scope
      */
     protected function getLocalizableColumn(Builder $builder)
     {
-        if (count($builder->getQuery()->joins) > 0) {
-            return $builder->getModel()->getQualifiedLocalizableColumn();
-        } else {
+        if (empty($builder->getQuery()->joins)) {
             return $builder->getModel()->getLocalizableColumn();
         }
+
+        return $builder->getModel()->getQualifiedLocalizableColumn();
     }
 
 }
