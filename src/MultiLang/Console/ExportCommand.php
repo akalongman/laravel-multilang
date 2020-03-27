@@ -11,6 +11,18 @@ use Illuminate\Database\DatabaseManager as Database;
 use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
 
+use function array_replace_recursive;
+use function array_values;
+use function explode;
+use function file_get_contents;
+use function file_put_contents;
+use function implode;
+use function in_array;
+use function is_dir;
+use function is_readable;
+use function is_writable;
+use function mkdir;
+
 class ExportCommand extends Command
 {
     /**

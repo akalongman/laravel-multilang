@@ -12,6 +12,13 @@ use Illuminate\Database\DatabaseManager as Database;
 use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
 
+use function explode;
+use function file_get_contents;
+use function implode;
+use function in_array;
+use function is_dir;
+use function is_readable;
+
 class ImportCommand extends Command
 {
     /**
@@ -19,7 +26,7 @@ class ImportCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'multilang:import        
+    protected $signature = 'multilang:import
         {--path=storage/multilang : The path to multilang folder}
         {--lang= : Comma separated langs to import, default all}
         {--scope= : Comma separated scopes, default all}
@@ -130,8 +137,8 @@ class ImportCommand extends Command
                 ->delete();
         }
 
-        $created_at = Carbon::now()->toDateTimeString();
-        $updated_at = $created_at;
+        $createdAt = Carbon::now()->toDateTimeString();
+        $updatedAt = $createdAt;
         $inserted = 0;
         $updated = 0;
         foreach ($data as $text) {
@@ -156,8 +163,8 @@ class ImportCommand extends Command
                     $ins['lang'] = $lang;
                     $ins['scope'] = $scope;
                     $ins['value'] = $value;
-                    $ins['created_at'] = $created_at;
-                    $ins['updated_at'] = $updated_at;
+                    $ins['created_at'] = $createdAt;
+                    $ins['updated_at'] = $updatedAt;
                     $this->db
                         ->table($this->table)
                         ->insert($ins);
@@ -170,7 +177,7 @@ class ImportCommand extends Command
                         $upd['lang'] = $lang;
                         $upd['scope'] = $scope;
                         $upd['value'] = $value;
-                        $upd['updated_at'] = $updated_at;
+                        $upd['updated_at'] = $updatedAt;
                         $this->db
                             ->table($this->table)
                             ->where('key', $key)

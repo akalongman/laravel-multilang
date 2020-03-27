@@ -109,8 +109,8 @@ class MultiLangTest extends AbstractTestCase
         $multilang->setLocale('en');
         $middleware = new MultiLangMiddleware($this->app, $this->app->redirect, $multilang);
 
-        $QUERY_STRING = 'param1=value1&param2=value2';
-        $REQUEST_URI = '/ka/auth/login?' . $QUERY_STRING;
+        $queryString = 'param1=value1&param2=value2';
+        $requestUri = '/ka/auth/login?' . $queryString;
 
         $request = new Request(
             $query = [],
@@ -118,7 +118,7 @@ class MultiLangTest extends AbstractTestCase
             $attributes = [],
             $cookies = [],
             $files = [],
-            $server = ['REQUEST_URI' => $REQUEST_URI, 'QUERY_STRING' => $QUERY_STRING],
+            $server = ['REQUEST_URI' => $requestUri, 'QUERY_STRING' => $queryString],
             $content = null
         );
 
@@ -128,7 +128,7 @@ class MultiLangTest extends AbstractTestCase
 
         $location = $result->headers->get('location');
 
-        $this->assertEquals('http://localhost/en/auth/login?' . $QUERY_STRING, $location);
+        $this->assertEquals('http://localhost/en/auth/login?' . $queryString, $location);
     }
 
     /**

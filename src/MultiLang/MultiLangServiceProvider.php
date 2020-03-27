@@ -135,11 +135,6 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
         });
     }
 
-    private function getBlade(): BladeCompiler
-    {
-        return $this->app->make('view')->getEngineResolver()->resolve('blade')->getCompiler();
-    }
-
     /**
      * Get the services provided by the provider.
      *
@@ -155,5 +150,10 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
             'command.multilang.import',
             'command.multilang.export',
         ];
+    }
+
+    private function getBlade(): BladeCompiler
+    {
+        return $this->app->make('view')->getEngineResolver()->resolve('blade')->getCompiler();
     }
 }

@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Longman\LaravelMultiLang\MultiLang as MultiLangLib;
 
+use function setlocale;
+
+use const LC_ALL;
+
 class MultiLang
 {
     /**

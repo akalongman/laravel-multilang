@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Longman\LaravelMultiLang\MultiLang;
 use TypeError;
 
+use function count;
+
 class MultiLangTest extends AbstractTestCase
 {
     public function setUp(): void

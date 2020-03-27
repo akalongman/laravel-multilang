@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang;
 
+use function array_key_exists;
+use function explode;
+use function is_array;
+
 class Config
 {
     /**

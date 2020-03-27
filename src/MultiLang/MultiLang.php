@@ -12,6 +12,18 @@ use InvalidArgumentException;
 use Symfony\Component\Translation\Loader\ArrayLoader;
 use Symfony\Component\Translation\Translator;
 
+use function array_combine;
+use function array_keys;
+use function array_map;
+use function call_user_func_array;
+use function implode;
+use function is_null;
+use function ltrim;
+use function mb_strlen;
+use function mb_substr;
+use function str_replace;
+use function strlen;
+
 class MultiLang
 {
     /**
@@ -54,7 +66,7 @@ class MultiLang
      *
      * @var array
      */
-    protected $new_texts;
+    protected $newTexts;
 
     /**
      * Application scope.
@@ -199,15 +211,6 @@ class MultiLang
         return $texts;
     }
 
-    protected function createTranslator(string $locale, string $scope, array $texts): Translator
-    {
-        $this->translator = new Translator($locale);
-        $this->translator->addLoader('array', new ArrayLoader());
-        $this->translator->addResource('array', $texts, $locale, $scope);
-
-        return $this->translator;
-    }
-
     /**
      * Get translated text
      *
@@ -257,33 +260,35 @@ class MultiLang
      */
     public function getRedirectUrl(Request $request): string
     {
-        $exclude_patterns = $this->config->get('exclude_segments', []);
-        if (! empty($exclude_patterns)) {
-            if (call_user_func_array([$request, 'is'], $exclude_patterns)) {
+        $excludePatterns = $this->config->get('exclude_segments', []);
+        if (! empty($excludePatterns)) {
+            if (call_user_func_array([$request, 'is'], $excludePatterns)) {
                 return '';
             }
         }
 
         $locale = $request->segment(1);
-        $fallback_locale = $this->config->get('default_locale', 'en');
+        $fallbackLocale = $this->config->get('default_locale', 'en');
         if (! empty($locale) && strlen($locale) === 2) {
             $locales = $this->config->get('locales', []);
 
             if (! isset($locales[$locale])) {
                 $segments = $request->segments();
-                $segments[0] = $fallback_locale;
+                $segments[0] = $fallbackLocale;
                 $url = implode('/', $segments);
-                if ($query_string = $request->server->get('QUERY_STRING')) {
-                    $url .= '?' . $query_string;
+                $queryString = $request->server->get('QUERY_STRING');
+                if ($queryString) {
+                    $url .= '?' . $queryString;
                 }
 
                 return $url;
             }
         } else {
             $segments = $request->segments();
-            $url = $fallback_locale . '/' . implode('/', $segments);
-            if ($query_string = $request->server->get('QUERY_STRING')) {
-                $url .= '?' . $query_string;
+            $url = $fallbackLocale . '/' . implode('/', $segments);
+            $queryString = $request->server->get('QUERY_STRING');
+            if ($queryString) {
+                $url .= '?' . $queryString;
             }
 
             return $url;
@@ -356,13 +361,13 @@ class MultiLang
     /**
      * Set texts manually
      *
-     * @param  array $texts_array
+     * @param  array $textsArray
      * @return \Longman\LaravelMultiLang\MultiLang
      */
-    public function setTexts(array $texts_array): MultiLang
+    public function setTexts(array $textsArray): MultiLang
     {
         $texts = [];
-        foreach ($texts_array as $key => $value) {
+        foreach ($textsArray as $key => $value) {
             $texts[$key] = $value;
         }
 
@@ -371,17 +376,6 @@ class MultiLang
         $this->createTranslator($this->getLocale(), $this->getScope(), $texts);
 
         return $this;
-    }
-
-    /**
-     * Queue missing texts
-     *
-     * @param  string $key
-     * @return void
-     */
-    protected function queueToSave(string $key)
-    {
-        $this->new_texts[$key] = $key;
     }
 
     /**
@@ -396,31 +390,6 @@ class MultiLang
         $locale = $lang ?: $this->getLocale();
         if ($locale) {
             $path = $locale . '/' . $this->removeLocaleFromPath($path);
-        }
-
-        return $path;
-    }
-
-    /**
-     * Remove locale from the path
-     *
-     * @param string $path
-     * @return string
-     */
-    private function removeLocaleFromPath(string $path): string
-    {
-        $lang_path = $path;
-
-        // Remove domain from path
-        $app_url = config('app.url', '');
-        if (! empty($app_url) && mb_substr($lang_path, 0, mb_strlen($app_url)) === $app_url) {
-            $lang_path = ltrim(str_replace($app_url, '', $lang_path), '/');
-        }
-
-        $locales = $this->config->get('locales');
-        $locale = mb_substr($lang_path, 0, 2);
-        if (isset($locales[$locale])) {
-            return mb_substr($lang_path, 3);
         }
 
         return $path;
@@ -483,10 +452,55 @@ class MultiLang
      */
     public function saveTexts(): bool
     {
-        if (empty($this->new_texts)) {
+        if (empty($this->newTexts)) {
             return false;
         }
 
-        return $this->repository->save($this->new_texts, $this->scope);
+        return $this->repository->save($this->newTexts, $this->scope);
+    }
+
+    protected function createTranslator(string $locale, string $scope, array $texts): Translator
+    {
+        $this->translator = new Translator($locale);
+        $this->translator->addLoader('array', new ArrayLoader());
+        $this->translator->addResource('array', $texts, $locale, $scope);
+
+        return $this->translator;
+    }
+
+    /**
+     * Queue missing texts
+     *
+     * @param  string $key
+     * @return void
+     */
+    protected function queueToSave(string $key)
+    {
+        $this->newTexts[$key] = $key;
+    }
+
+    /**
+     * Remove locale from the path
+     *
+     * @param string $path
+     * @return string
+     */
+    private function removeLocaleFromPath(string $path): string
+    {
+        $langPath = $path;
+
+        // Remove domain from path
+        $appUrl = config('app.url', '');
+        if (! empty($appUrl) && mb_substr($langPath, 0, mb_strlen($appUrl)) === $appUrl) {
+            $langPath = ltrim(str_replace($appUrl, '', $langPath), '/');
+        }
+
+        $locales = $this->config->get('locales');
+        $locale = mb_substr($langPath, 0, 2);
+        if (isset($locales[$locale])) {
+            return mb_substr($langPath, 3);
+        }
+
+        return $path;
     }
 }
