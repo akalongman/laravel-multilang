@@ -48,10 +48,20 @@ return [
     | Set System locale
     |--------------------------------------------------------------------------
     |
-    | Call setlocale(LC_ALL, $locale) and set current locale in middleware
+    | Call setlocale() and set current locale in middleware
     |
      */
     'set_system_locale' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Locale LC
+    |--------------------------------------------------------------------------
+    |
+    | Which locale to set
+    |
+     */
+    'system_locale_lc'  => LC_ALL,
 
     /*
     |--------------------------------------------------------------------------
@@ -64,7 +74,6 @@ return [
     'exclude_segments'  => [
         //
     ],
-
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +89,7 @@ return [
     | Load or not translations from database/cache
     |
      */
-    'use_texts' => true,
+    'use_texts'         => true,
 
     /*
     |--------------------------------------------------------------------------
