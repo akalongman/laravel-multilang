@@ -13,7 +13,6 @@ use Longman\LaravelMultiLang\MultiLang as MultiLangLib;
 
 use function setlocale;
 
-use const E_ALL;
 use const LC_ALL;
 
 class MultiLang
@@ -79,7 +78,7 @@ class MultiLang
         if ($multilang->getConfig()->get('set_system_locale')) {
             $locales = $multilang->getLocales();
             if (! empty($locales[$locale]['full_locale'])) {
-                $lc = $multilang->getConfig()->get('system_locale_lc', E_ALL);
+                $lc = $multilang->getConfig()->get('system_locale_lc', LC_ALL);
 
                 setlocale($lc, $locales[$locale]['full_locale']);
             }
