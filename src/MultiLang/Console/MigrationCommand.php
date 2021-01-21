@@ -63,7 +63,7 @@ class MigrationCommand extends Command
             } else {
                 $this->error(
                     'Couldn\'t create migration.' . PHP_EOL . ' Check the write permissions
-                    within the database/migrations directory.'
+                    within the database/migrations directory.',
                 );
             }
 

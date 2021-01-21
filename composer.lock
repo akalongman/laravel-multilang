@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9fbf2c11d2fb512a21f617b7b856f50a",
+    "content-hash": "992dad3e0fb8c9bad793d48d17219831",
     "packages": [
         {
             "name": "brick/math",
@@ -4249,24 +4249,24 @@
         },
         {
             "name": "longman/php-code-style",
-            "version": "4.5.1",
+            "version": "5.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/akalongman/php-code-style.git",
-                "reference": "90919ce098beae6c7bb0c783ce8f46e1875c9112"
+                "reference": "92cd80e432098be7dd0f79bdef3527ed7322f01e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/akalongman/php-code-style/zipball/90919ce098beae6c7bb0c783ce8f46e1875c9112",
-                "reference": "90919ce098beae6c7bb0c783ce8f46e1875c9112",
+                "url": "https://api.github.com/repos/akalongman/php-code-style/zipball/92cd80e432098be7dd0f79bdef3527ed7322f01e",
+                "reference": "92cd80e432098be7dd0f79bdef3527ed7322f01e",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1",
+                "php": "^7.1|^8.0",
                 "slevomat/coding-standard": "^6.1"
             },
             "require-dev": {
-                "symfony/var-dumper": "^4.4"
+                "symfony/var-dumper": "^5.0"
             },
             "type": "phpcodesniffer-standard",
             "autoload": {
@@ -4281,9 +4281,9 @@
             "description": "Longish Code style configurations",
             "support": {
                 "issues": "https://github.com/akalongman/php-code-style/issues",
-                "source": "https://github.com/akalongman/php-code-style/tree/4.5.1"
+                "source": "https://github.com/akalongman/php-code-style/tree/5.0.4"
             },
-            "time": "2020-03-27T17:05:37+00:00"
+            "time": "2021-01-13T23:04:36+00:00"
         },
         {
             "name": "mockery/mockery",

@@ -33,7 +33,7 @@ class MultiLangTest extends AbstractTestCase
             $cookies = [],
             $files = [],
             $server = ['REQUEST_URI' => '/en/auth/login'],
-            $content = null
+            $content = null,
         );
 
         $result = $middleware->handle($request, static function (Request $request) {
@@ -60,7 +60,7 @@ class MultiLangTest extends AbstractTestCase
             $cookies = [],
             $files = [],
             $server = ['REQUEST_URI' => '/ka/auth/login'],
-            $content = null
+            $content = null,
         );
 
         $result = $middleware->handle($request, static function () {
@@ -88,7 +88,7 @@ class MultiLangTest extends AbstractTestCase
             $cookies = [],
             $files = [],
             $server = ['REQUEST_URI' => '/auth/login'],
-            $content = null
+            $content = null,
         );
 
         $result = $middleware->handle($request, static function () {
@@ -119,7 +119,7 @@ class MultiLangTest extends AbstractTestCase
             $cookies = [],
             $files = [],
             $server = ['REQUEST_URI' => $requestUri, 'QUERY_STRING' => $queryString],
-            $content = null
+            $content = null,
         );
 
         $result = $middleware->handle($request, static function () {
@@ -147,7 +147,7 @@ class MultiLangTest extends AbstractTestCase
             $cookies = [],
             $files = [],
             $server = ['REQUEST_URI' => '/ka/auth/login'],
-            $content = null
+            $content = null,
         );
         $request->headers->set('accept', 'application/json');
 

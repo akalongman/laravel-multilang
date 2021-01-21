@@ -28,13 +28,13 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
             [
                 __DIR__ . '/../config/config.php' => config_path('multilang.php'),
                 __DIR__ . '/../views'             => base_path('resources/views/vendor/multilang'),
-            ]
+            ],
         );
 
         // Append the country settings
         $this->mergeConfigFrom(
             __DIR__ . '/../config/config.php',
-            'multilang'
+            'multilang',
         );
 
         // Register blade directives
@@ -74,7 +74,7 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
                 $environment,
                 $config,
                 $app['cache'],
-                $app['db']
+                $app['db'],
             );
 
             if ($multilang->autoSaveIsAllowed()) {
@@ -97,28 +97,28 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
             'command.multilang.migration',
             static function () {
                 return new MigrationCommand();
-            }
+            },
         );
 
         $this->app->singleton(
             'command.multilang.texts',
             static function () {
                 return new TextsCommand();
-            }
+            },
         );
 
         $this->app->singleton(
             'command.multilang.import',
             static function () {
                 return new ImportCommand();
-            }
+            },
         );
 
         $this->app->singleton(
             'command.multilang.export',
             static function () {
                 return new ExportCommand();
-            }
+            },
         );
 
         $this->commands(
@@ -127,7 +127,7 @@ class MultiLangServiceProvider extends ServiceProvider implements DeferrableProv
                 'command.multilang.texts',
                 'command.multilang.import',
                 'command.multilang.export',
-            ]
+            ],
         );
 
         $this->app->make('request')->macro('locale', static function () {
