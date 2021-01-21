@@ -26,7 +26,7 @@
         }
     ],
     "require": {
-        "php": "^7.3",
+        "php": "^7.4|^8.0",
         "ext-mbstring": "*",
         "symfony/yaml": "^5.0",
         "symfony/translation": "^5.0",
