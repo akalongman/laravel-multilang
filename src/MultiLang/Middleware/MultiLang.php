@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Longman\LaravelMultiLang\MultiLang as MultiLangLib;
 
+use function is_array;
 use function setlocale;
 
 use const LC_ALL;
@@ -46,8 +47,8 @@ class MultiLang
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -78,9 +79,14 @@ class MultiLang
         if ($multilang->getConfig()->get('set_system_locale')) {
             $locales = $multilang->getLocales();
             if (! empty($locales[$locale]['full_locale'])) {
-                $lc = $multilang->getConfig()->get('system_locale_lc', LC_ALL);
-
-                setlocale($lc, $locales[$locale]['full_locale']);
+                $lcList = $multilang->getConfig()->get('system_locale_lc', LC_ALL);
+                if (is_array($lcList)) {
+                    foreach ($lcList as $lc) {
+                        setlocale((int) $lc, $locales[$locale]['full_locale']);
+                    }
+                } else {
+                    setlocale((int) $lcList, $locales[$locale]['full_locale']);
+                }
             }
         }
 

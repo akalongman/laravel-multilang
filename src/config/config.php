@@ -58,7 +58,7 @@ return [
     | Locale LC
     |--------------------------------------------------------------------------
     |
-    | Which locale to set
+    | Which locale to set. You can specify array of locale types, e.g LC_TIME, LC_CTYPE
     |
      */
     'system_locale_lc'  => LC_ALL,
