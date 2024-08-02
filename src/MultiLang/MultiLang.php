@@ -432,7 +432,7 @@ class MultiLang
      */
     public function getLocale()
     {
-        return $this->lang;
+        return $this->lang ?? $this->config->get('default_locale');
     }
 
     /**
