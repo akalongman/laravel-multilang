@@ -10,6 +10,8 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager as Database;
 
+use function is_null;
+
 class Repository
 {
     /**
@@ -169,36 +171,6 @@ class Repository
     }
 
     /**
-     * Get a database connection instance.
-     *
-     * @return \Illuminate\Database\Connection
-     */
-    protected function getDb(): Connection
-    {
-        $connection = $this->config->get('db.connection');
-        if ($connection === 'default') {
-            return $this->db->connection();
-        }
-
-        return $this->db->connection($connection);
-    }
-
-    /**
-     * Get a cache driver instance.
-     *
-     * @return \Illuminate\Contracts\Cache\Repository
-     */
-    protected function getCache(): CacheRepository
-    {
-        $store = $this->config->get('cache.store', 'default');
-        if ($store === 'default') {
-            return $this->cache->store();
-        }
-
-        return $this->cache->store($store);
-    }
-
-    /**
      * Save missing texts in database
      *
      * @param array $texts
@@ -219,7 +191,7 @@ class Repository
 
         $now = Carbon::now()->toDateTimeString();
         foreach ($texts as $k => $v) {
-            foreach ($locales as $lang => $locale_data) {
+            foreach ($locales as $lang => $localeData) {
                 $exists = $this->getDb()
                     ->table($table)
                     ->where([
@@ -258,5 +230,35 @@ class Repository
         $table = $this->config->get('db.texts_table', 'texts');
 
         return (string) $table;
+    }
+
+    /**
+     * Get a database connection instance.
+     *
+     * @return \Illuminate\Database\Connection
+     */
+    protected function getDb(): Connection
+    {
+        $connection = $this->config->get('db.connection');
+        if ($connection === 'default') {
+            return $this->db->connection();
+        }
+
+        return $this->db->connection($connection);
+    }
+
+    /**
+     * Get a cache driver instance.
+     *
+     * @return \Illuminate\Contracts\Cache\Repository
+     */
+    protected function getCache(): CacheRepository
+    {
+        $store = $this->config->get('cache.store', 'default');
+        if ($store === 'default') {
+            return $this->cache->store();
+        }
+
+        return $this->cache->store($store);
     }
 }

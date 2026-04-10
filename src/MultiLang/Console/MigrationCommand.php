@@ -7,6 +7,14 @@ namespace Longman\LaravelMultiLang\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 
+use function date;
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function str_replace;
+
+use const PHP_EOL;
+
 class MigrationCommand extends Command
 {
     /**
@@ -55,7 +63,7 @@ class MigrationCommand extends Command
             } else {
                 $this->error(
                     'Couldn\'t create migration.' . PHP_EOL . ' Check the write permissions
-                    within the database/migrations directory.'
+                    within the database/migrations directory.',
                 );
             }
 

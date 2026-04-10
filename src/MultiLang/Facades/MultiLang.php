@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Longman\LaravelMultiLang\Facades;
 
-class MultiLang extends \Illuminate\Support\Facades\Facade
+use Illuminate\Support\Facades\Facade;
+
+class MultiLang extends Facade
 {
     /**
      * {@inheritDoc}

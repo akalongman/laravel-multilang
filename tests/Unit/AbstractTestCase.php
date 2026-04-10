@@ -11,6 +11,8 @@ use Longman\LaravelMultiLang\MultiLangServiceProvider;
 use Longman\LaravelMultiLang\Repository;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
+use function array_replace_recursive;
+
 /**
  * This is the abstract test case class.
  *
@@ -50,8 +52,8 @@ abstract class AbstractTestCase extends BaseTestCase
         $cache    = $this->app->cache;
         $database = $this->app->db;
 
-        $default_config = include __DIR__ . '/../../src/config/config.php';
-        $config = array_replace_recursive($default_config, $config);
+        $defaultConfig = include __DIR__ . '/../../src/config/config.php';
+        $config = array_replace_recursive($defaultConfig, $config);
 
         $multilang = new MultiLang($env, $config, $cache, $database);
 
@@ -63,8 +65,8 @@ abstract class AbstractTestCase extends BaseTestCase
         $cache    = $this->app->cache;
         $database = $this->app->db;
 
-        $default_config = include __DIR__ . '/../../src/config/config.php';
-        $config = array_replace_recursive($default_config, $config);
+        $defaultConfig = include __DIR__ . '/../../src/config/config.php';
+        $config = array_replace_recursive($defaultConfig, $config);
 
         $config = $this->getConfig($config);
 

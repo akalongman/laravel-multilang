@@ -40,7 +40,11 @@
         </div>
     @endif
     <form action="{{lang_url(config('multilang.text-route.route').'/save')}}" method="POST">
-        <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+        <input type="hidden" name="_token" value="<?php
+
+        declare(strict_types=1);
+
+        echo csrf_token(); ?>">
         <table class="table table-striped table-hover">
             <thead>
                 <tr>

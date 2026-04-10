@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Longman\LaravelMultiLang\MultiLang;
 use TypeError;
 
+use function count;
+
 class MultiLangTest extends AbstractTestCase
 {
     public function setUp(): void
@@ -381,7 +383,7 @@ class MultiLangTest extends AbstractTestCase
 
         $this->assertEquals(
             $multilang->get('text1', ['attribute' => 'Start Date', 'date' => '7 April 1986']),
-            'The Start Date must be a date after 7 April 1986.'
+            'The Start Date must be a date after 7 April 1986.',
         );
     }
 
