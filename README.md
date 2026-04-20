@@ -1,5 +1,7 @@
 # Laravel 5.x MultiLanguage
 
+## DEPRECATED
+
 [![Build Status](https://img.shields.io/travis/akalongman/laravel-multilang/master.svg?style=flat-square)](https://travis-ci.org/akalongman/laravel-multilang)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/akalongman/laravel-multilang.svg?style=flat-square)](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/?branch=master)
 [![Code Quality](https://img.shields.io/scrutinizer/g/akalongman/laravel-multilang.svg?style=flat-square)](https://scrutinizer-ci.com/g/akalongman/laravel-multilang/?branch=master)
